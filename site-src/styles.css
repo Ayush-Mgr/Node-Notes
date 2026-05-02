@@ -257,3 +257,23 @@ svg {
     border-radius: 0;
   }
 }
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+  color: #000;
+}

@@ -7,7 +7,9 @@
   --primary: #000000;
   --on-primary: #ffffff;
   --outline: #dddddd;
+  --accent: #3b2240;
   --link: #000000;
+  --node: #888888;
   --edge: rgba(0, 0, 0, 0.08);
   --overlay: rgba(0, 0, 0, 0.05);
   --radius-lg: 15px;
@@ -38,7 +40,10 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-weight: 600;
   color: #000000;
   letter-spacing: -0.02em;
@@ -68,9 +73,7 @@ svg {
   color: var(--on-surface-variant);
   font-size: 0.8rem;
   font-weight: 500;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid #000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .tooltip {
@@ -253,4 +256,24 @@ svg {
     width: 100vw;
     border-radius: 0;
   }
+}
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+  color: #000;
 }
