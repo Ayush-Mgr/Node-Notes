@@ -1,0 +1,96 @@
+# Statistics & Probability
+
+## Probability Theory
+- [[1. THEORY OF PROBABILITY]]
+- [[4.Classic Probability]]
+- [[9. Probability Basics & Conditional Probability]]
+- [[8.Sets And Probability]]
+- [[1.2 EVENTS]]
+- [[Odds Vs Probability]]
+- [[11. joint probability]]
+- [[6.Baye's Teorm]]
+- [[5.theorem of probability]]
+- [[Addition Theorem]]
+- [[9. probability axioms]]
+- [[7. mathematical expectations]]
+- [[representation of  various probabilistic concepts]]
+
+## Distributions & Random Variables
+- [[Probability distribution]]
+- [[1.theoretical distribution]]
+- [[Probability Density Function]]
+- [[Probability Mass Function (PMF)]]
+- [[10. Random variable]]
+- [[10 Binomial & Geometric Distributions]]
+- [[2.binomial distribution]]
+- [[3. Poisson Distribution]]
+
+## Descriptive Statistics
+- [[2. Descriptive stats vs  inferential statistics]]
+- [[Mean]]
+- [[Median]]
+- [[Mode]]
+- [[eg.1Median]]
+- [[variance  & its coefficient]]
+- [[Standard_deviation & coefficient]]
+- [[mean deviation]]
+- [[0. MEASURES OF DISPERSION]]
+- [[Moment]]
+- [[skewness]]
+- [[5.Skewness]]
+- [[Karl Pearson's Coefficient of Skewness]]
+- [[Bowley’s Coefficient of Skewness]]
+- [[kurtosis]]
+- [[4. Partition Values - quartiles, deciles, and percentiles]]
+
+## Hypothesis Testing & P-Values
+- [[0.1 Hypothesis]]
+- [[0.2 P-Value]]
+- [[1.1 One-Sample Test for Mean]]
+- [[2.1  one sample Hypothesis Testing for Proportions]]
+- [[2.2  two sample Hypothesis Testing for Proportions]]
+- [[3.1  single sample Hypothesis Testing for Variance (Chi-squared)]]
+- [[3.2 two sample Hypothesis Testing for Variance (F - test)]]
+- [[Population Proportions]]
+- [[Chi-Square Test — Nonparametric Method]]
+
+## Regression & Correlation
+- [[Linear Regression]]
+- [[1. simple Linear regression]]
+- [[2. Multiple Linear regression & analysis]]
+- [[7.1 LinearRegression]]
+- [[7.2 Mean centered Regression]]
+- [[9.regression Bivariate Frequency distribution.]]
+- [[1.Concept of regression and correlation]]
+- [[6. Correlation coefficient (r)]]
+- [[Multiple & Partial Correlation Coefficients]]
+- [[Multiple Correlation and Partial Correlation Coefficients]]
+- [[3. Residual calculation, correlation, and VIF]]
+- [[5.Fitting straight line]]
+- [[8.explained, unexplained variation]]
+
+## Advanced Statistics & Models
+- [[One-Way and Two-Way ANOVA]]
+- [[9. Hidden Markove Model (HMM)]]
+- [[8. Smoothing Techniques (N-gram)]]
+- [[BOX-COX]]
+- [[Viterbi Algorithm]]
+- [[random forest]]
+- [[Supervised learning]]
+- [[model assessment and validation]]
+
+## Other Data Operations
+- [[12. Data]]
+- [[2.Bivariate data]]
+- [[Data Cleaning]]
+- [[14.2 panda Stats]]
+- [[Convolution]]
+- [[theory of attributes  example 1]]
+- [[2.Terminologies]]
+- [[4.Forward Channing AND backward Channing]]
+- [[2. regular expressions]]
+- [[seo KEys]]
+
+## Time Series Analysis
+- [[intro - Time Series Analysis]]
+- 

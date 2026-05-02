@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ayush Notes Graph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css?v=3" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="graph-view" aria-label="Notes graph"></section>
+    </main>
+
+    <div id="app-status" class="app-status">Loading graph...</div>
+    <div id="note-backdrop" class="note-backdrop hidden" aria-hidden="true"></div>
+    <aside id="note-panel" class="note-panel hidden" aria-hidden="true">
+      <div class="note-panel__header">
+        <div class="note-panel__eyebrow">Note</div>
+        <button id="close-note" class="icon-button" aria-label="Close note">Close</button>
+      </div>
+      <h1 id="note-title">Note</h1>
+      <article id="note-content" class="note-content"></article>
+    </aside>
+
+    <div id="tooltip" class="tooltip hidden"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="./app.js?v=11"></script>
+  </body>
+</html>
