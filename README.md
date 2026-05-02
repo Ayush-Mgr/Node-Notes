@@ -11,9 +11,7 @@ This project was created to fulfill two primary goals:
 
 ## Source Data
 
-Your source notes stay here:
-
-`your configured local Obsidian vault path`
+Your source notes stay in your configured local Obsidian vault path.
 
 The site does only two things:
 
@@ -32,7 +30,6 @@ The site does only two things:
 ## Local preview
 
 ```bash
-cd .
 ./scripts/preview-graph-site.sh
 ```
 
@@ -43,7 +40,6 @@ Then open:
 ## Build static output
 
 ```bash
-cd .
 python3 ./scripts/build_graph_site.py
 ```
 
