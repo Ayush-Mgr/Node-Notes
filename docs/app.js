@@ -13,14 +13,13 @@ const noteContent = document.getElementById("note-content");
 const closeNoteButton = document.getElementById("close-note");
 const tooltip = document.getElementById("tooltip");
 
-let currentNodeSelection = null;
-let currentLinkSelection = null;
 let currentNeighborMap = new Map();
 let currentZoomTransform = d3.zoomIdentity;
-let svg = null;
+let canvas = null;
+let context = null;
 let simulation = null;
-
-const NODE_FILL = "#333";
+let hoveredNode = null;
+let triggerRedraw = null;
 
 function stripFrontmatter(markdown) {
   return markdown.replace(/^---\n[\s\S]*?\n---\n?/, "");
@@ -130,97 +129,8 @@ function setStatus(text) {
   appStatus.textContent = text;
 }
 
-function updateGlow(gSelection, d, stateName) {
-  const aura = gSelection.select(".node-aura");
-  const shadow = gSelection.select(".node-shadow");
-  
-  if (d.degree < 1) {
-    aura.attr("r", 0);
-    shadow.attr("r", 0);
-    return;
-  }
-
-  const scale = 1 + Math.min(Math.log10(d.degree), 1.2) * 0.6;
-  let auraSpread = 0;
-  let shadowSpread = 0;
-  let auraOpacity = 0;
-  let shadowOpacity = 0;
-
-  if (stateName === "hover") {
-    auraSpread = 12 * scale; 
-    shadowSpread = 6 * scale;
-    auraOpacity = 0.4;
-    shadowOpacity = 0.5;
-  } else if (stateName === "active") {
-    auraSpread = 9 * scale;
-    shadowSpread = 4 * scale;
-    auraOpacity = 0.3;
-    shadowOpacity = 0.4;
-  } else {
-    // base
-    auraSpread = 6 * scale;
-    shadowSpread = 3 * scale;
-    auraOpacity = 0.15;
-    shadowOpacity = 0.3;
-  }
-
-  aura.attr("r", d.radius + auraSpread)
-      .attr("fill", `rgba(30, 30, 30, ${auraOpacity})`)
-      .attr("filter", "url(#aura-blur)");
-
-  shadow.attr("r", d.radius + shadowSpread)
-        .attr("fill", `rgba(30, 30, 30, ${shadowOpacity})`)
-        .attr("filter", "url(#shadow-blur)");
-}
-function highlightSelection(noteId) {
-  if (!currentNodeSelection || !currentLinkSelection) return;
-
-  if (!noteId) {
-    currentNodeSelection.each(function(d) {
-      const g = d3.select(this);
-      updateGlow(g, d, "base");
-      g.select(".node-core")
-        .attr("fill-opacity", 0.95)
-        .attr("stroke", "none")
-        .attr("stroke-width", 0)
-        .attr("r", d.radius)
-        .attr("fill", NODE_FILL);
-    });
-
-    currentLinkSelection
-      .attr("stroke", "var(--edge)")
-      .attr("stroke-opacity", 1)
-      .attr("stroke-width", 0.8);
-    return;
-  }
-
-  const neighbors = currentNeighborMap.get(noteId) || new Set();
-
-  currentNodeSelection.each(function(d) {
-    const g = d3.select(this);
-    const isActive = d.id === noteId;
-    const isNeighbor = neighbors.has(d.id);
-    
-    updateGlow(g, d, isActive ? "active" : "base");
-    
-    g.select(".node-core")
-      .attr("fill-opacity", isActive || isNeighbor ? 1 : 0.18)
-      .attr("stroke", isActive ? "#000000" : "none")
-      .attr("stroke-width", isActive ? 1.5 : 0)
-      .attr("fill", NODE_FILL)
-      .attr("r", isActive ? d.radius + 2 : d.radius);
-  });
-
-  currentLinkSelection
-    .attr("stroke", (d) =>
-      d.source.id === noteId || d.target.id === noteId ? "rgba(0,0,0,0.4)" : "var(--edge)",
-    )
-    .attr("stroke-opacity", (d) =>
-      d.source.id === noteId || d.target.id === noteId ? 1 : 0.08,
-    )
-    .attr("stroke-width", (d) =>
-      d.source.id === noteId || d.target.id === noteId ? 1.25 : 0.55,
-    );
+function highlightSelection() {
+  if (triggerRedraw) triggerRedraw();
 }
 
 function renderGraph() {
@@ -239,58 +149,22 @@ function renderGraph() {
 
   graphView.innerHTML = "";
 
-  svg = d3
+  canvas = d3
     .select(graphView)
-    .append("svg")
-    .attr("viewBox", [0, 0, width, height])
-    .attr("role", "img")
-    .attr("aria-label", "Interactive notes graph");
+    .append("canvas")
+    .node();
 
-  const zoomLayer = svg.append("g");
+  context = canvas.getContext("2d");
 
-  const defs = svg.append("defs");
+  // Handle High DPI displays
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  context.scale(dpr, dpr);
 
-  const auraBlur = defs.append("filter").attr("id", "aura-blur").attr("x", "-50%").attr("y", "-50%").attr("width", "200%").attr("height", "200%");
-  auraBlur.append("feGaussianBlur").attr("stdDeviation", "4");
-
-  const shadowBlur = defs.append("filter").attr("id", "shadow-blur").attr("x", "-50%").attr("y", "-50%").attr("width", "200%").attr("height", "200%");
-  shadowBlur.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "3").attr("result", "blur");
-  shadowBlur.append("feOffset").attr("in", "blur").attr("dx", "2").attr("dy", "3");
-
-  const link = zoomLayer
-    .append("g")
-    .attr("stroke", "var(--edge)")
-    .attr("stroke-opacity", 1)
-    .selectAll("line")
-    .data(links)
-    .join("line")
-    .attr("stroke-width", 0.8);
-
-  const node = zoomLayer
-    .append("g")
-    .selectAll("g.node")
-    .data(nodes)
-    .join(enter => {
-      const g = enter.append("g")
-        .attr("class", "node")
-        .attr("cursor", "pointer")
-        .on("click", (_, d) => openNote(d.id))
-        .on("mouseenter", function (event, d) {
-          updateGlow(d3.select(this), d, "hover");
-          showTooltip(d.title, event.clientX, event.clientY);
-        })
-        .on("mousemove", (event, d) => showTooltip(d.title, event.clientX, event.clientY))
-        .on("mouseleave", function (event, d) {
-          const stateName = (state.activeNoteId === d.id) ? "active" : "base";
-          updateGlow(d3.select(this), d, stateName);
-          hideTooltip();
-        });
-
-      g.append("circle").attr("class", "node-shadow").style("pointer-events", "none");
-      g.append("circle").attr("class", "node-aura").style("pointer-events", "none");
-      g.append("circle").attr("class", "node-core");
-      return g;
-    });
+  currentZoomTransform = d3.zoomIdentity;
 
   simulation = d3
     .forceSimulation(nodes)
@@ -299,80 +173,213 @@ function renderGraph() {
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("x", d3.forceX(width / 2).strength(0.8))
     .force("y", d3.forceY(height / 2).strength(0.8))
-    .force("collision", d3.forceCollide().radius((d) => d.radius + 2))
-    .alpha(1)
-    .alphaDecay(0.035)
-    .on("tick", ticked);
+    .force("collision", d3.forceCollide().radius((d) => d.radius + 2));
 
-  const drag = d3
-    .drag()
-    .on("start", (event, d) => {
-      if (!event.active) simulation.alphaTarget(0.2).restart();
-      d.fx = d.x;
-      d.fy = d.y;
+  simulation.on("tick", drawCanvas);
+
+  d3.select(canvas)
+    .call(
+      d3.drag()
+        .subject((event) => {
+          const transform = currentZoomTransform;
+          const x = transform.invertX(event.x);
+          const y = transform.invertY(event.y);
+          return simulation.find(x, y, 20);
+        })
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+    )
+    .call(
+      d3.zoom()
+        .scaleExtent([0.35, 3])
+        .on("zoom", (event) => {
+          currentZoomTransform = event.transform;
+          drawCanvas();
+        })
+    )
+    .on("mousemove", (event) => {
+      const [mx, my] = d3.pointer(event);
+      const x = currentZoomTransform.invertX(mx);
+      const y = currentZoomTransform.invertY(my);
+      const found = simulation.find(x, y, 20);
+
+      if (found !== hoveredNode) {
+        hoveredNode = found;
+        if (hoveredNode) {
+          showTooltip(hoveredNode.title, mx, my);
+          canvas.style.cursor = "pointer";
+        } else {
+          hideTooltip();
+          canvas.style.cursor = "default";
+        }
+        if (simulation.alpha() < simulation.alphaMin()) drawCanvas();
+      } else if (hoveredNode) {
+        showTooltip(hoveredNode.title, mx, my);
+      }
     })
-    .on("drag", (event, d) => {
-      d.fx = event.x;
-      d.fy = event.y;
-    })
-    .on("end", (event, d) => {
-      if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
+    .on("click", () => {
+      if (hoveredNode) openNote(hoveredNode.id);
     });
 
-  node.call(drag);
-  currentNodeSelection = node;
-  currentLinkSelection = link;
-
-  svg.call(
-    d3.zoom().scaleExtent([0.35, 3]).on("zoom", (event) => {
-      currentZoomTransform = event.transform;
-      zoomLayer.attr("transform", event.transform);
-    }),
-  );
-  
-  if (currentZoomTransform !== d3.zoomIdentity) {
-    svg.call(d3.zoom().transform, currentZoomTransform);
+  function dragstarted(event) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    event.subject.fx = event.subject.x;
+    event.subject.fy = event.subject.y;
   }
 
-  highlightSelection(state.activeNoteId);
+  function dragged(event) {
+    event.subject.fx = event.x;
+    event.subject.fy = event.y;
+  }
 
-  function ticked() {
-    const padding = 20;
+  function dragended(event) {
+    if (!event.active) simulation.alphaTarget(0);
+    event.subject.fx = null;
+    event.subject.fy = null;
+  }
 
-    // Soft viewport containment nudging based on inverse zoom transform
-    const minX = (padding - currentZoomTransform.x) / currentZoomTransform.k;
-    const minY = (padding - currentZoomTransform.y) / currentZoomTransform.k;
-    const maxX = (window.innerWidth - padding - currentZoomTransform.x) / currentZoomTransform.k;
-    const maxY = (window.innerHeight - padding - currentZoomTransform.y) / currentZoomTransform.k;
+  function drawCanvas() {
+    context.clearRect(0, 0, width, height);
+    context.save();
+    context.translate(currentZoomTransform.x, currentZoomTransform.y);
+    context.scale(currentZoomTransform.k, currentZoomTransform.k);
 
+    const activeId = state.activeNoteId;
+    const hoverId = hoveredNode?.id;
+    const focusId = hoverId || activeId;
+    
+    let neighbors = new Set();
+    if (focusId) {
+        neighbors = currentNeighborMap.get(focusId) || new Set();
+    }
+
+    const normalLinks = [];
+    const fadedLinks = [];
+    const highlightedLinks = [];
+    
+    links.forEach(d => {
+       if (!focusId) {
+           normalLinks.push(d);
+       } else if (d.source.id === focusId || d.target.id === focusId) {
+           highlightedLinks.push(d);
+       } else {
+           fadedLinks.push(d);
+       }
+    });
+    
+    if (normalLinks.length > 0) {
+        context.beginPath();
+        normalLinks.forEach(d => {
+           context.moveTo(d.source.x, d.source.y);
+           context.lineTo(d.target.x, d.target.y);
+        });
+        context.strokeStyle = "rgba(0, 0, 0, 0.08)";
+        context.lineWidth = 0.8;
+        context.stroke();
+    }
+    
+    if (fadedLinks.length > 0) {
+        context.beginPath();
+        fadedLinks.forEach(d => {
+           context.moveTo(d.source.x, d.source.y);
+           context.lineTo(d.target.x, d.target.y);
+        });
+        context.strokeStyle = "rgba(0, 0, 0, 0.02)";
+        context.lineWidth = 0.55;
+        context.stroke();
+    }
+    
+    if (highlightedLinks.length > 0) {
+        context.beginPath();
+        highlightedLinks.forEach(d => {
+           context.moveTo(d.source.x, d.source.y);
+           context.lineTo(d.target.x, d.target.y);
+        });
+        context.strokeStyle = "rgba(0,0,0,0.4)";
+        context.lineWidth = 1.25;
+        context.stroke();
+    }
+
+    const normalNodes = [];
+    const fadedNodes = [];
+    const highlightedNodes = [];
+    
     nodes.forEach(d => {
-      if (d.x < minX) d.vx += (minX - d.x) * 0.05;
-      if (d.x > maxX) d.vx += (maxX - d.x) * 0.05;
-      if (d.y < minY) d.vy += (minY - d.y) * 0.05;
-      if (d.y > maxY) d.vy += (maxY - d.y) * 0.05;
+        const isActive = d.id === focusId;
+        const isNeighbor = neighbors.has(d.id);
+        
+        if (!focusId) {
+            normalNodes.push(d);
+        } else if (isActive || isNeighbor) {
+            highlightedNodes.push(d);
+        } else {
+            fadedNodes.push(d);
+        }
     });
+    
+    if (normalNodes.length > 0) {
+        context.beginPath();
+        normalNodes.forEach(d => {
+            context.moveTo(d.x + d.radius, d.y);
+            context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
+        });
+        context.fillStyle = "rgba(51, 51, 51, 0.95)";
+        context.fill();
+    }
+    
+    if (fadedNodes.length > 0) {
+        context.beginPath();
+        fadedNodes.forEach(d => {
+            context.moveTo(d.x + d.radius, d.y);
+            context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
+        });
+        context.fillStyle = "rgba(51, 51, 51, 0.18)";
+        context.fill();
+    }
+    
+    if (highlightedNodes.length > 0) {
+        highlightedNodes.forEach(d => {
+            context.beginPath();
+            const r = (d.id === focusId) ? d.radius + 2 : d.radius;
+            context.arc(d.x, d.y, r, 0, 2 * Math.PI);
+            context.fillStyle = "rgba(51, 51, 51, 1)";
+            context.fill();
+            if (d.id === focusId) {
+                context.lineWidth = 1.5;
+                context.strokeStyle = "#000000";
+                context.stroke();
+            }
+        });
+    }
 
-    link
-      .attr("x1", (d) => d.source.x)
-      .attr("y1", (d) => d.source.y)
-      .attr("x2", (d) => d.target.x)
-      .attr("y2", (d) => d.target.y);
-
-    node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    context.restore();
   }
+
+  triggerRedraw = drawCanvas;
+  triggerRedraw();
 }
 
 function handleResize() {
-  if (svg) {
-    svg.attr("viewBox", [0, 0, window.innerWidth, window.innerHeight]);
-  }
-  if (simulation) {
-    simulation.force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
-    simulation.force("x", d3.forceX(window.innerWidth / 2).strength(0.8));
-    simulation.force("y", d3.forceY(window.innerHeight / 2).strength(0.8));
-    simulation.alpha(0.3).restart();
+  if (canvas) {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    
+    context.setTransform(1, 0, 0, 1, 0, 0); // reset transform before scaling
+    context.scale(dpr, dpr);
+    
+    if (simulation) {
+        simulation.force("center", d3.forceCenter(width / 2, height / 2));
+        simulation.force("x", d3.forceX(width / 2).strength(0.8));
+        simulation.force("y", d3.forceY(height / 2).strength(0.8));
+        simulation.alpha(0.3).restart();
+    }
   }
 }
 
