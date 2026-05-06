@@ -1,31 +1,37 @@
 # Node-Notes
 
-This repository transforms a private Obsidian vault into a public-facing, interactive, Zen-inspired "Ink & Void" node graph.
+Transforms a private Obsidian vault into a public-facing, interactive, Zen-inspired **"Ink & Void"** node graph — hosted on GitHub Pages.
 
-## Vision & Purpose
+## Architecture
 
-This project was created to fulfill two primary goals:
-1. **Personal Web Showcase**: To serve as a high-fidelity, interactive portfolio piece hosted on GitHub Pages. It acts as a public window into your structured knowledge and notes, demonstrating technical proficiency and a refined design aesthetic.
-2. **Ubiquitous Access**: To provide a seamless, mobile-friendly way to view and access your knowledge base from anywhere. You don't need your primary computer to access your Obsidian vault.
-    - *Future Potential*: In the future, this project may evolve beyond a static viewer into an application that allows adding new notes or editing existing ones directly from the web on the go.
+GitHub is the single source of truth.
 
-## Source Data
+```
+vault/*.md  (committed to git)
+    │
+    ├─── push → GitHub Actions → build_graph_site.py → docs/ → GitHub Pages
+    │
+    ├─── Obsidian Git (PC)    — auto-pull on startup, auto-push on save
+    └─── Obsidian Git (Phone) — auto-pull on startup, auto-push on save
+```
 
-Your source notes stay in your configured local Obsidian vault path.
+Every push automatically rebuilds and deploys the live site (~60 seconds).
 
-The site does only two things:
-
-- show the notes as an interactive node graph
-- open a note when you click a node
+---
 
 ## Files that matter
 
-- [scripts/build_graph_site.py](./scripts/build_graph_site.py): syncs the vault and generates the site data
-- [scripts/preview-graph-site.sh](./scripts/preview-graph-site.sh): builds and runs localhost preview
-- [site-src/index.html](./site-src/index.html): the app shell
-- [site-src/styles.css](./site-src/styles.css): the visual style
-- [site-src/app.js](./site-src/app.js): graph + note panel behavior
-- [publish.exclude](./publish.exclude): files and folders excluded from sync
+| File | Purpose |
+|---|---|
+| `vault/` | Your notes — the source of truth |
+| `publish.exclude` | Patterns for private notes excluded from site |
+| `scripts/build_graph_site.py` | Reads `vault/`, outputs `docs/` |
+| `scripts/publish.sh` | One-command sync + commit + push |
+| `scripts/preview-graph-site.sh` | Local preview at localhost:8080 |
+| `site-src/` | App shell (HTML, CSS, JS) |
+| `.github/workflows/deploy-pages.yml` | CI: build + deploy on push |
+
+---
 
 ## Local preview
 
@@ -33,29 +39,43 @@ The site does only two things:
 ./scripts/preview-graph-site.sh
 ```
 
-Then open:
+Open: [http://localhost:8080](http://localhost:8080)
 
-[http://localhost:8080](http://localhost:8080)
+---
 
-## Build static output
+## Publishing from PC (via Google Drive)
+
+If you still sync from Google Drive first:
 
 ```bash
-python3 ./scripts/build_graph_site.py
+./scripts/publish.sh
+# or with a custom message:
+./scripts/publish.sh "add: new investing notes"
 ```
 
-This writes the static site into `docs/`.
+This runs rsync from your vault, commits the changes to `vault/`, and pushes. CI does the rest.
 
-## Publish model
+---
 
-The generated site is committed from `docs/`.
-GitHub Pages can serve that folder directly.
+## Publishing from phone
 
-## Hide private content
+Install **Obsidian Mobile** + **Obsidian Git** community plugin.
 
-Add folders or files you do not want public to [publish.exclude](./publish.exclude).
+1. Clone this repo as your Obsidian vault
+2. Point vault root to the `vault/` subfolder
+3. Enable "Auto-commit and push on file change" in Obsidian Git settings
+4. Write a note → it auto-pushes → site updates in ~60 seconds
 
-Example:
+---
+
+## Private notes
+
+Add folder or file patterns to `publish.exclude`. Matched paths are excluded from both the graph and `docs/content/` (they never leave your machine during CI).
 
 ```text
+# publish.exclude example
 Random Shits and Notes/
+private/
 ```
+
+> **Note:** The files still exist in the git repo (`vault/`). If your repo is public, use a `private/` subfolder pattern **and** add `vault/private/` to `.gitignore` so those notes are never committed.
