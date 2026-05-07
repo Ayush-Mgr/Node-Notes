@@ -3,9 +3,8 @@ const CONFIG = {
   repo: "Node-Notes",
   branch: "main",
   apiBase: "https://api.github.com",
-  inboxPrefix: "vault/inbox/",
+  vaultPrefix: "vault/",
   noteSuffix: ".md",
-  maxRecentNotes: 24,
   deleteConfirmMs: 4000,
   draftBodyKey: "nn_draft_body",
   draftTitleKey: "nn_draft_title",
@@ -64,7 +63,7 @@ function setStatus(type, message) {
 
 function isPathSafe(path) {
   return typeof path === "string"
-    && path.startsWith(CONFIG.inboxPrefix)
+    && path.startsWith(CONFIG.vaultPrefix)
     && path.endsWith(CONFIG.noteSuffix)
     && !path.includes("..")
     && !path.includes("\\");
@@ -82,8 +81,18 @@ function buildFilename(title) {
   if (title.trim()) {
     return `${title.trim().replace(/\.md$/i, "")}.md`;
   }
-
-  return `${new Date().toISOString().replace(/[:.]/g, "-")}.md`;
+  const now = new Date();
+  const pad = (n, l = 2) => String(n).padStart(l, '0');
+  return [
+    now.getUTCFullYear(),
+    '-', pad(now.getUTCMonth() + 1),
+    '-', pad(now.getUTCDate()),
+    'T', pad(now.getUTCHours()),
+    '-', pad(now.getUTCMinutes()),
+    '-', pad(now.getUTCSeconds()),
+    '-', pad(now.getUTCMilliseconds(), 3),
+    'Z.md'
+  ].join('');
 }
 
 function buildMarkdown(title, body, fallbackTitle) {
@@ -92,7 +101,7 @@ function buildMarkdown(title, body, fallbackTitle) {
     "---",
     `title: "${safeTitle}"`,
     `date: ${new Date().toISOString()}`,
-    "tags: [inbox, mobile]",
+    "tags: [vault, web]",
     "---",
     "",
     body,
@@ -113,13 +122,9 @@ function extractFrontmatter(markdown) {
 
 function parseEditableNote(path, markdown) {
   const fallbackTitle = noteStemFromPath(path);
-
   try {
     const parsed = extractFrontmatter(markdown);
-    if (!parsed) {
-      return { title: fallbackTitle, body: markdown };
-    }
-
+    if (!parsed) return { title: fallbackTitle, body: markdown };
     return {
       title: parsed.title || fallbackTitle,
       body: parsed.body,
@@ -139,9 +144,7 @@ function saveDraftSoon() {
         "visible",
         Boolean(elements.bodyInput.value || elements.titleInput.value),
       );
-    } catch {
-      // Ignore storage failures on restrictive browsers.
-    }
+    } catch { }
   }, 600);
 }
 
@@ -152,43 +155,33 @@ function restoreSavedDraft() {
     if (savedBody) elements.bodyInput.value = savedBody;
     if (savedTitle) elements.titleInput.value = savedTitle;
     if (savedBody || savedTitle) elements.draftTag.classList.add("visible");
-  } catch {
-    // Ignore storage failures on restrictive browsers.
-  }
+  } catch { }
 }
 
 function clearSavedDraft() {
   try {
     localStorage.removeItem(CONFIG.draftBodyKey);
     localStorage.removeItem(CONFIG.draftTitleKey);
-  } catch {
-    // Ignore storage failures on restrictive browsers.
-  }
-
+  } catch { }
   elements.draftTag.classList.remove("visible");
 }
 
 function saveSessionToken() {
   try {
     sessionStorage.setItem(CONFIG.tokenKey, currentToken());
-  } catch {
-    // Ignore storage failures on restrictive browsers.
-  }
+  } catch { }
 }
 
 function restoreSessionToken() {
   try {
     const saved = sessionStorage.getItem(CONFIG.tokenKey);
     if (saved) elements.tokenInput.value = saved;
-  } catch {
-    // Ignore storage failures on restrictive browsers.
-  }
+  } catch { }
 }
 
 function renderPreview() {
   const title = elements.titleInput.value.trim();
   const body = elements.bodyInput.value;
-
   elements.previewTitle.textContent = title;
   elements.previewTitle.classList.toggle("hidden", !title);
 
@@ -205,12 +198,8 @@ function setEditorMode(mode) {
   const showPreview = mode === "preview";
   elements.writeTab.classList.toggle("active", !showPreview);
   elements.previewTab.classList.toggle("active", showPreview);
-  elements.writeTab.setAttribute("aria-selected", String(!showPreview));
-  elements.previewTab.setAttribute("aria-selected", String(showPreview));
   elements.writePane.classList.toggle("active", !showPreview);
   elements.previewPane.classList.toggle("active", showPreview);
-  elements.writePane.setAttribute("aria-hidden", String(showPreview));
-  elements.previewPane.setAttribute("aria-hidden", String(!showPreview));
 }
 
 function clearDeleteConfirmation() {
@@ -245,43 +234,47 @@ function filteredNotes() {
 
 function renderNoteList() {
   if (state.listStatus === "loading") {
-    elements.noteList.innerHTML = '<p class="list-state">Loading inbox notes…</p>';
+    elements.noteList.innerHTML = '<p class="list-state">Scanning vault files…</p>';
     elements.noteCount.textContent = "Syncing";
     return;
   }
 
   if (state.listStatus === "error") {
-    elements.noteList.innerHTML = `<p class="list-state">${escapeHtml(state.listError || "Unable to load inbox notes.")}</p>`;
+    elements.noteList.innerHTML = `<p class="list-state">${escapeHtml(state.listError || "Unable to load notes from GitHub.")}</p>`;
     elements.noteCount.textContent = "Error";
     return;
   }
 
   const notes = filteredNotes();
   if (notes.length === 0) {
-    const message = state.searchQuery
-      ? "No inbox notes match that search."
-      : "No inbox notes yet.";
+    const token = currentToken();
+    const message = token 
+      ? (state.searchQuery ? `No notes match "${escapeHtml(state.searchQuery)}".` : "No notes found in vault. Your new notes will appear here.")
+      : "Enter your GitHub Token above to list and manage your vault notes.";
     elements.noteList.innerHTML = `<p class="list-state">${message}</p>`;
-    elements.noteCount.textContent = "Empty";
+    elements.noteCount.textContent = "0 files";
     return;
   }
 
-  elements.noteCount.textContent = `${notes.length} shown`;
+  elements.noteCount.textContent = `${notes.length} files`;
   elements.noteList.innerHTML = notes.map((note) => {
     const confirmDelete = state.confirmDeletePath === note.path;
-    const deleteLabel = confirmDelete ? "Tap Again to Delete" : "Delete";
+    const deleteLabel = confirmDelete ? "Confirm Delete" : "Delete";
+    const hasToken = !!currentToken();
+    const displayPath = note.path.replace(/^vault\//, '');
+    
     return `
       <article class="vault-card">
         <div class="vault-card__top">
           <div class="vault-card__content">
-            <h3 class="vault-card__title">${escapeHtml(note.title)}</h3>
-            <p class="vault-card__meta">${escapeHtml(note.path)}</p>
+            <h3 class="vault-card__title" style="font-family:var(--font-sans); font-size: 0.9rem; font-weight: 500;">${escapeHtml(displayPath)}</h3>
           </div>
         </div>
         <div class="vault-actions">
-          <button class="action-btn" type="button" data-action="edit" data-path="${escapeHtml(note.path)}" ${state.isMutating ? "disabled" : ""}>Edit</button>
-          <button class="action-btn danger ${confirmDelete ? "active-danger" : ""}" type="button" data-action="delete" data-path="${escapeHtml(note.path)}" data-sha="${escapeHtml(note.sha || "")}" ${state.isMutating ? "disabled" : ""}>${escapeHtml(deleteLabel)}</button>
+          <button class="action-btn" type="button" data-action="edit" data-path="${escapeHtml(note.path)}" ${state.isMutating || !hasToken ? "disabled" : ""}>Edit</button>
+          <button class="action-btn danger ${confirmDelete ? "active-danger" : ""}" type="button" data-action="delete" data-path="${escapeHtml(note.path)}" data-sha="${escapeHtml(note.sha || "")}" ${state.isMutating || !hasToken ? "disabled" : ""}>${escapeHtml(deleteLabel)}</button>
         </div>
+        ${!hasToken ? '<p style="font-size:0.6rem;color:var(--error);text-align:right;margin-top:4px;text-transform:uppercase;">Token required</p>' : ''}
       </article>
     `;
   }).join("");
@@ -289,8 +282,8 @@ function renderNoteList() {
 
 function updateModeUi() {
   const editing = state.mode === "edit";
-  elements.uploadBtn.textContent = editing ? "Update Note" : "Create Note";
-  elements.cancelEditBtn.classList.toggle("hidden", !editing);
+  elements.uploadBtn.textContent = editing ? "Update Note" : "Save to Vault";
+  cancelEditBtn.classList.toggle("hidden", !editing);
 }
 
 function restoreDraftSnapshot() {
@@ -324,7 +317,6 @@ async function githubRequest(path, options = {}) {
     const errorBody = await response.json().catch(() => ({}));
     throw new Error(errorBody.message || `${options.method || "GET"} ${path}: ${response.status}`);
   }
-
   return response.json();
 }
 
@@ -338,33 +330,24 @@ function authHeaders(token, includeJson = false) {
 }
 
 async function getFileSha(token, path) {
-  if (!isPathSafe(path)) throw new Error("Unsafe inbox path rejected.");
-
+  if (!isPathSafe(path)) throw new Error("Unsafe vault path rejected.");
   const response = await fetch(`${CONFIG.apiBase}/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`, {
     headers: authHeaders(token),
   });
-
   if (response.status === 404) return null;
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    throw new Error(errorBody.message || `GET ${path}: ${response.status}`);
-  }
-
+  if (!response.ok) throw new Error(`GET ${path}: ${response.status}`);
   const data = await response.json();
   return data.sha || null;
 }
 
 async function getFileContent(token, path) {
-  if (!isPathSafe(path)) throw new Error("Unsafe inbox path rejected.");
-
+  if (!isPathSafe(path)) throw new Error("Unsafe vault path rejected.");
   const data = await githubRequest(
     `/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`,
     { headers: authHeaders(token) },
   );
-
   const binary = atob((data.content || "").replace(/\n/g, ""));
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-
   return {
     sha: data.sha || null,
     content: new TextDecoder().decode(bytes),
@@ -372,12 +355,10 @@ async function getFileContent(token, path) {
 }
 
 async function putFile(token, path, content, sha, message) {
-  if (!isPathSafe(path)) throw new Error("Unsafe inbox path rejected.");
-
+  if (!isPathSafe(path)) throw new Error("Unsafe vault path rejected.");
   const bytes = new TextEncoder().encode(content);
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-
   return githubRequest(
     `/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`,
     {
@@ -394,8 +375,7 @@ async function putFile(token, path, content, sha, message) {
 }
 
 async function deleteFile(token, path, sha, message) {
-  if (!isPathSafe(path)) throw new Error("Unsafe inbox path rejected.");
-
+  if (!isPathSafe(path)) throw new Error("Unsafe vault path rejected.");
   return githubRequest(
     `/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`,
     {
@@ -410,84 +390,64 @@ async function deleteFile(token, path, sha, message) {
   );
 }
 
-async function fetchInbox(token) {
+async function fetchNotes(token) {
   state.listStatus = "loading";
   state.listError = "";
   clearDeleteConfirmation();
   renderNoteList();
 
-  const response = await fetch(
-    `${CONFIG.apiBase}/repos/${CONFIG.owner}/${CONFIG.repo}/contents/vault/inbox?ref=${encodeURIComponent(CONFIG.branch)}`,
-    { headers: authHeaders(token) },
-  );
+  try {
+    const headers = authHeaders(token);
+    const branchRes = await fetch(`${CONFIG.apiBase}/repos/${CONFIG.owner}/${CONFIG.repo}/branches/${CONFIG.branch}`, { headers });
+    if (!branchRes.ok) throw new Error(`Branch resolution failed: ${branchRes.status}`);
+    const branchData = await branchRes.json();
+    const treeSha = branchData.commit.commit.tree.sha;
 
-  if (response.status === 404) {
-    state.notes = [];
+    const res = await fetch(`${CONFIG.apiBase}/repos/${CONFIG.owner}/${CONFIG.repo}/git/trees/${treeSha}?recursive=1`, { headers });
+    if (res.status === 404) {
+      state.notes = [];
+      state.listStatus = "ready";
+      renderNoteList();
+      return;
+    }
+    if (!res.ok) throw new Error(`Note list failed: ${res.status}`);
+
+    const data = await res.json();
+    const tree = data.tree || [];
+    const files = tree
+      .filter((entry) => entry.type === "blob" && isPathSafe(entry.path))
+      .sort((a, b) => b.path.localeCompare(a.path));
+
+    state.notes = files.map((entry) => ({
+      path: entry.path,
+      sha: entry.sha || null,
+    }));
+
     state.listStatus = "ready";
     renderNoteList();
-    return;
-  }
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    throw new Error(errorBody.message || `Inbox list failed: ${response.status}`);
-  }
-
-  const entries = await response.json();
-  const files = Array.isArray(entries)
-    ? entries
-      .filter((entry) => entry.type === "file" && isPathSafe(entry.path))
-      .sort((a, b) => b.name.localeCompare(a.name))
-      .slice(0, CONFIG.maxRecentNotes)
-    : [];
-
-  const notes = await Promise.all(files.map(async (entry) => {
-    try {
-      const { content } = await getFileContent(token, entry.path);
-      const parsed = parseEditableNote(entry.path, content);
-      return {
-        path: entry.path,
-        sha: entry.sha || null,
-        title: parsed.title || noteStemFromPath(entry.path),
-      };
-    } catch {
-      return {
-        path: entry.path,
-        sha: entry.sha || null,
-        title: noteStemFromPath(entry.path),
-      };
-    }
-  }));
-
-  state.notes = notes;
-  state.listStatus = "ready";
-  renderNoteList();
-}
-
-async function refreshInboxFromToken() {
-  const token = currentToken();
-  if (!token) {
-    state.notes = [];
-    state.listStatus = "empty";
-    renderNoteList();
-    return;
-  }
-
-  try {
-    await fetchInbox(token);
   } catch (error) {
     state.listStatus = "error";
-    state.listError = error.message || "Unable to load inbox notes.";
+    state.listError = "Unable to load notes from GitHub.";
+    renderNoteList();
+  }
+}
+
+async function refreshFromToken() {
+  const token = currentToken();
+  try {
+    await fetchNotes(token);
+  } catch (error) {
+    state.listStatus = "error";
+    state.listError = "Unable to load vault files from GitHub.";
     renderNoteList();
   }
 }
 
 async function startEditing(path) {
   if (state.isMutating) return;
-
   const token = currentToken();
   if (!token) {
-    setStatus("error", "GitHub token required to load inbox notes.");
+    setStatus("error", "GitHub token required to load notes.");
     elements.tokenInput.focus();
     return;
   }
@@ -506,7 +466,6 @@ async function startEditing(path) {
 
     const { sha, content } = await getFileContent(token, path);
     const parsed = parseEditableNote(path, content);
-
     elements.titleInput.value = parsed.title;
     elements.bodyInput.value = parsed.body;
     state.mode = "edit";
@@ -514,12 +473,10 @@ async function startEditing(path) {
     state.editingSha = sha;
     updateModeUi();
     renderPreview();
-    setStatus("success", "Editing inbox note.");
+    setStatus("success", "Editing vault note.");
   } catch (error) {
     setStatus("error", error.message || "Unable to load note.");
-    if (state.mode !== "edit") {
-      state.draftSnapshot = null;
-    }
+    if (state.mode !== "edit") state.draftSnapshot = null;
   } finally {
     setMutationState(false);
   }
@@ -528,7 +485,7 @@ async function startEditing(path) {
 async function handleDelete(path, shaHint) {
   const token = currentToken();
   if (!token) {
-    setStatus("error", "GitHub token required to delete inbox notes.");
+    setStatus("error", "GitHub token required to delete notes.");
     elements.tokenInput.focus();
     return;
   }
@@ -547,14 +504,10 @@ async function handleDelete(path, shaHint) {
   try {
     const sha = shaHint || state.notes.find((note) => note.path === path)?.sha || await getFileSha(token, path);
     if (!sha) throw new Error("Missing file SHA for delete.");
-
-    await deleteFile(token, path, sha, `inbox: delete ${path.split("/").pop()}`);
-    if (state.editingPath === path) {
-      exitEditMode({ restoreDraft: true });
-    }
-
-    await fetchInbox(token);
-    setStatus("success", "Inbox note deleted.");
+    await deleteFile(token, path, sha, `vault: delete ${path.split("/").pop()}`);
+    if (state.editingPath === path) exitEditMode({ restoreDraft: true });
+    await fetchNotes(token);
+    setStatus("success", "Note deleted.");
   } catch (error) {
     setStatus("error", error.message || "Delete failed.");
   } finally {
@@ -572,7 +525,6 @@ async function handleSave() {
     elements.tokenInput.focus();
     return;
   }
-
   if (!body.trim()) {
     setStatus("error", "Note is empty.");
     elements.bodyInput.focus();
@@ -581,33 +533,30 @@ async function handleSave() {
 
   clearDeleteConfirmation();
   setMutationState(true);
-  setStatus("uploading", state.mode === "edit" ? "Updating note…" : "Creating note…");
+  setStatus("uploading", state.mode === "edit" ? "Updating vault note…" : "Saving to vault…");
 
   try {
     const filename = buildFilename(title);
-    const path = state.mode === "edit" ? state.editingPath : `${CONFIG.inboxPrefix}${filename}`;
+    const path = state.mode === "edit" ? state.editingPath : `${CONFIG.vaultPrefix}${filename}`;
     const fallbackTitle = noteStemFromPath(path);
     const message = state.mode === "edit"
-      ? `inbox: update ${path.split("/").pop()}`
-      : `inbox: add ${path.split("/").pop()}`;
-    const sha = state.mode === "edit"
-      ? state.editingSha
-      : await getFileSha(token, path);
+      ? `vault: update ${path.split("/").pop()}`
+      : `vault: add ${path.split("/").pop()}`;
+    const sha = state.mode === "edit" ? state.editingSha : await getFileSha(token, path);
 
     await putFile(token, path, buildMarkdown(title, body, fallbackTitle), sha, message);
-    await fetchInbox(token);
+    await fetchNotes(token);
 
     if (state.mode === "edit") {
       exitEditMode({ restoreDraft: true });
       setStatus("success", "Note updated.");
-      return;
+    } else {
+      clearSavedDraft();
+      elements.titleInput.value = "";
+      elements.bodyInput.value = "";
+      renderPreview();
+      setStatus("success", `Uploaded ${path.split("/").pop()}. Site rebuilding (~60s)`);
     }
-
-    clearSavedDraft();
-    elements.titleInput.value = "";
-    elements.bodyInput.value = "";
-    renderPreview();
-    setStatus("success", `Created ${path.split("/").pop()}.`);
   } catch (error) {
     setStatus("error", error.message || "Save failed. Check token and network.");
   } finally {
@@ -617,59 +566,34 @@ async function handleSave() {
 
 function bindEvents() {
   elements.tokenInput.addEventListener("input", saveSessionToken);
-  elements.tokenInput.addEventListener("change", refreshInboxFromToken);
-
+  elements.tokenInput.addEventListener("change", refreshFromToken);
   elements.tokenToggle.addEventListener("click", () => {
     const hidden = elements.tokenInput.type === "password";
     elements.tokenInput.type = hidden ? "text" : "password";
     elements.tokenToggle.textContent = hidden ? "Hide" : "Show";
   });
-
-  elements.titleInput.addEventListener("input", () => {
-    saveDraftSoon();
-    renderPreview();
-  });
-
-  elements.bodyInput.addEventListener("input", () => {
-    saveDraftSoon();
-    renderPreview();
-  });
-
+  elements.titleInput.addEventListener("input", () => { saveDraftSoon(); renderPreview(); });
+  elements.bodyInput.addEventListener("input", () => { saveDraftSoon(); renderPreview(); });
   elements.writeTab.addEventListener("click", () => setEditorMode("write"));
   elements.previewTab.addEventListener("click", () => setEditorMode("preview"));
-
   elements.noteSearchInput.addEventListener("input", () => {
     state.searchQuery = elements.noteSearchInput.value;
     clearDeleteConfirmation();
     renderNoteList();
   });
-
   elements.noteList.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-action]");
     if (!button || state.isMutating) return;
-
     const path = button.dataset.path;
-    if (!isPathSafe(path)) {
-      setStatus("error", "Unsafe inbox path rejected.");
-      return;
-    }
-
-    if (button.dataset.action === "edit") {
-      await startEditing(path);
-      return;
-    }
-
-    if (button.dataset.action === "delete") {
-      await handleDelete(path, button.dataset.sha || null);
-    }
+    if (!isPathSafe(path)) { setStatus("error", "Unsafe vault path rejected."); return; }
+    if (button.dataset.action === "edit") { await startEditing(path); return; }
+    if (button.dataset.action === "delete") { await handleDelete(path, button.dataset.sha || null); }
   });
-
   elements.cancelEditBtn.addEventListener("click", () => {
     if (state.isMutating) return;
     exitEditMode({ restoreDraft: true });
     setStatus("success", "Returned to draft.");
   });
-
   elements.uploadBtn.addEventListener("click", handleSave);
 }
 
@@ -681,7 +605,7 @@ function boot() {
   updateModeUi();
   renderPreview();
   renderNoteList();
-  refreshInboxFromToken();
+  refreshFromToken();
 }
 
 boot();
