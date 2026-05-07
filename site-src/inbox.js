@@ -267,7 +267,7 @@ function renderNoteList() {
       <article class="vault-card">
         <div class="vault-card__top">
           <div class="vault-card__content">
-            <h3 class="vault-card__title" style="font-family:var(--font-sans); font-size: 0.9rem; font-weight: 500;">${escapeHtml(displayPath)}</h3>
+            <h3 class="vault-card__title">${escapeHtml(displayPath)}</h3>
           </div>
         </div>
         <div class="vault-actions">
