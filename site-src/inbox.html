@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Quick capture notes directly to your Node-Notes vault." />
+  <meta name="description" content="Manage and capture notes directly in your Node-Notes vault." />
   <meta name="theme-color" content="#F9F9F9" />
-  <title>Inbox — Node Notes</title>
+  <title>Vault Manager — Node Notes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap"
+    rel="stylesheet" />
   <style>
-    /* ── Design Tokens — Ink & Void ─────────────────── */
     :root {
-      --bg:          #F9F9F9;
-      --surface:     #FFFFFF;
-      --surface-hi:  #F0F0F0;
-      --ink:         #000000;
-      --ink-body:    #1A1C1C;
-      --ink-mid:     #4C4546;
-      --ink-ghost:   rgba(0,0,0,0.12);
-      --error:       #BA1A1A;
-      --success:     #1A5C1A;
-      --radius:      0px;
-      --font-serif:  'Noto Serif', Georgia, serif;
-      --font-sans:   'Inter', system-ui, sans-serif;
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --surface-hi: #f0f0f0;
+      --ink: #000000;
+      --ink-body: #1a1c1c;
+      --ink-mid: #4c4546;
+      --ink-ghost: rgba(0, 0, 0, 0.12);
+      --error: #ba1a1a;
+      --success: #1a5c1a;
+      --radius: 0px;
+      --font-serif: "Noto Serif", Georgia, serif;
+      --font-sans: "Inter", system-ui, sans-serif;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* ── Reset ──────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    html, body {
+    html,
+    body {
       height: 100%;
       background: var(--bg);
       color: var(--ink-body);
@@ -40,7 +48,6 @@
       overscroll-behavior: none;
     }
 
-    /* ── Layout ─────────────────────────────────────── */
     .page {
       display: flex;
       flex-direction: column;
@@ -50,42 +57,40 @@
       padding: 0 24px;
     }
 
-    /* ── Header ─────────────────────────────────────── */
     header {
       padding: 48px 0 32px;
       border-bottom: 0.5px solid var(--ink-ghost);
     }
 
     .logo {
+      margin-bottom: 12px;
+      color: var(--ink-mid);
       font-family: var(--font-serif);
       font-size: 0.75rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--ink-mid);
-      margin-bottom: 12px;
     }
 
     h1 {
+      color: var(--ink);
       font-family: var(--font-serif);
       font-size: clamp(1.8rem, 5vw, 2.8rem);
       font-weight: 400;
       line-height: 1.15;
-      color: var(--ink);
       letter-spacing: -0.02em;
     }
 
     h1 em {
-      font-style: italic;
       color: var(--ink-mid);
+      font-style: italic;
     }
 
-    /* ── Form ───────────────────────────────────────── */
     .form {
       flex: 1;
-      padding: 40px 0 24px;
       display: flex;
       flex-direction: column;
       gap: 32px;
+      padding: 40px 0 24px;
     }
 
     .field {
@@ -95,33 +100,33 @@
     }
 
     label {
+      color: var(--ink-mid);
       font-size: 0.7rem;
       font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--ink-mid);
     }
 
     .field-hint {
-      font-size: 0.72rem;
+      margin-top: -4px;
       color: var(--ink-mid);
       opacity: 0.7;
-      margin-top: -4px;
+      font-size: 0.72rem;
     }
 
     input[type="password"],
     input[type="text"],
     textarea {
-      background: var(--surface);
+      width: 100%;
       border: none;
       border-bottom: 0.5px solid var(--ink-ghost);
       border-radius: var(--radius);
+      background: var(--surface);
       color: var(--ink-body);
       font-family: var(--font-sans);
       font-size: 1rem;
-      padding: 12px 0;
-      width: 100%;
       outline: none;
+      padding: 12px 0;
       transition: border-color 0.2s ease;
       -webkit-appearance: none;
     }
@@ -139,50 +144,218 @@
     }
 
     textarea {
+      min-height: clamp(200px, 38vh, 380px);
       resize: none;
-      height: clamp(200px, 38vh, 380px);
-      line-height: 1.65;
       padding: 12px 0;
       font-size: 0.95rem;
+      line-height: 1.65;
     }
 
-    /* Token section ─────────────────────────────────── */
     .token-row {
       display: flex;
       align-items: flex-end;
       gap: 12px;
     }
 
-    .token-row .field { flex: 1; }
+    .token-row .field {
+      flex: 1;
+    }
 
     .token-toggle {
-      background: none;
       border: none;
+      background: none;
+      color: var(--ink-mid);
       cursor: pointer;
       padding: 12px 0;
-      color: var(--ink-mid);
       font-size: 0.8rem;
-      white-space: nowrap;
       opacity: 0.6;
       transition: opacity 0.15s;
+      white-space: nowrap;
     }
-    .token-toggle:hover { opacity: 1; }
 
-    /* ── Status Banner ──────────────────────────────── */
+    .token-toggle:hover {
+      opacity: 1;
+    }
+
+    .editor-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 0.5px solid var(--ink-ghost);
+      background: var(--surface-hi);
+      padding: 4px;
+    }
+
+    .editor-tab {
+      border: none;
+      background: transparent;
+      color: var(--ink-mid);
+      cursor: pointer;
+      padding: 9px 14px;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .editor-tab.active {
+      box-shadow: inset 0 0 0 0.5px var(--ink-ghost);
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .editor-pane {
+      display: none;
+    }
+
+    .editor-pane.active {
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .draft-tag {
+      color: var(--ink-mid);
+      opacity: 0;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: opacity 0.3s;
+    }
+
+    .draft-tag.visible {
+      opacity: 0.5;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preview-pane {
+      min-height: clamp(200px, 38vh, 380px);
+      border: 0.5px solid var(--ink-ghost);
+      background: var(--surface);
+      color: var(--ink-body);
+      padding: 18px 20px;
+    }
+
+    .preview-empty {
+      color: var(--ink-mid);
+      opacity: 0.7;
+      font-style: italic;
+    }
+
+    .preview-title {
+      margin: 0 0 16px;
+      color: var(--ink);
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-body {
+      color: var(--ink-body);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .preview-body > :first-child {
+      margin-top: 0;
+    }
+
+    .preview-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .preview-body h1,
+    .preview-body h2,
+    .preview-body h3,
+    .preview-body h4 {
+      margin: 1.8rem 0 0.9rem;
+      color: var(--ink);
+      font-family: var(--font-serif);
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-body p,
+    .preview-body ul,
+    .preview-body ol,
+    .preview-body blockquote,
+    .preview-body pre,
+    .preview-body hr {
+      margin: 1rem 0;
+    }
+
+    .preview-body ul,
+    .preview-body ol {
+      padding-left: 1.4rem;
+    }
+
+    .preview-body li + li {
+      margin-top: 0.35rem;
+    }
+
+    .preview-body a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .preview-body blockquote {
+      border-left: 2px solid var(--ink);
+      color: var(--ink-mid);
+      padding: 0.2rem 0 0.2rem 1rem;
+    }
+
+    .preview-body code {
+      background: var(--surface-hi);
+      padding: 0.15rem 0.35rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    .preview-body pre {
+      overflow-x: auto;
+      border: 0.5px solid var(--ink-ghost);
+      background: var(--surface-hi);
+      padding: 1rem;
+    }
+
+    .preview-body pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    .preview-body hr {
+      border: 0;
+      border-top: 0.5px solid var(--ink-ghost);
+    }
+
     .status {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 14px 16px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border-left: 3px solid transparent;
-      background: transparent;
-      transition: all 0.25s ease;
       min-height: 0;
       max-height: 0;
       overflow: hidden;
+      border-left: 3px solid transparent;
+      background: transparent;
       opacity: 0;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
     }
 
     .status.visible {
@@ -211,42 +384,195 @@
     .status-dot {
       width: 7px;
       height: 7px;
+      flex-shrink: 0;
       border-radius: 50%;
       background: currentColor;
-      flex-shrink: 0;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
     }
 
     .uploading .status-dot {
       animation: pulse 1s ease-in-out infinite;
     }
 
-    /* ── Footer / Submit ────────────────────────────── */
+    .section-block {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-top: 0.5px solid var(--ink-ghost);
+      padding-top: 12px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .section-title {
+      color: var(--ink);
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .section-meta {
+      color: var(--ink-mid);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .vault-search {
+      margin-bottom: 8px;
+      border-bottom-width: 0.5px !important;
+      padding: 8px 0 !important;
+      font-size: 0.85rem !important;
+    }
+
+    .vault-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 12px;
+    }
+
+    .vault-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 0.5px solid var(--ink-ghost);
+      background: var(--surface);
+      padding: 16px 18px;
+    }
+
+    .vault-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .vault-card__content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vault-card__title {
+      color: var(--ink);
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 400;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .vault-card__meta {
+      color: var(--ink-mid);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .vault-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-btn {
+      border: 0.5px solid var(--ink-ghost);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 9px 12px;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .action-btn:disabled,
+    .btn-secondary:disabled,
+    .btn-upload:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .action-btn.danger {
+      border-color: rgba(186, 26, 26, 0.2);
+      color: var(--error);
+    }
+
+    .action-btn.active-danger {
+      border-color: var(--error);
+      background: var(--error);
+      color: #fff;
+    }
+
+    .list-state {
+      color: var(--ink-mid);
+      padding: 16px 0 4px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
     footer {
       position: sticky;
       bottom: 0;
-      background: rgba(249,249,249,0.9);
+      border-top: 0.5px solid var(--ink-ghost);
+      background: rgba(249, 249, 249, 0.9);
+      padding: 20px 0 calc(20px + var(--safe-bottom));
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      padding: 20px 0 calc(20px + var(--safe-bottom));
-      border-top: 0.5px solid var(--ink-ghost);
     }
 
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-secondary,
     .btn-upload {
-      width: 100%;
-      background: var(--ink);
-      color: #fff;
-      border: none;
       border-radius: var(--radius);
       font-family: var(--font-sans);
       font-size: 0.9rem;
       font-weight: 500;
       letter-spacing: 0.06em;
-      padding: 18px 24px;
+      padding: 18px 20px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      border: 0.5px solid var(--ink-ghost);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .btn-upload {
+      width: 100%;
+      border: none;
+      background: var(--ink);
+      color: #fff;
       cursor: pointer;
       transition: opacity 0.2s ease, transform 0.1s ease;
       -webkit-tap-highlight-color: transparent;
@@ -256,295 +582,98 @@
       transform: scale(0.98);
     }
 
-    .btn-upload:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* ── Draft indicator ────────────────────────────── */
-    .draft-tag {
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-mid);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .draft-tag.visible { opacity: 0.5; }
-
-    .label-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* ── Responsive ─────────────────────────────────── */
     @media (min-width: 600px) {
-      .page { padding: 0 40px; }
-      header { padding: 64px 0 40px; }
+      .page {
+        padding: 0 40px;
+      }
+
+      header {
+        padding: 64px 0 40px;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <header>
       <p class="logo">Node Notes</p>
-      <h1>Quick<br /><em>Capture</em></h1>
+      <h1>Vault<br /><em>Manager</em></h1>
     </header>
 
-    <main class="form" id="capture-form">
-
-      <!-- Token -->
+    <main class="form" id="vault-manager">
       <div class="field">
         <label for="token-input">GitHub Token</label>
         <div class="token-row">
           <div class="field">
-            <input
-              type="password"
-              id="token-input"
-              placeholder="github_pat_..."
-              autocomplete="off"
-              autocorrect="off"
-              spellcheck="false"
-            />
+            <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off" autocorrect="off"
+              spellcheck="false" />
           </div>
           <button class="token-toggle" id="token-toggle" type="button" aria-label="Toggle token visibility">Show</button>
         </div>
         <p class="field-hint">Fine-grained PAT · Contents: Read &amp; Write · Not saved locally</p>
       </div>
 
-      <!-- Title -->
       <div class="field">
-        <label for="note-title">Title <span style="opacity:0.45;font-weight:400;">(optional)</span></label>
-        <input
-          type="text"
-          id="note-title"
-          placeholder="Leave blank for timestamp filename"
-          autocorrect="on"
-          spellcheck="true"
-        />
+        <label for="note-title">Title</label>
+        <input type="text" id="note-title" placeholder="Optional note title" autocorrect="on" spellcheck="true" />
       </div>
 
-      <!-- Content -->
       <div class="field">
         <div class="label-row">
           <label for="note-body">Note</label>
           <span class="draft-tag" id="draft-tag">Draft saved</span>
         </div>
-        <textarea
-          id="note-body"
-          placeholder="Start writing…&#10;&#10;Markdown supported."
-          autocorrect="on"
-          spellcheck="true"
-        ></textarea>
+        <div class="editor-toggle" role="tablist" aria-label="Editor mode">
+          <button class="editor-tab active" id="write-tab" type="button" role="tab" aria-selected="true"
+            aria-controls="write-pane">Write</button>
+          <button class="editor-tab" id="preview-tab" type="button" role="tab" aria-selected="false"
+            aria-controls="preview-pane">Preview</button>
+        </div>
+        <div class="editor-pane active" id="write-pane" role="tabpanel" aria-labelledby="write-tab">
+          <textarea id="note-body" placeholder="Start writing…&#10;&#10;Markdown supported." autocorrect="on"
+            spellcheck="true"></textarea>
+        </div>
+        <div class="editor-pane" id="preview-pane" role="tabpanel" aria-labelledby="preview-tab" aria-hidden="true">
+          <div class="preview-pane">
+            <h2 class="preview-title hidden" id="preview-title"></h2>
+            <div class="preview-body" id="preview-body">
+              <p class="preview-empty">Nothing to preview yet</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Status -->
       <div class="status" id="status-bar" role="status" aria-live="polite">
         <span class="status-dot"></span>
         <span id="status-text"></span>
       </div>
 
+      <section class="section-block" aria-labelledby="recent-notes-title">
+        <div class="section-head">
+          <h2 class="section-title" id="recent-notes-title">Inbox Notes</h2>
+          <span class="section-meta" id="note-count">Syncing</span>
+        </div>
+        <div class="field">
+          <input class="vault-search" type="text" id="note-search" placeholder="Search by path or filename…" />
+        </div>
+        <div class="vault-list" id="note-list">
+          <p class="list-state">Loading inbox notes…</p>
+        </div>
+      </section>
     </main>
 
     <footer>
-      <button class="btn-upload" id="upload-btn" type="button">
-        Upload to Vault
-      </button>
+      <div class="footer-actions">
+        <button class="btn-secondary hidden" id="cancel-edit-btn" type="button">Cancel Edit</button>
+        <button class="btn-upload" id="upload-btn" type="button">Create Note</button>
+      </div>
     </footer>
   </div>
 
-  <script>
-    /* ── Config ───────────────────────────────────── */
-    const OWNER  = 'Ayush-Mgr';
-    const REPO   = 'Node-Notes';
-    const BRANCH = 'main';
-    const API    = 'https://api.github.com';
-
-    /* ── Elements ─────────────────────────────────── */
-    const tokenInput  = document.getElementById('token-input');
-    const tokenToggle = document.getElementById('token-toggle');
-    const titleInput  = document.getElementById('note-title');
-    const bodyInput   = document.getElementById('note-body');
-    const uploadBtn   = document.getElementById('upload-btn');
-    const statusBar   = document.getElementById('status-bar');
-    const statusText  = document.getElementById('status-text');
-    const draftTag    = document.getElementById('draft-tag');
-
-    /* ── Session token restore ────────────────────── */
-    try {
-      const saved = sessionStorage.getItem('nn_token');
-      if (saved) tokenInput.value = saved;
-    } catch (_) {}
-
-    tokenInput.addEventListener('input', () => {
-      try { sessionStorage.setItem('nn_token', tokenInput.value.trim()); } catch (_) {}
-    });
-
-    /* ── Token visibility toggle ──────────────────── */
-    tokenToggle.addEventListener('click', () => {
-      const hidden = tokenInput.type === 'password';
-      tokenInput.type   = hidden ? 'text' : 'password';
-      tokenToggle.textContent = hidden ? 'Hide' : 'Show';
-    });
-
-    /* ── Draft persistence (content only) ─────────── */
-    const DRAFT_KEY = 'nn_draft_body';
-    const TITLE_KEY = 'nn_draft_title';
-
-    try {
-      const savedBody  = localStorage.getItem(DRAFT_KEY);
-      const savedTitle = localStorage.getItem(TITLE_KEY);
-      if (savedBody)  bodyInput.value  = savedBody;
-      if (savedTitle) titleInput.value = savedTitle;
-      if (savedBody || savedTitle) draftTag.classList.add('visible');
-    } catch (_) {}
-
-    let draftTimer = null;
-    function saveDraft() {
-      clearTimeout(draftTimer);
-      draftTimer = setTimeout(() => {
-        try {
-          localStorage.setItem(DRAFT_KEY, bodyInput.value);
-          localStorage.setItem(TITLE_KEY, titleInput.value);
-          draftTag.classList.toggle('visible', !!(bodyInput.value || titleInput.value));
-        } catch (_) {}
-      }, 600);
-    }
-
-    bodyInput.addEventListener('input', saveDraft);
-    titleInput.addEventListener('input', saveDraft);
-
-    /* ── Status helper ────────────────────────────── */
-    function setStatus(type, msg) {
-      statusBar.className = `status visible ${type}`;
-      statusText.textContent = msg;
-    }
-
-    function clearStatus() {
-      statusBar.className = 'status';
-    }
-
-    /* ── Filename generator ───────────────────────── */
-    function makeFilename() {
-      const now = new Date();
-      const pad = (n, l = 2) => String(n).padStart(l, '0');
-      return [
-        now.getUTCFullYear(),
-        '-', pad(now.getUTCMonth() + 1),
-        '-', pad(now.getUTCDate()),
-        'T', pad(now.getUTCHours()),
-        '-', pad(now.getUTCMinutes()),
-        '-', pad(now.getUTCSeconds()),
-        '-', pad(now.getUTCMilliseconds(), 3),
-        'Z.md'
-      ].join('');
-    }
-
-    /* ── Frontmatter builder ──────────────────────── */
-    function buildMarkdown(title, body) {
-      const ts = new Date().toISOString();
-      const safeTitle = (title || makeFilename().replace('.md', '')).replace(/"/g, '\\"');
-      const fm = `---\ntitle: "${safeTitle}"\ndate: ${ts}\ntags: [inbox, mobile]\n---\n\n`;
-      return fm + body;
-    }
-
-    /* ── UTF-8 → Base64 ───────────────────────────── */
-    function toBase64(str) {
-      const bytes  = new TextEncoder().encode(str);
-      let   binary = '';
-      for (const byte of bytes) binary += String.fromCharCode(byte);
-      return btoa(binary);
-    }
-
-    /* ── GitHub API helpers ───────────────────────── */
-    async function getFileSha(token, path) {
-      const res = await fetch(`${API}/repos/${OWNER}/${REPO}/contents/${path}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-        },
-      });
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error(`GET ${path}: ${res.status}`);
-      const data = await res.json();
-      return data.sha || null;
-    }
-
-    async function putFile(token, path, content, sha, commitMsg) {
-      const body = {
-        message: commitMsg,
-        content: toBase64(content),
-        branch:  BRANCH,
-        ...(sha ? { sha } : {}),
-      };
-      const res = await fetch(`${API}/repos/${OWNER}/${REPO}/contents/${path}`, {
-        method:  'PUT',
-        headers: {
-          Authorization:          `Bearer ${token}`,
-          Accept:                 'application/vnd.github+json',
-          'Content-Type':         'application/json',
-          'X-GitHub-Api-Version': '2022-11-28',
-        },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `PUT failed: ${res.status}`);
-      }
-      return res.json();
-    }
-
-    /* ── Upload handler ───────────────────────────── */
-    uploadBtn.addEventListener('click', async () => {
-      const token = tokenInput.value.trim();
-      const title = titleInput.value.trim();
-      const body  = bodyInput.value.trim();
-
-      if (!token) {
-        setStatus('error', 'GitHub token required.');
-        tokenInput.focus();
-        return;
-      }
-      if (!body) {
-        setStatus('error', 'Note is empty.');
-        bodyInput.focus();
-        return;
-      }
-
-      uploadBtn.disabled = true;
-      setStatus('uploading', 'Uploading to vault…');
-
-      try {
-        const filename   = makeFilename();
-        const path       = `vault/inbox/${filename}`;
-        const markdown   = buildMarkdown(title, body);
-        const commitMsg  = `inbox: ${title || filename}`;
-
-        // Check for existing file (conflict prevention)
-        const sha = await getFileSha(token, path);
-
-        await putFile(token, path, markdown, sha, commitMsg);
-
-        // Clear draft on success
-        try {
-          localStorage.removeItem(DRAFT_KEY);
-          localStorage.removeItem(TITLE_KEY);
-        } catch (_) {}
-        draftTag.classList.remove('visible');
-
-        titleInput.value = '';
-        bodyInput.value  = '';
-
-        setStatus('success', `Uploaded · ${filename} · Site rebuilding (~60s)`);
-      } catch (err) {
-        setStatus('error', err.message || 'Upload failed. Check token and network.');
-      } finally {
-        uploadBtn.disabled = false;
-      }
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.11/purify.min.js"></script>
+  <script src="./inbox.js"></script>
 </body>
+
 </html>

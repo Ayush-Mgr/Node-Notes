@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# publish.sh — sync vault from Google Drive, commit, and push.
-# GitHub Actions will auto-build and deploy the site within ~60 seconds.
+# publish.sh — optional Google Drive -> repo sync helper.
+# For phone/browser flows, notes can also arrive directly through git-backed edits.
 #
 # Usage:
 #   ./scripts/publish.sh

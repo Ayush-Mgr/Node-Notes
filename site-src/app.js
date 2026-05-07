@@ -2,6 +2,8 @@ const state = {
   data: null,
   nodeById: new Map(),
   activeNoteId: null,
+  resolveAssetTarget: () => null,
+  resolveNoteTarget: () => null,
 };
 
 const graphView = document.getElementById("graph-view");
@@ -19,10 +21,74 @@ let canvas = null;
 let context = null;
 let simulation = null;
 let hoveredNode = null;
-let triggerRedraw = null;
+let redrawGraph = () => {};
 
 function stripFrontmatter(markdown) {
-  return markdown.replace(/^---\n[\s\S]*?\n---\n?/, "");
+  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+}
+
+function isExternalUrl(value) {
+  return /^(?:[a-z]+:)?\/\//i.test(value) || value.startsWith("data:") || value.startsWith("#");
+}
+
+function decodeAssetTarget(target) {
+  try {
+    return decodeURIComponent(target);
+  } catch {
+    return target;
+  }
+}
+
+function buildAssetResolver() {
+  const exact = new Map();
+  const byLeaf = new Map();
+
+  for (const assetPath of state.data.assets || []) {
+    const normalized = assetPath.toLowerCase();
+    exact.set(normalized, assetPath);
+
+    const leaf = normalized.split("/").pop();
+    if (!byLeaf.has(leaf)) byLeaf.set(leaf, []);
+    byLeaf.get(leaf).push(assetPath);
+  }
+
+  return (target) => {
+    const clean = decodeAssetTarget(target).trim().replace(/\\/g, "/").replace(/^\.?\//, "");
+    if (!clean || isExternalUrl(clean)) return null;
+
+    const normalized = clean.toLowerCase();
+    if (exact.has(normalized)) return exact.get(normalized);
+
+    const matches = byLeaf.get(normalized.split("/").pop()) || [];
+    return matches.length >= 1 ? matches[0] : null;
+  };
+}
+
+function resolveAssetUrl(target) {
+  const resolved = state.resolveAssetTarget(target);
+  return resolved ? `content/${encodeURI(resolved)}` : null;
+}
+
+function rewriteHtmlImageSources(markdown) {
+  return markdown.replace(/<img\b([^>]*?)\bsrc\s*=\s*(['"]?)([^"'>\s]+(?:\s[^"'>\s]+)*)\2([^>]*)>/gi, (match, before, quote, src, after) => {
+    if (isExternalUrl(src) || src.startsWith("content/")) return match;
+    const resolved = resolveAssetUrl(src);
+    if (!resolved) return match;
+    const q = quote || '"';
+    return `<img${before}src=${q}${resolved}${q}${after}>`;
+  });
+}
+
+function rewriteMarkdownImageSources(markdown) {
+  return markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, rawTarget) => {
+    const parts = rawTarget.trim().match(/^(<)?([^>]+?)(>)?(?:\s+"[^"]*")?$/);
+    if (!parts) return match;
+    const target = parts[2].trim();
+    if (isExternalUrl(target) || target.startsWith("content/")) return match;
+    const resolved = resolveAssetUrl(target);
+    if (!resolved) return match;
+    return `![${alt}](${resolved})`;
+  });
 }
 
 function buildInternalLinkResolver() {
@@ -45,9 +111,8 @@ function buildInternalLinkResolver() {
   };
 }
 
-function preprocessObsidianMarkdown(markdown) {
-  const resolveTarget = buildInternalLinkResolver();
-  return stripFrontmatter(markdown).replace(/(!)?\[\[([^\]]+)\]\]/g, (_, bang, inner) => {
+function rewriteWikilinks(markdown) {
+  return markdown.replace(/(!)?\[\[([^\]]+)\]\]/g, (_, bang, inner) => {
     const [targetPart, aliasPart] = inner.split("|");
     const target = (targetPart || "").split("#")[0].trim();
     const label = (aliasPart || target || "Untitled").trim();
@@ -57,14 +122,24 @@ function preprocessObsidianMarkdown(markdown) {
     const isImage = /\.(png|jpe?g|gif|webp|svg)$/i.test(lower);
 
     if (bang || isImage) {
-      const src = `content/${encodeURI(target)}`;
-      return `![${label}](${src})`;
+      const src = resolveAssetUrl(target);
+      return src ? `![${label}](${src})` : `<span class="missing-attachment">Missing Attachment: ${label}</span>`;
     }
 
-    const resolved = resolveTarget(target);
+    const resolved = state.resolveNoteTarget(target);
     if (!resolved) return label;
     return `<a href="#note=${encodeURIComponent(resolved)}" class="internal-note-link" data-note-id="${resolved}">${label}</a>`;
   });
+}
+
+function preprocessObsidianMarkdown(markdown) {
+  return rewriteHtmlImageSources(
+    rewriteMarkdownImageSources(
+      rewriteWikilinks(
+        stripFrontmatter(markdown),
+      ),
+    ),
+  );
 }
 
 async function openNote(noteId, pushHash = true) {
@@ -84,7 +159,7 @@ async function openNote(noteId, pushHash = true) {
   noteBackdrop.setAttribute("aria-hidden", "false");
   document.body.classList.add("note-open");
   state.activeNoteId = noteId;
-  highlightSelection(noteId);
+  redrawGraph();
   setStatus(node.title);
 
   if (pushHash) {
@@ -107,7 +182,7 @@ function closeNote(clearHash = true) {
   document.body.classList.remove("note-open");
   noteContent.innerHTML = "";
   state.activeNoteId = null;
-  highlightSelection(null);
+  redrawGraph();
   setStatus(`${state.data?.nodes.length ?? 0} notes`);
   if (clearHash) {
     history.replaceState(null, "", window.location.pathname);
@@ -127,10 +202,6 @@ function hideTooltip() {
 
 function setStatus(text) {
   appStatus.textContent = text;
-}
-
-function highlightSelection() {
-  if (triggerRedraw) triggerRedraw();
 }
 
 function renderGraph() {
@@ -356,8 +427,8 @@ function renderGraph() {
     context.restore();
   }
 
-  triggerRedraw = drawCanvas;
-  triggerRedraw();
+  redrawGraph = drawCanvas;
+  redrawGraph();
 }
 
 function handleResize() {
@@ -397,6 +468,8 @@ async function init() {
   setStatus("Loading graph...");
   const response = await fetch("./graph-data.json");
   state.data = await response.json();
+  state.resolveAssetTarget = buildAssetResolver();
+  state.resolveNoteTarget = buildInternalLinkResolver();
   state.nodeById = new Map(state.data.nodes.map((node) => {
     node.radius = 3 + Math.sqrt(Math.max(node.degree, 1)) * 1.3;
     return [node.id, node];

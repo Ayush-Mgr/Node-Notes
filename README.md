@@ -1,37 +1,34 @@
 # Node-Notes
 
-Transforms a private Obsidian vault into a public-facing, interactive, Zen-inspired **"Ink & Void"** node graph — hosted on GitHub Pages.
+Node-Notes publishes an Obsidian-style vault as a graph site and ships a browser-based Vault Manager for phone-friendly note creation, editing, and deletion.
 
 ## Architecture
 
-GitHub is the single source of truth.
+Git is the source of truth.
 
+```text
+vault/                 source notes
+site-src/              graph UI + Vault Manager sources
+scripts/build_graph_site.py
+  -> docs/             generated local build output
+  -> GitHub Pages      deployed by Actions artifact upload
 ```
-vault/*.md  (committed to git)
-    │
-    ├─── push → GitHub Actions → build_graph_site.py → docs/ → GitHub Pages
-    │
-    ├─── Obsidian Git (PC)    — auto-pull on startup, auto-push on save
-    └─── Obsidian Git (Phone) — auto-pull on startup, auto-push on save
-```
 
-Every push automatically rebuilds and deploys the live site (~60 seconds).
+Every push that touches `vault/`, `site-src/`, `scripts/build_graph_site.py`, or `publish.exclude` rebuilds the site in GitHub Actions.
 
----
+## Active files
 
-## Files that matter
-
-| File | Purpose |
-|---|---|
-| `vault/` | Your notes — the source of truth |
-| `publish.exclude` | Patterns for private notes excluded from site |
-| `scripts/build_graph_site.py` | Reads `vault/`, outputs `docs/` |
-| `scripts/publish.sh` | One-command sync + commit + push |
-| `scripts/preview-graph-site.sh` | Local preview at localhost:8080 |
-| `site-src/` | App shell (HTML, CSS, JS) |
-| `.github/workflows/deploy-pages.yml` | CI: build + deploy on push |
-
----
+| Path | Purpose |
+| --- | --- |
+| `vault/` | Markdown notes and local assets |
+| `publish.exclude` | Excludes private paths from the public site |
+| `site-src/index.html` | Graph page shell |
+| `site-src/app.js` | Graph runtime |
+| `site-src/styles.css` | Graph page styles |
+| `site-src/inbox.html` | Vault Manager markup and page-scoped styles |
+| `site-src/inbox.js` | Vault Manager behavior |
+| `scripts/build_graph_site.py` | Build pipeline from `vault/` to `docs/` |
+| `.github/workflows/deploy-pages.yml` | CI build and Pages deploy |
 
 ## Local preview
 
@@ -39,43 +36,32 @@ Every push automatically rebuilds and deploys the live site (~60 seconds).
 ./scripts/preview-graph-site.sh
 ```
 
-Open: [http://localhost:8080](http://localhost:8080)
+Then open [http://localhost:8080](http://localhost:8080).
 
----
+The script rebuilds the site into `docs/` and serves that generated output locally.
 
-## Publishing from PC (via Google Drive)
+## Vault Manager
 
-If you still sync from Google Drive first:
+`site-src/inbox.html` is a lightweight single-page manager for `vault/inbox/`.
 
-```bash
-./scripts/publish.sh
-# or with a custom message:
-./scripts/publish.sh "add: new investing notes"
-```
-
-This runs rsync from your vault, commits the changes to `vault/`, and pushes. CI does the rest.
-
----
-
-## Publishing from phone
-
-Install **Obsidian Mobile** + **Obsidian Git** community plugin.
-
-1. Clone this repo as your Obsidian vault
-2. Point vault root to the `vault/` subfolder
-3. Enable "Auto-commit and push on file change" in Obsidian Git settings
-4. Write a note → it auto-pushes → site updates in ~60 seconds
-
----
+- Uses a GitHub fine-grained PAT with `Contents: Read & Write`
+- Keeps the token in `sessionStorage`, never `localStorage`
+- Autosaves title/body drafts locally
+- Supports live Markdown preview
+- Can browse, edit, and delete inbox notes with inbox-only path guards
 
 ## Private notes
 
-Add folder or file patterns to `publish.exclude`. Matched paths are excluded from both the graph and `docs/content/` (they never leave your machine during CI).
+Add folder or file patterns to `publish.exclude`. Matching paths are excluded from both the graph data and `docs/content/`.
 
 ```text
 # publish.exclude example
-Random Shits and Notes/
 private/
+Random Shits and Notes/
 ```
 
-> **Note:** The files still exist in the git repo (`vault/`). If your repo is public, use a `private/` subfolder pattern **and** add `vault/private/` to `.gitignore` so those notes are never committed.
+If the repository itself is public, keep truly private notes out of git as well.
+
+## Build output
+
+`docs/` is generated build output for local preview. It is gitignored here and should not be hand-edited.

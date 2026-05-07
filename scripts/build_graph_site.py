@@ -30,6 +30,9 @@ IGNORED_NOTE_IDS = {"index"}
 
 WIKILINK_RE = re.compile(r"(!)?\[\[([^\]]+)\]\]")
 HEADING_RE  = re.compile(r"^\s*#\s+(.+?)\s*$", re.MULTILINE)
+FRONTMATTER_RE = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n?", re.DOTALL | re.MULTILINE)
+FRONTMATTER_TITLE_RE = re.compile(r'^title\s*:\s*(?:"((?:\\"|[^"])*)"|\'([^\']*)\'|(.+))\s*$',
+                                  re.MULTILINE)
 
 
 # ---------------------------------------------------------------------------
@@ -62,10 +65,29 @@ def normalize_target(value: str) -> str:
 
 
 def extract_title(markdown: str, fallback: str) -> str:
+    frontmatter = FRONTMATTER_RE.match(markdown)
+    if frontmatter:
+        title_match = FRONTMATTER_TITLE_RE.search(frontmatter.group(1))
+        if title_match:
+            quoted, single_quoted, bare = title_match.groups()
+            raw_title = quoted if quoted is not None else single_quoted if single_quoted is not None else bare
+            if raw_title:
+                return raw_title.replace('\\"', '"').strip()
     match = HEADING_RE.search(markdown)
     if match:
         return match.group(1).strip()
     return fallback
+
+
+def asset_files(exclude_patterns: set[str]):
+    """Yield vault assets that should be publicly available to the site."""
+    for path in sorted(VAULT_DIR.rglob("*")):
+        if not path.is_file() or path.suffix.lower() == ".md":
+            continue
+        rel = path.relative_to(VAULT_DIR)
+        if _is_excluded(rel, exclude_patterns):
+            continue
+        yield rel.as_posix()
 
 
 def note_files(exclude_patterns: set[str]):
@@ -78,6 +100,21 @@ def note_files(exclude_patterns: set[str]):
         if note_id in IGNORED_NOTE_IDS:
             continue
         yield path, note_id
+
+
+def resolve_note_target(target: str, notes: dict[str, dict], basename_map: dict[str, list[str]]) -> str | None:
+    normalized = normalize_target(target)
+
+    if normalized in notes:
+        return normalized
+    if normalized in basename_map and len(basename_map[normalized]) == 1:
+        return basename_map[normalized][0]
+
+    leaf = normalize_target(Path(normalized).name)
+    if leaf in basename_map and len(basename_map[leaf]) == 1:
+        return basename_map[leaf][0]
+
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -105,10 +142,8 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
     incoming_counts: Counter[str] = Counter()
     seen_links: set[tuple[str, str]] = set()
 
-    wikilink_re = re.compile(r"(!)?\[\[([^\]]+)\]\]")
-
     for note in notes.values():
-        for embed_flag, raw_target in wikilink_re.findall(note["markdown"]):
+        for embed_flag, raw_target in WIKILINK_RE.findall(note["markdown"]):
             if embed_flag:
                 continue
 
@@ -116,17 +151,7 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
             if not target:
                 continue
 
-            normalized = normalize_target(target)
-            resolved = None
-
-            if normalized in notes:
-                resolved = normalized
-            elif normalized in basename_map and len(basename_map[normalized]) == 1:
-                resolved = basename_map[normalized][0]
-            else:
-                leaf = normalize_target(Path(normalized).name)
-                if leaf in basename_map and len(basename_map[leaf]) == 1:
-                    resolved = basename_map[leaf][0]
+            resolved = resolve_note_target(target, notes, basename_map)
 
             if not resolved or resolved == note["id"]:
                 continue
@@ -151,7 +176,11 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
         for note_id, note in notes.items()
     ]
 
-    return {"nodes": nodes, "links": links}
+    return {
+        "nodes": nodes,
+        "links": links,
+        "assets": list(asset_files(exclude_patterns)),
+    }
 
 
 # ---------------------------------------------------------------------------

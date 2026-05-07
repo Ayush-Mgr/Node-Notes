@@ -1,4 +1,4 @@
-name: Build & Deploy Pages
+name: Build & Deploy Site
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Build graph site
+      - name: Build site bundle
         run: python3 ./scripts/build_graph_site.py
 
       - name: Setup Pages
