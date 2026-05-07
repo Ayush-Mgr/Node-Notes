@@ -283,7 +283,7 @@ function renderNoteList() {
 function updateModeUi() {
   const editing = state.mode === "edit";
   elements.uploadBtn.textContent = editing ? "Update Note" : "Save to Vault";
-  cancelEditBtn.classList.toggle("hidden", !editing);
+  elements.cancelEditBtn.classList.toggle("hidden", !editing);
 }
 
 function restoreDraftSnapshot() {
