@@ -7,12 +7,12 @@
   <meta name="description" content="Manage and capture notes directly in your Node-Notes vault." />
   <meta name="theme-color" content="#fafafa" />
   <title>Vault Manager — Node Notes</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Using exactly Inter 400 & 600 as per index.html -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  
+
   <style>
     /* 1. BASIC STYLING (Imported from index.html) */
     :root {
@@ -191,6 +191,7 @@
       border: 1px solid var(--ink-ghost);
       box-sizing: border-box;
       margin-bottom: 8px;
+      border-radius: var(--radius);
     }
 
     .editor-tab {
@@ -209,7 +210,8 @@
     .editor-tab.active {
       color: var(--ink);
       border: 2px solid var(--ink);
-      margin: -1px; /* Compensate for border */
+      margin: -1px;
+      /* Compensate for border */
       border-radius: var(--radius);
       background: var(--bg);
     }
@@ -281,7 +283,9 @@
       line-height: 1.6;
     }
 
-    .preview-body h1, .preview-body h2, .preview-body h3 {
+    .preview-body h1,
+    .preview-body h2,
+    .preview-body h3 {
       color: var(--ink);
       font-weight: 600;
       margin: 1.5rem 0 0.8rem;
@@ -337,9 +341,20 @@
       opacity: 1;
     }
 
-    .status.uploading { background: #eee; color: var(--ink-light); }
-    .status.success { background: rgba(26, 92, 26, 0.1); color: var(--success); }
-    .status.error { background: rgba(186, 26, 26, 0.1); color: var(--error); }
+    .status.uploading {
+      background: #eee;
+      color: var(--ink-light);
+    }
+
+    .status.success {
+      background: rgba(26, 92, 26, 0.1);
+      color: var(--success);
+    }
+
+    .status.error {
+      background: rgba(186, 26, 26, 0.1);
+      color: var(--error);
+    }
 
     .status-dot {
       width: 8px;
@@ -349,10 +364,20 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
     }
-    .uploading .status-dot { animation: pulse 1s ease-in-out infinite; }
+
+    .uploading .status-dot {
+      animation: pulse 1s ease-in-out infinite;
+    }
 
     /* 9. VAULT / PROJECT SECTION */
     .section-block {
@@ -425,7 +450,7 @@
       line-height: 1.3;
       text-decoration: none;
     }
-    
+
     .vault-card__title:hover {
       text-decoration: underline;
     }
@@ -470,9 +495,11 @@
       color: var(--error);
       background: rgba(186, 26, 26, 0.1);
     }
+
     .action-btn.danger:hover:not(:disabled) {
       background: rgba(186, 26, 26, 0.2);
     }
+
     .action-btn.active-danger {
       background: var(--error);
       color: #fff;
@@ -531,17 +558,17 @@
       background-color: var(--ink);
       color: #fff;
     }
-    
+
     .btn-secondary:hover:not(:disabled) {
       border-color: var(--ink);
       color: var(--ink);
     }
 
-    .btn-upload:disabled, .btn-secondary:disabled {
+    .btn-upload:disabled,
+    .btn-secondary:disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
-
   </style>
 </head>
 
@@ -560,7 +587,8 @@
             <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off" autocorrect="off"
               spellcheck="false" />
           </div>
-          <button class="token-toggle" id="token-toggle" type="button" aria-label="Toggle token visibility">Show</button>
+          <button class="token-toggle" id="token-toggle" type="button"
+            aria-label="Toggle token visibility">Show</button>
         </div>
         <p class="field-hint">Fine-grained PAT · Contents: Read &amp; Write · Not saved locally</p>
       </div>
@@ -575,19 +603,19 @@
           <label for="note-body">Note</label>
           <span class="draft-tag" id="draft-tag">Draft saved</span>
         </div>
-        
+
         <div class="editor-toggle" role="tablist" aria-label="Editor mode">
           <button class="editor-tab active" id="write-tab" type="button" role="tab" aria-selected="true"
             aria-controls="write-pane">Write</button>
           <button class="editor-tab" id="preview-tab" type="button" role="tab" aria-selected="false"
             aria-controls="preview-pane">Preview</button>
         </div>
-        
+
         <div class="editor-pane active" id="write-pane" role="tabpanel" aria-labelledby="write-tab">
           <textarea id="note-body" placeholder="Start writing…&#10;&#10;Markdown supported." autocorrect="on"
             spellcheck="true"></textarea>
         </div>
-        
+
         <div class="editor-pane" id="preview-pane" role="tabpanel" aria-labelledby="preview-tab" aria-hidden="true">
           <div class="preview-pane">
             <h2 class="preview-title hidden" id="preview-title"></h2>
