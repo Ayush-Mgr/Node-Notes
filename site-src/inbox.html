@@ -605,6 +605,39 @@
       opacity: 0.4;
       cursor: not-allowed;
     }
+    .autocomplete-panel {
+      position: absolute;
+      bottom: calc(100% + 5px);
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--ink-ghost);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .autocomplete-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+    .autocomplete-item.selected {
+      background: rgba(0,0,0,0.05);
+    }
+    .autocomplete-meta {
+      font-size: 0.8rem;
+      color: var(--ink-mid);
+    }
+    
+    /* Make write pane relative for the autocomplete popup */
+    #write-pane {
+      position: relative;
+    }
   </style>
 </head>
 
@@ -722,7 +755,7 @@
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.11/purify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
-  <script src="./inbox.js"></script>
+  <script type="module" src="./inbox.js"></script>
 </body>
 
 </html>

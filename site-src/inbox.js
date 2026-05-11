@@ -61,6 +61,10 @@ const state = {
   privateMode: false,
 };
 
+import { setupEditor } from './editor/editor.js';
+
+setupEditor(elements.bodyInput, () => state);
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
