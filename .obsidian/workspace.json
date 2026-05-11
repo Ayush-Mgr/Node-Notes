@@ -11,12 +11,14 @@
             "id": "c7fcfe2cdfc3fb2e",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "img/background-texture.webp"
+                "file": "vault/SEO/brand overview.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "background-texture"
+              "icon": "lucide-file",
+              "title": "brand overview"
             }
           }
         ]
@@ -162,13 +164,23 @@
               "icon": "lucide-list",
               "title": "Outline of F - distribution table"
             }
+          },
+          {
+            "id": "8323b53eee729f04",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -182,9 +194,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c7fcfe2cdfc3fb2e",
+  "active": "331fbe0d342e8efa",
   "lastOpenFiles": [
     "vault/Assets/F - distribution table.md",
+    "vault/Assets/Chi-square - distribution table.md",
+    "vault/Assets/image.psd-8 1.png.md",
+    "img/background-texture.webp",
+    "img/logo.webp",
     "vault/Assets/Assets.md"
   ]
 }
