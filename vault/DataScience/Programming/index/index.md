@@ -124,6 +124,6 @@
 - [[cumulative frequency]]
 - [[discrete to continuous]]
 - [[INTRO]]
-- [[Untitled]]
+- [[Private]]
 - [[Untitled 1_3]]
 - [[eg2.Mode]]
