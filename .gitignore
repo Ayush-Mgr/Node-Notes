@@ -5,9 +5,10 @@ prof
 tsconfig.tsbuildinfo
 .obsidian
 .quartz-cache
-private/
+# private/
 .replit
 replit.nix
 scripts/__pycache__/
 docs/
 .agents
+.cursor/
