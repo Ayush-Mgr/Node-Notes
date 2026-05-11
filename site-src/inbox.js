@@ -18,6 +18,7 @@ const elements = {
   tokenInput: document.getElementById("token-input"),
   tokenToggle: document.getElementById("token-toggle"),
   folderInput: document.getElementById("note-folder"),
+  privateModeToggle: document.getElementById("private-mode-toggle"),
   folderDatalist: document.getElementById("folder-suggestions"),
   folderHint: document.getElementById("folder-hint"),
   recentFolders: document.getElementById("recent-folders"),
@@ -56,6 +57,8 @@ const state = {
   recentFoldersList: [],
   folderIndex: [],
   folderStats: {},
+  excludePatterns: [],
+  privateMode: false,
 };
 
 function escapeHtml(value) {
@@ -66,6 +69,22 @@ function escapeHtml(value) {
     "\"": "&quot;",
     "'": "&#39;",
   }[char]));
+}
+
+function normalizeFolderPath(path) {
+  if (!path) return "";
+  return path
+    .replace(/\\/g, '/')
+    .replace(/\/+/g, '/')
+    .replace(/\s*\/\s*/g, '/')
+    .replace(/^\/+|\/+$/g, '')
+    .trim();
+}
+
+function isExcludedPath(path) {
+  if (!path) return false;
+  const parts = path.split("/");
+  return parts.some(part => state.excludePatterns.includes(part));
 }
 
 let fuseIndex = null;
@@ -195,10 +214,18 @@ function saveDraftSoon() {
     try {
       localStorage.setItem(CONFIG.draftBodyKey, elements.bodyInput.value);
       localStorage.setItem(CONFIG.draftTitleKey, elements.titleInput.value);
-      localStorage.setItem(CONFIG.draftFolderKey, elements.folderInput.value);
+      const folderRaw = elements.folderInput.value;
+      const folder = normalizeFolderPath(folderRaw);
+      
+      if (!isExcludedPath(folder) && !state.privateMode) {
+        localStorage.setItem(CONFIG.draftFolderKey, folderRaw);
+      } else {
+        localStorage.removeItem(CONFIG.draftFolderKey);
+      }
+      
       elements.draftTag.classList.toggle(
         "visible",
-        Boolean(elements.bodyInput.value || elements.titleInput.value || elements.folderInput.value),
+        Boolean(elements.bodyInput.value || elements.titleInput.value || folderRaw),
       );
     } catch { }
   }, 600);
@@ -249,7 +276,7 @@ function loadRecentFolders() {
 }
 
 function saveRecentFolder(folder) {
-  if (!folder) return;
+  if (!folder || isExcludedPath(folder) || state.privateMode) return;
   state.recentFoldersList = state.recentFoldersList.filter(f => f !== folder);
   state.recentFoldersList.unshift(folder);
   if (state.recentFoldersList.length > 5) state.recentFoldersList.pop();
@@ -273,7 +300,7 @@ function updateFolderIndex(tree) {
   const folders = new Set();
   const stats = {};
   tree.forEach(entry => {
-    if (entry.type === 'blob' && entry.path.startsWith(CONFIG.vaultPrefix)) {
+    if (entry.type === 'blob' && entry.path.startsWith(CONFIG.vaultPrefix) && !isExcludedPath(entry.path)) {
       const parts = entry.path.replace(CONFIG.vaultPrefix, '').split('/');
       parts.pop(); 
       let current = '';
@@ -579,17 +606,13 @@ async function fetchNotes(token) {
     }
     if (!res.ok) throw new Error(`Note list failed: ${res.status}`);
 
-    const excludePatterns = await getExcludePatterns(token);
-    const isExcluded = (path) => {
-      const parts = path.split("/");
-      return parts.some(part => excludePatterns.includes(part));
-    };
+    state.excludePatterns = await getExcludePatterns(token);
 
     const data = await res.json();
     const tree = data.tree || [];
     updateFolderIndex(tree);
     const files = tree
-      .filter((entry) => entry.type === "blob" && isPathSafe(entry.path) && !isExcluded(entry.path))
+      .filter((entry) => entry.type === "blob" && isPathSafe(entry.path) && !isExcludedPath(entry.path))
       .sort((a, b) => b.path.localeCompare(a.path));
 
     state.notes = files.map((entry) => ({
@@ -703,7 +726,7 @@ async function handleDelete(path, shaHint) {
 async function handleSave() {
   const token = currentToken();
   const title = elements.titleInput.value.trim();
-  let folder = elements.folderInput.value.trim().replace(/^\/+|\/+$/g, '');
+  let folder = normalizeFolderPath(elements.folderInput.value);
   
   if (!folder && state.mode === "create") {
     const last = sessionStorage.getItem(CONFIG.lastFolderKey);
@@ -745,8 +768,11 @@ async function handleSave() {
 
     await putFile(token, path, buildMarkdown(title, body, fallbackTitle), sha, message);
     await fetchNotes(token);
-    saveRecentFolder(folder);
-    sessionStorage.setItem(CONFIG.lastFolderKey, folder);
+    
+    if (!isExcludedPath(folder) && !state.privateMode) {
+      saveRecentFolder(folder);
+      sessionStorage.setItem(CONFIG.lastFolderKey, folder);
+    }
 
     if (state.mode === "edit") {
       exitEditMode({ restoreDraft: true });
@@ -766,7 +792,25 @@ async function handleSave() {
   }
 }
 
+function togglePrivateMode() {
+  state.privateMode = !state.privateMode;
+  elements.privateModeToggle.textContent = state.privateMode ? "Private: ON" : "Private: OFF";
+  elements.privateModeToggle.style.color = state.privateMode ? "var(--ink)" : "var(--ink-body)";
+  elements.privateModeToggle.style.borderColor = state.privateMode ? "var(--ink)" : "var(--ink-ghost)";
+  
+  if (state.privateMode) {
+    elements.folderInput.removeAttribute("list");
+    elements.recentFolders.classList.add("hidden");
+    elements.folderHint.classList.add("hidden");
+  } else {
+    elements.folderInput.setAttribute("list", "folder-suggestions");
+    elements.recentFolders.classList.remove("hidden");
+    if (typeof updateFolderHint === "function") updateFolderHint();
+  }
+}
+
 function bindEvents() {
+  elements.privateModeToggle.addEventListener("click", togglePrivateMode);
   elements.tokenInput.addEventListener("input", saveSessionToken);
   elements.tokenInput.addEventListener("change", refreshFromToken);
   elements.tokenToggle.addEventListener("click", () => {

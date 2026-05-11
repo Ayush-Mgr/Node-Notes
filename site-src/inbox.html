@@ -635,7 +635,10 @@
       </div>
 
       <div class="field">
-        <label for="note-folder">Folder Path</label>
+        <div class="label-row">
+          <label for="note-folder">Folder Path</label>
+          <button type="button" id="private-mode-toggle" class="token-toggle" style="height: 24px; font-size: 0.75rem; padding: 0 8px;" aria-label="Toggle Private Capture Mode">Private: OFF</button>
+        </div>
         <input type="text" id="note-folder" list="folder-suggestions" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
         <datalist id="folder-suggestions"></datalist>
         <div id="recent-folders" class="chip-row"></div>
