@@ -68,6 +68,16 @@
     /* 3. TYPOGRAPHY & HEADERS */
     header {
       padding: 48px 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .header-logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      opacity: 0.9;
     }
 
     .logo {
@@ -247,6 +257,32 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    /* Chips */
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-top: -2px;
+    }
+    .chip-row::-webkit-scrollbar {
+      display: none;
+    }
+    .folder-chip {
+      background: rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-ghost);
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      color: var(--ink-body);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .folder-chip:hover {
+      background: rgba(0,0,0,0.1);
     }
 
     /* 7. PREVIEW PANE */
@@ -575,8 +611,13 @@
 <body>
   <div class="page">
     <header>
-      <p class="logo">Node Notes</p>
-      <h1>Vault<br /><em>Manager</em></h1>
+      <div class="header-left">
+        <p class="logo">Node Notes</p>
+        <h1>Vault<br /><em>Manager</em></h1>
+      </div>
+      <a href="https://ayush-mgr.github.io/Node-Notes/" aria-label="Go to Node Notes Home">
+        <img src="../img/logo.webp" alt="Logo" class="header-logo" />
+      </a>
     </header>
 
     <main class="form" id="vault-manager">
@@ -591,6 +632,14 @@
             aria-label="Toggle token visibility">Show</button>
         </div>
         <p class="field-hint">Fine-grained PAT · Contents: Read &amp; Write · Not saved locally</p>
+      </div>
+
+      <div class="field">
+        <label for="note-folder">Folder Path</label>
+        <input type="text" id="note-folder" list="folder-suggestions" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
+        <datalist id="folder-suggestions"></datalist>
+        <div id="recent-folders" class="chip-row"></div>
+        <p id="folder-hint" class="field-hint hidden"></p>
       </div>
 
       <div class="field">
@@ -656,6 +705,7 @@
   <!-- External dependencies for your js -->
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.11/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
   <script src="./inbox.js"></script>
 </body>
 
