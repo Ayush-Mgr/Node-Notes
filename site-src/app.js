@@ -23,6 +23,46 @@ let simulation = null;
 let hoveredNode = null;
 let redrawGraph = () => {};
 
+const mathExtension = {
+  name: 'math',
+  level: 'inline',
+  start(src) {
+    return src.match(/\$/)?.index;
+  },
+  tokenizer(src, tokens) {
+    const blockRule = /^\$\$(.*?)\$\$/s;
+    const inlineRule = /^\$([^$\n]+?)\$/;
+    let match;
+    if ((match = blockRule.exec(src))) {
+      return {
+        type: 'math',
+        raw: match[0],
+        text: match[1],
+        displayMode: true
+      };
+    } else if ((match = inlineRule.exec(src))) {
+      return {
+        type: 'math',
+        raw: match[0],
+        text: match[1],
+        displayMode: false
+      };
+    }
+  },
+  renderer(token) {
+    const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (s) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[s]));
+    if (token.displayMode) {
+      return `\\[${escapeHtml(token.text)}\\]`;
+    } else {
+      return `\\(${escapeHtml(token.text)}\\)`;
+    }
+  }
+};
+if (typeof marked !== 'undefined') marked.use({ extensions: [mathExtension] });
+
+
 function stripFrontmatter(markdown) {
   return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
 }
@@ -153,6 +193,11 @@ async function openNote(noteId, pushHash = true) {
 
   noteTitle.textContent = node.title;
   noteContent.innerHTML = DOMPurify.sanitize(marked.parse(processed, { breaks: true, gfm: true }));
+  
+  if (window.MathJax) {
+    MathJax.typesetPromise([noteContent]).catch(err => console.log('MathJax error', err));
+  }
+
   notePanel.classList.remove("hidden");
   noteBackdrop.classList.remove("hidden");
   notePanel.setAttribute("aria-hidden", "false");

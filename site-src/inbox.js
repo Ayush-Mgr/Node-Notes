@@ -89,6 +89,45 @@ function isExcludedPath(path) {
 
 let fuseIndex = null;
 
+const mathExtension = {
+  name: 'math',
+  level: 'inline',
+  start(src) {
+    return src.match(/\$/)?.index;
+  },
+  tokenizer(src, tokens) {
+    const blockRule = /^\$\$(.*?)\$\$/s;
+    const inlineRule = /^\$([^$\n]+?)\$/;
+    let match;
+    if ((match = blockRule.exec(src))) {
+      return {
+        type: 'math',
+        raw: match[0],
+        text: match[1],
+        displayMode: true
+      };
+    } else if ((match = inlineRule.exec(src))) {
+      return {
+        type: 'math',
+        raw: match[0],
+        text: match[1],
+        displayMode: false
+      };
+    }
+  },
+  renderer(token) {
+    const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (s) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[s]));
+    if (token.displayMode) {
+      return `\\[${escapeHtml(token.text)}\\]`;
+    } else {
+      return `\\(${escapeHtml(token.text)}\\)`;
+    }
+  }
+};
+if (typeof marked !== 'undefined') marked.use({ extensions: [mathExtension] });
+
 function updateFuseIndex() {
   if (typeof Fuse === "undefined") return;
   fuseIndex = new Fuse(state.notes, {
@@ -351,6 +390,10 @@ function renderPreview() {
 
   const html = marked.parse(body, { breaks: true, gfm: true });
   elements.previewBody.innerHTML = DOMPurify.sanitize(html);
+  
+  if (window.MathJax) {
+    MathJax.typesetPromise([elements.previewBody]).catch(err => console.log('MathJax error', err));
+  }
 }
 
 function setEditorMode(mode) {
