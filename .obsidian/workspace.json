@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "vault/Private/Private.md",
+                "file": "vault/Business/basics acc./Expense.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Private"
+              "title": "Expense"
             }
           }
         ],
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "trend-in-time-series.png",
+                "query": "expense",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -93,7 +93,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 407.5
   },
   "right": {
     "id": "7fc4109dc08b917e",
@@ -212,27 +212,44 @@
   },
   "active": "331fbe0d342e8efa",
   "lastOpenFiles": [
-    "site-src/editor/utils.js",
-    "site-src/editor/shortcuts.js",
-    "site-src/editor/pairs.js",
-    "site-src/editor/lists.js",
-    "site-src/editor/indent.js",
-    "site-src/editor/editor.js",
-    "site-src/editor/backspace.js",
-    "site-src/editor/autocomplete.js",
-    "site-src/editor",
-    "scratch.js",
-    "vault/DataScience/Programming/notes/private enviroment.md",
+    "vault/Business/basics acc./BONDS.md",
+    "vault/Business/Investing/Bill Ackman.md",
+    "vault/Business/Investing/Account profits.md",
+    "Finance/Basic fin terms/Expense.md",
+    "Finance/Basic fin terms",
+    "Finance",
+    "vault/DataScience/1. INtro.md",
+    "vault/Business/basics acc./📘 C Corporation.md",
+    "vault/Business/basics acc./Assets.md",
+    "vault/Business/basics acc.",
+    "vault/Assets/Lorenz Curve.png",
     "vault/Private/Private.md",
-    "vault/Private",
+    "vault/Private/Random Shits and Notes/Untriaged/script.md",
+    "vault/DataScience/Stats/notes/F - distribution table.md",
+    "vault/DataScience/Stats/notes/Chi-square - distribution table.md",
+    "vault/Assets/trend-in-time-series copy.png",
+    "vault/Assets/mml-book.pdf",
+    "vault/Assets/material-ugtPddqr.png",
+    "vault/Assets/licensed-image.jpeg",
+    "vault/Assets/licensed-image copy.jpeg",
+    "vault/Assets/licensed-image copy 2.jpeg",
+    "vault/Assets/licensed-image 3.jpeg",
+    "vault/Assets/licensed-image 2.jpeg",
+    "vault/Assets/licensed-image 1.jpeg",
+    "vault/Assets/image.psd-8.png",
+    "vault/Assets/Untitled.base",
+    "vault/Assets/Untitled 1.base",
+    "vault/Assets/BDS 3rd AI&ML.pdf",
+    "vault/Assets/AIMLSyllabus.pdf",
+    "site-src/editor/assets.js",
+    "site-src/editor/utils.js",
+    "vault/DataScience/Programming/notes/private enviroment.md",
     "vault/DataScience/Programming/index/index.md",
     "README.md",
     "vault/SEO/brand overview.md",
     "vault/Assets/F - distribution table.md",
     "vault/Assets/Chi-square - distribution table.md",
     "vault/Assets/image.psd-8 1.png.md",
-    "img/background-texture.webp",
-    "img/logo.webp",
     "vault/Assets/Assets.md"
   ]
 }

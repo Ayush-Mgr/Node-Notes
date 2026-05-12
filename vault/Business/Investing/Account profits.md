@@ -1,4 +1,4 @@
-[[Revenue]]  - [[Finance/Basic fin terms/Expense]] 
+[[Revenue]]  - [[vault/Business/basics acc./Expence]] 
 
 ---
 Tags: #finance #investing

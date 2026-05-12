@@ -70,5 +70,5 @@
 - [[AI hyopno]]
 - [[The saas]]
 - [[web Lofi]]
-- [[1. INtro]]
+- [[vault/DataScience/1. INtro]]
 - [[theoretical model]]

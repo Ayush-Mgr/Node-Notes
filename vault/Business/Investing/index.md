@@ -56,4 +56,4 @@
 - [[BUffet]]
 
 ## Uncategorized
-- [[1. INtro]]
+- [[vault/DataScience/1. INtro]]
