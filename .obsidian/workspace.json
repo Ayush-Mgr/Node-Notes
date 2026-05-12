@@ -25,14 +25,14 @@
             "id": "809f26b12a9f29d4",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "split-diff-view",
               "state": {
-                "file": "vault/Private/Private.md",
-                "mode": "source",
-                "source": false
+                "aFile": ".obsidian/workspace.json",
+                "bFile": ".obsidian/workspace.json",
+                "aRef": ""
               },
-              "icon": "lucide-file",
-              "title": "Private"
+              "icon": "diff",
+              "title": "Diff: workspace.json  (Working Tree)"
             }
           }
         ],
@@ -209,8 +209,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "331fbe0d342e8efa",
+  "active": "809f26b12a9f29d4",
   "lastOpenFiles": [
+    "vault/Private/psycology/happiness.md",
+    "vault/Private/Private.md",
     "vault/DataScience/Programming/notes/5.Inputl & Output.md",
     "vault/DataScience/Programming/notes/0. source_1_SQL.md",
     "vault/DataScience/Programming/notes/A path finder.md",
@@ -239,8 +241,6 @@
     "vault/Private/Random/6. reddit video maker.md",
     "vault/Private/Random/Firfirey.md",
     "vault/Private/Random/F sharp m.md",
-    "vault/Private/Random/G sharp m.md",
-    "vault/Private/psycology/happiness.md",
     "vault/Business/basics acc",
     "Untitled-1.base",
     "vault/Private/Untriaged",
