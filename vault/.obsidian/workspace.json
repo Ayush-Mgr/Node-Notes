@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Assets/Assets.md",
+                "file": "DataScience/Machine_Learning/notes/0 Problem solving agents.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Assets"
+              "title": "0 Problem solving agents"
             }
           }
         ]
@@ -174,6 +174,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
@@ -185,6 +186,8 @@
   },
   "active": "ced007a432b33e06",
   "lastOpenFiles": [
+    "DataScience/Machine_Learning/notes/1 . Propositional logic.md",
+    "DataScience/Machine_Learning/notes/0 Problem solving agents.md",
     "Random Shits and Notes/Untriaged/0. source.md",
     "Random Shits and Notes/Untriaged/yt?.md",
     "Random Shits and Notes/Untriaged/withdrawals.md",
@@ -209,8 +212,6 @@
     "Random Shits and Notes/Untriaged/interquartile range & quartile deviation   & Coefficient.md",
     "Random Shits and Notes/Untriaged/integration.md",
     "Random Shits and Notes/Untriaged/index.md",
-    "Random Shits and Notes/Untriaged/ig live lofi.md",
-    "Random Shits and Notes/Untriaged/happiness.md",
     "Random Shits and Notes/Untriaged",
     "Random Shits and Notes",
     "Untitled.base",
