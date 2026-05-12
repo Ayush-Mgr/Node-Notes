@@ -12,3 +12,4 @@ scripts/__pycache__/
 docs/
 .agents
 .cursor/
+skills-lock.json
