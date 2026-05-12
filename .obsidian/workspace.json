@@ -20,23 +20,8 @@
               "icon": "lucide-file",
               "title": "private enviroment"
             }
-          },
-          {
-            "id": "809f26b12a9f29d4",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2026-05-12.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "2026-05-12"
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -209,34 +194,40 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "809f26b12a9f29d4",
+  "active": "8323b53eee729f04",
   "lastOpenFiles": [
-    "vault/Private/Random/COC.md",
-    "vault/Private/Random/C.md",
-    "vault/Private/Random/C sharp m.md",
-    "vault/Private/Random/Bsus4.md",
-    "vault/Private/Random/B7.md",
-    "vault/Private/B7.md",
-    "vault/Private/Random/Asus2.md",
-    "vault/Private/Random/App.md",
-    "vault/Private/Random/7 ..md",
-    "vault/Private/Untriaged/yt?.md",
-    "vault/Private/Untriaged/withdrawals.md",
-    "vault/Private/Untriaged/what you practice.md",
-    "vault/Private/Untriaged/un_1.md",
-    "vault/Private/Untriaged/torchviz.md",
-    "vault/Private/Untriaged/the advices.md",
-    "vault/Private/Untriaged/the Beast style.md",
-    "vault/Private/Untriaged/stored procedure.md",
-    "vault/Private/Untriaged/something resonates.md",
-    "vault/Private/Untriaged/sets.md",
-    "vault/Private/Untriaged/script.md",
-    "vault/Private/Untriaged/scalar.md",
-    "vault/Private/Untriaged/say no to women of love.md",
-    "vault/Private/Untriaged/row-echelon form.md",
-    "vault/Private/Untriaged/sadhana.md",
-    "vault/Private/Untriaged/px,percent,rem.md",
-    "vault/Private/Untriaged/price , durability ,brand.md",
+    "vault/Private/Random/price , durability ,brand.md",
+    "vault/DataScience/Stats/notes/interquartile range & quartile deviation   & Coefficient.md",
+    "vault/DataScience/Stats/notes/discrete series.md",
+    "vault/DataScience/Stats/notes/continuous series.md",
+    "vault/DataScience/Stats/notes/cantillon effect.md",
+    "vault/DataScience/Stats/notes/binomial distribution.md",
+    "vault/DataScience/Stats/notes/Lorenz Curve.md",
+    "vault/DataScience/Stats/notes/LINEAR EQUATION.md",
+    "vault/DataScience/Stats/notes/Geometric representation of a linear equation.md",
+    "vault/DataScience/Stats/notes/5.Covariance.md",
+    "vault/DataScience/Stats/notes/4.Method of Least Square.md",
+    "vault/DataScience/Stats/notes/3. Originality Aspects.md",
+    "vault/DataScience/Stats/notes/3. Identity Aspects.md",
+    "vault/DataScience/Stats/notes/3. Free-hand method.md",
+    "vault/DataScience/Stats/notes/1.2 Two-Sample Test for Mean.md",
+    "vault/DataScience/Stats/notes/1. curve fitting.md",
+    "vault/DataScience/Stats/notes/1. INtro.md",
+    "vault/DataScience/Stats/notes/0. source_1.md",
+    "vault/DataScience/Stats/notes/0. source.md",
+    "vault/DataScience/Programming/notes/un_1.md",
+    "vault/DataScience/Programming/notes/stored procedure.md",
+    "vault/DataScience/Programming/notes/something resonates.md",
+    "vault/DataScience/Programming/notes/px,percent,rem.md",
+    "vault/DataScience/Programming/notes/pixel arts.md",
+    "vault/DataScience/Programming/notes/Stack.md",
+    "vault/DataScience/Programming/notes/Queue (FIFO - First In, First Out).md",
+    "vault/Assets/licensed-image 2.jpg",
+    "vault/Assets/licensed-image copy.jpg",
+    "vault/Assets/licensed-image copy 2.jpg",
+    "vault/Assets/licensed-image.jpg",
+    "vault/Business/basics acc",
+    "Untitled-1.base",
     "vault/Private/Untriaged",
     "vault/Private/psycology",
     "vault/Private/Random",
@@ -245,17 +236,11 @@
     "vault/Private/Random Shits and Notes/psycology",
     "vault/Business/Investing_strageties",
     "vault/Business/Investing_stragities",
-    "Untitled.base",
-    "Finance/Basic fin terms",
     "vault/Assets/Lorenz Curve.png",
     "vault/Assets/trend-in-time-series copy.png",
     "vault/Assets/material-ugtPddqr.png",
     "vault/Assets/licensed-image.jpeg",
     "vault/Assets/licensed-image copy.jpeg",
-    "vault/Assets/licensed-image copy 2.jpeg",
-    "vault/Assets/licensed-image 3.jpeg",
-    "vault/Assets/licensed-image 2.jpeg",
-    "vault/Assets/licensed-image 1.jpeg",
-    "vault/Assets/image.psd-8.png"
+    "vault/Assets/licensed-image copy 2.jpeg"
   ]
 }
