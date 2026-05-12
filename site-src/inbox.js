@@ -576,11 +576,23 @@ async function getFileContent(token, path) {
   };
 }
 
-async function putFile(token, path, content, sha, message) {
+export async function putFile(token, path, content, sha, message) {
   if (!isPathSafe(path)) throw new Error("Unsafe vault path rejected.");
-  const bytes = new TextEncoder().encode(content);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
+
+  let base64Content;
+  if (content instanceof Uint8Array) {
+    let binary = "";
+    for (let i = 0; i < content.byteLength; i++) {
+      binary += String.fromCharCode(content[i]);
+    }
+    base64Content = btoa(binary);
+  } else {
+    const bytes = new TextEncoder().encode(content);
+    let binary = "";
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    base64Content = btoa(binary);
+  }
+
   return githubRequest(
     `/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`,
     {
@@ -588,7 +600,7 @@ async function putFile(token, path, content, sha, message) {
       headers: authHeaders(token, true),
       body: JSON.stringify({
         message,
-        content: btoa(binary),
+        content: base64Content,
         branch: CONFIG.branch,
         ...(sha ? { sha } : {}),
       }),
