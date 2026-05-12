@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Interactive knowledge graph of Ayush's notes — explore connections between ideas visually." />
   <title>Ayush Notes Graph</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
@@ -22,7 +22,7 @@
     <section id="graph-view" aria-label="Notes graph"></section>
   </main>
 
-  <div id="app-status" class="app-status">Loading graph...</div>
+  <div id="app-status" class="app-status" aria-live="polite" aria-atomic="true">Loading graph...</div>
   <div id="note-backdrop" class="note-backdrop hidden" aria-hidden="true"></div>
   <aside id="note-panel" class="note-panel hidden" aria-hidden="true">
     <div class="note-panel__header">

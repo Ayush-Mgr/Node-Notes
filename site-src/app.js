@@ -187,8 +187,15 @@ async function openNote(noteId, pushHash = true) {
   if (!node) return;
 
   setStatus(`Opening ${node.title}`);
-  const response = await fetch(`content/${encodeURI(node.path)}`);
-  const markdown = await response.text();
+  let markdown;
+  try {
+    const response = await fetch(`content/${encodeURI(node.path)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    markdown = await response.text();
+  } catch (err) {
+    setStatus(`Failed to load note: ${err.message}`);
+    return;
+  }
   const processed = preprocessObsidianMarkdown(markdown);
 
   noteTitle.textContent = node.title;
@@ -356,6 +363,9 @@ function renderGraph() {
   }
 
   function drawCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const width = canvas.width / dpr;
+    const height = canvas.height / dpr;
     context.clearRect(0, 0, width, height);
     context.save();
     context.translate(currentZoomTransform.x, currentZoomTransform.y);
@@ -511,8 +521,16 @@ function syncHashToNote() {
 
 async function init() {
   setStatus("Loading graph...");
-  const response = await fetch("./graph-data.json");
-  state.data = await response.json();
+  let data;
+  try {
+    const response = await fetch("./graph-data.json");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    data = await response.json();
+  } catch (err) {
+    setStatus(`Failed to load graph: ${err.message}`);
+    return;
+  }
+  state.data = data;
   state.resolveAssetTarget = buildAssetResolver();
   state.resolveNoteTarget = buildInternalLinkResolver();
   state.nodeById = new Map(state.data.nodes.map((node) => {
