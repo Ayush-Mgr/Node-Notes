@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "Private",
+                "query": "trend-in-time-series.png",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -210,15 +210,24 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "809f26b12a9f29d4",
+  "active": "331fbe0d342e8efa",
   "lastOpenFiles": [
+    "site-src/editor/utils.js",
+    "site-src/editor/shortcuts.js",
+    "site-src/editor/pairs.js",
+    "site-src/editor/lists.js",
+    "site-src/editor/indent.js",
+    "site-src/editor/editor.js",
+    "site-src/editor/backspace.js",
+    "site-src/editor/autocomplete.js",
+    "site-src/editor",
+    "scratch.js",
     "vault/DataScience/Programming/notes/private enviroment.md",
     "vault/Private/Private.md",
     "vault/Private",
     "vault/DataScience/Programming/index/index.md",
     "README.md",
     "vault/SEO/brand overview.md",
-    "vault/Assets/Private",
     "vault/Assets/F - distribution table.md",
     "vault/Assets/Chi-square - distribution table.md",
     "vault/Assets/image.psd-8 1.png.md",
