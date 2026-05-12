@@ -180,7 +180,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 210.5
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -194,7 +194,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "331fbe0d342e8efa",
+  "active": "73f135a2b9b14618",
   "lastOpenFiles": [
     "vault/Business/basics accounting/📘 C Corporation.md",
     "vault/Business/basics accounting/index",
