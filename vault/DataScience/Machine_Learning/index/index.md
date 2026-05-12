@@ -72,3 +72,16 @@
 - [[web Lofi]]
 - [[vault/DataScience/1. INtro]]
 - [[theoretical model]]
+
+## New / Uncategorized
+- [[1. INtro]]
+- [[2.unInformed Search]]
+- [[4. Inference Rules and Resolution]]
+- [[5.Stop word removal]]
+- [[Adam optimizer]]
+- [[BACk Propagation]]
+- [[MNIST]]
+- [[Manhattan distance]]
+- [[Sketch recognition]]
+- [[Unsupervised Learning]]
+- [[torchviz]]
