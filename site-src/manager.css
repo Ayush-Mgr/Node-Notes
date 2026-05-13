@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Manage and capture notes directly in your Node-Notes vault." />
-  <meta name="theme-color" content="#fafafa" />
-  <title>Vault Manager — Node Notes</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Using exactly Inter 400 & 600 as per index.html -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-
-  <style>
-    /* 1. BASIC STYLING (Imported from index.html) */
+    /* 1. BASIC STYLING (Imported from manager.html) */
     :root {
       --bg: #fafafa;
       --surface: #ffffff;
@@ -45,8 +29,8 @@
       line-height: 1.6;
       color: var(--ink-body);
       background-color: var(--bg);
-      /* Using raw github url for the texture to ensure it loads */
-      background-image: linear-gradient(rgba(250, 250, 250, 0.8), rgba(250, 250, 250, 0.8)), url('https://raw.githubusercontent.com/Ayush-Mgr/Ayush-Mgr.github.io/main/assets/background-texture.webp');
+      /* Background texture loaded from local img/ folder */
+      background-image: linear-gradient(rgba(250, 250, 250, 0.8), rgba(250, 250, 250, 0.8)), url('./img/background-texture.webp');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -639,127 +623,56 @@
       position: relative;
     }
     textarea.drag-over {
-      background: rgba(var(--accent-rgb), 0.05);
-      border: 2px dashed var(--accent);
+      background: rgba(0, 0, 0, 0.03);
+      border: 2px dashed var(--ink-mid);
     }
-  </style>
-</head>
 
-<body>
-  <div class="page">
-    <header>
-      <div class="header-left">
-        <p class="logo">Node Notes</p>
-        <h1>Vault<br /><em>Manager</em></h1>
-      </div>
-      <a href="https://ayush-mgr.github.io/Node-Notes/" aria-label="Go to Node Notes Home">
-        <img src="img/logo.webp" alt="Logo" class="header-logo" />
-      </a>
-    </header>
+    /* 12. ATTACH ROW */
+    .attach-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
 
-    <main class="form" id="vault-manager">
-      <div class="field">
-        <label for="token-input">GitHub Token</label>
-        <div class="token-row">
-          <div class="field">
-            <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off" autocorrect="off"
-              spellcheck="false" />
-          </div>
-          <button class="token-toggle" id="token-toggle" type="button"
-            aria-label="Toggle token visibility">Show</button>
-        </div>
-        <p class="field-hint">Fine-grained PAT · Contents: Read &amp; Write · Not saved locally</p>
-      </div>
+    .attach-btn {
+      background: #eee;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      border: none;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      color: var(--ink-body);
+      cursor: pointer;
+      transition: background 0.3s ease;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
 
-      <div class="field">
-        <div class="label-row">
-          <label for="note-folder">Folder Path</label>
-          <button type="button" id="private-mode-toggle" class="token-toggle" style="height: 24px; font-size: 0.75rem; padding: 0 8px;" aria-label="Toggle Private Capture Mode">Private: OFF</button>
-        </div>
-        <input type="text" id="note-folder" list="folder-suggestions" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
-        <datalist id="folder-suggestions"></datalist>
-        <div id="recent-folders" class="chip-row"></div>
-        <p id="folder-hint" class="field-hint hidden"></p>
-      </div>
+    .attach-btn:hover:not(:disabled) {
+      background: var(--ink-ghost);
+    }
 
-      <div class="field">
-        <label for="note-title">Title</label>
-        <input type="text" id="note-title" placeholder="Optional note title" autocorrect="on" spellcheck="true" />
-      </div>
+    .attach-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
 
-      <div class="field">
-        <div class="label-row">
-          <label for="note-body">Note</label>
-          <span class="draft-tag" id="draft-tag">Draft saved</span>
-        </div>
+    .attach-count {
+      font-size: 0.78rem;
+      color: var(--ink-mid);
+      font-weight: 500;
+    }
 
-        <div class="editor-toggle" role="tablist" aria-label="Editor mode">
-          <button class="editor-tab active" id="write-tab" type="button" role="tab" aria-selected="true"
-            aria-controls="write-pane">Write</button>
-          <button class="editor-tab" id="preview-tab" type="button" role="tab" aria-selected="false"
-            aria-controls="preview-pane">Preview</button>
-        </div>
+    /* Desktop: hide camera button. Mobile: show both */
+    .attach-btn-camera {
+      display: none;
+    }
 
-        <div class="editor-pane active" id="write-pane" role="tabpanel" aria-labelledby="write-tab">
-          <textarea id="note-body" placeholder="Start writing…&#10;&#10;Markdown supported." autocorrect="on"
-            spellcheck="true"></textarea>
-        </div>
-
-        <div class="editor-pane" id="preview-pane" role="tabpanel" aria-labelledby="preview-tab" aria-hidden="true">
-          <div class="preview-pane">
-            <h2 class="preview-title hidden" id="preview-title"></h2>
-            <div class="preview-body" id="preview-body">
-              <p class="preview-empty">Nothing to preview yet</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="status" id="status-bar" role="status" aria-live="polite">
-        <span class="status-dot"></span>
-        <span id="status-text"></span>
-      </div>
-
-      <section class="section-block" aria-labelledby="recent-notes-title">
-        <div class="section-head">
-          <h2 class="section-title" id="recent-notes-title">Inbox Notes</h2>
-          <span class="section-meta" id="note-count">Syncing</span>
-        </div>
-        <div class="field" style="margin-bottom: 10px;">
-          <input class="vault-search" type="text" id="note-search" placeholder="Search by path or filename…" />
-        </div>
-        <div class="vault-list" id="note-list">
-          <p class="list-state">Loading inbox notes…</p>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="footer-actions">
-        <button class="btn-secondary hidden" id="cancel-edit-btn" type="button">Cancel Edit</button>
-        <button class="btn-upload" id="upload-btn" type="button">Create Note</button>
-      </div>
-    </footer>
-  </div>
-
-  <!-- External dependencies for your js -->
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['\\(', '\\)']],
-        displayMath: [['\\[', '\\]']],
-        processEscapes: true
-      },
-      startup: {
-        typeset: false
+    @media (max-width: 650px) {
+      .attach-btn-camera {
+        display: inline-flex;
       }
-    };
-  </script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.11/purify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
-  <script type="module" src="./inbox.js"></script>
-</body>
-
-</html>
+    }

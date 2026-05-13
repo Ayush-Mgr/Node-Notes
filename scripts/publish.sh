@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # publish.sh — optional Google Drive -> repo sync helper.
-# For phone/browser flows, notes can also arrive directly through git-backed edits.
+# For Vault Manager flows, notes arrive directly through git-backed edits.
 #
 # Usage:
 #   ./scripts/publish.sh

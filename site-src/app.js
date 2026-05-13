@@ -17,9 +17,7 @@ const tooltip = document.getElementById("tooltip");
 
 let currentNeighborMap = new Map();
 let currentZoomTransform = d3.zoomIdentity;
-let canvas = null;
-let context = null;
-let simulation = null;
+let canvas, context, simulation;
 let hoveredNode = null;
 let redrawGraph = () => {};
 
@@ -27,10 +25,11 @@ const mathExtension = {
   name: 'math',
   level: 'inline',
   start(src) {
-    return src.match(/\$/)?.index;
+    const match = src.match(/\$/);
+    return match ? match.index : -1;
   },
   tokenizer(src, tokens) {
-    const blockRule = /^\$\$(.*?)\$\$/s;
+    const blockRule = /^\$\$(?:[\s\S]*?)\$\$/;
     const inlineRule = /^\$([^$\n]+?)\$/;
     let match;
     if ((match = blockRule.exec(src))) {
@@ -235,7 +234,8 @@ function closeNote(clearHash = true) {
   noteContent.innerHTML = "";
   state.activeNoteId = null;
   redrawGraph();
-  setStatus(`${state.data?.nodes.length ?? 0} notes`);
+  const noteCount = (state.data && state.data.nodes) ? state.data.nodes.length : 0;
+  setStatus(`${noteCount} notes`);
   if (clearHash) {
     history.replaceState(null, "", window.location.pathname);
   }
@@ -279,7 +279,6 @@ function renderGraph() {
 
   context = canvas.getContext("2d");
 
-  // Handle High DPI displays
   const dpr = window.devicePixelRatio || 1;
   canvas.width = width * dpr;
   canvas.height = height * dpr;
@@ -372,7 +371,7 @@ function renderGraph() {
     context.scale(currentZoomTransform.k, currentZoomTransform.k);
 
     const activeId = state.activeNoteId;
-    const hoverId = hoveredNode?.id;
+    const hoverId = hoveredNode ? hoveredNode.id : null;
     const focusId = hoverId || activeId;
     
     let neighbors = new Set();
@@ -497,7 +496,7 @@ function handleResize() {
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     
-    context.setTransform(1, 0, 0, 1, 0, 0); // reset transform before scaling
+    context.setTransform(1, 0, 0, 1, 0, 0); 
     context.scale(dpr, dpr);
     
     if (simulation) {
@@ -542,13 +541,155 @@ async function init() {
   syncHashToNote();
 }
 
+// ---------------------------------------------------------------------------
+// Search
+// ---------------------------------------------------------------------------
+
+const searchBackdrop = document.getElementById("search-backdrop");
+const searchContainer = document.getElementById("search-container");
+const searchInput = document.getElementById("search-input");
+const searchResults = document.getElementById("search-results");
+const searchTrigger = document.getElementById("search-trigger");
+
+let searchSelectedIndex = -1;
+let searchActive = false;
+
+function openSearch() {
+  if (searchActive) return;
+  searchActive = true;
+  searchSelectedIndex = -1;
+  searchInput.value = "";
+  searchResults.innerHTML = "";
+  searchBackdrop.classList.remove("hidden");
+  searchContainer.classList.remove("hidden");
+  searchBackdrop.setAttribute("aria-hidden", "false");
+  searchContainer.setAttribute("aria-hidden", "false");
+  searchInput.focus();
+}
+
+function closeSearch() {
+  if (!searchActive) return;
+  searchActive = false;
+  searchBackdrop.classList.add("hidden");
+  searchContainer.classList.add("hidden");
+  searchBackdrop.setAttribute("aria-hidden", "true");
+  searchContainer.setAttribute("aria-hidden", "true");
+  searchInput.value = "";
+  searchResults.innerHTML = "";
+  searchSelectedIndex = -1;
+}
+
+function searchNodes(query) {
+  const q = query.toLowerCase().trim();
+  if (!q || !state.data) return [];
+  return state.data.nodes
+    .map((node) => {
+      const titleIdx = node.title.toLowerCase().indexOf(q);
+      const idIdx = node.id.toLowerCase().indexOf(q);
+      const score = titleIdx === 0 ? 3 : titleIdx > 0 ? 2 : idIdx >= 0 ? 1 : 0;
+      return { node, score };
+    })
+    .filter((r) => r.score > 0)
+    .sort((a, b) => b.score - a.score || b.node.degree - a.node.degree)
+    .slice(0, 8)
+    .map((r) => r.node);
+}
+
+function highlightMatch(text, query) {
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx < 0) return text;
+  const before = text.slice(0, idx);
+  const match = text.slice(idx, idx + query.length);
+  const after = text.slice(idx + query.length);
+  return `${before}<mark>${match}</mark>${after}`;
+}
+
+function renderSearchResults(nodes, query) {
+  searchResults.innerHTML = "";
+  searchSelectedIndex = -1;
+  nodes.forEach((node, i) => {
+    const li = document.createElement("li");
+    li.className = "search-result-item";
+    li.setAttribute("role", "option");
+    li.innerHTML = `
+      <span class="search-result-title">${highlightMatch(node.title, query)}</span>
+      <span class="search-result-path">${node.folder}/${node.id.split("/").pop()}</span>
+    `;
+    li.addEventListener("click", () => {
+      closeSearch();
+      openNote(node.id);
+    });
+    li.addEventListener("mouseenter", () => {
+      updateSearchSelection(i);
+    });
+    searchResults.appendChild(li);
+  });
+}
+
+function updateSearchSelection(index) {
+  const items = searchResults.querySelectorAll(".search-result-item");
+  items.forEach((el) => el.classList.remove("selected"));
+  searchSelectedIndex = index;
+  if (index >= 0 && index < items.length) {
+    items[index].classList.add("selected");
+    items[index].scrollIntoView({ block: "nearest" });
+  }
+}
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.trim();
+  if (!query) {
+    searchResults.innerHTML = "";
+    searchSelectedIndex = -1;
+    return;
+  }
+  const results = searchNodes(query);
+  renderSearchResults(results, query);
+});
+
+searchInput.addEventListener("keydown", (event) => {
+  const items = searchResults.querySelectorAll(".search-result-item");
+  const count = items.length;
+
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    updateSearchSelection(searchSelectedIndex < count - 1 ? searchSelectedIndex + 1 : 0);
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    updateSearchSelection(searchSelectedIndex > 0 ? searchSelectedIndex - 1 : count - 1);
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    if (searchSelectedIndex >= 0 && searchSelectedIndex < count) {
+      items[searchSelectedIndex].click();
+    }
+  } else if (event.key === "Escape") {
+    event.preventDefault();
+    closeSearch();
+  }
+});
+
+searchBackdrop.addEventListener("click", closeSearch);
+searchTrigger.addEventListener("click", openSearch);
+
 closeNoteButton.addEventListener("click", () => closeNote());
 noteBackdrop.addEventListener("click", () => closeNote());
 window.addEventListener("hashchange", syncHashToNote);
 window.addEventListener("resize", handleResize);
 window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && state.activeNoteId) {
-    closeNote();
+  if (event.key === "Escape") {
+    if (searchActive) {
+      closeSearch();
+    } else if (state.activeNoteId) {
+      closeNote();
+    }
+    return;
+  }
+  if (event.key === "/" && !searchActive && !state.activeNoteId) {
+    const activeEl = document.activeElement;
+    const tag = activeEl ? activeEl.tagName : null;
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    event.preventDefault();
+    openSearch();
   }
 });
 

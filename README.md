@@ -7,10 +7,10 @@ Node-Notes publishes an Obsidian-style vault as a graph site and ships a browser
 Git is the source of truth.
 
 ```text
-vault/                 source notes
+vault/                 source notes (git-tracked)
 site-src/              graph UI + Vault Manager sources
 scripts/build_graph_site.py
-  -> docs/             generated local build output
+  -> docs/             generated site bundle (gitignored)
   -> GitHub Pages      deployed by Actions artifact upload
 ```
 
@@ -25,15 +25,16 @@ Every push that touches `vault/`, `site-src/`, `scripts/build_graph_site.py`, or
 | `site-src/index.html` | Graph page shell |
 | `site-src/app.js` | Graph runtime |
 | `site-src/styles.css` | Graph page styles |
-| `site-src/inbox.html` | Vault Manager markup and page-scoped styles |
-| `site-src/inbox.js` | Vault Manager behavior |
+| `site-src/manager.html` | Vault Manager markup |
+| `site-src/manager.js` | Vault Manager behavior |
+| `site-src/manager.css` | Vault Manager styles |
 | `scripts/build_graph_site.py` | Build pipeline from `vault/` to `docs/` |
 | `.github/workflows/deploy-pages.yml` | CI build and Pages deploy |
 
 ## Local preview
 
 ```bash
-./scripts/preview-graph-site.sh
+./scripts/preview-site.sh
 ```
 
 Then open [http://localhost:8080](http://localhost:8080).
@@ -42,13 +43,13 @@ The script rebuilds the site into `docs/` and serves that generated output local
 
 ## Vault Manager
 
-`site-src/inbox.html` is a lightweight single-page manager for `vault/inbox/`.
+`site-src/manager.html` is a lightweight single-page manager for your vault.
 
 - Uses a GitHub fine-grained PAT with `Contents: Read & Write`
 - Keeps the token in `sessionStorage`, never `localStorage`
 - Autosaves title/body drafts locally
 - Supports live Markdown preview
-- Can browse, edit, and delete inbox notes with inbox-only path guards
+- Can browse, edit, and delete vault notes with path safety guards
 
 ## Private notes
 

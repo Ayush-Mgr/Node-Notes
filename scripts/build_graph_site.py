@@ -188,6 +188,12 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
 # ---------------------------------------------------------------------------
 
 def copy_site_scaffold() -> None:
+    if DOCS_DIR.exists():
+        for item in DOCS_DIR.iterdir():
+            if item.name == ".git": continue
+            if item.is_dir(): shutil.rmtree(item)
+            else: item.unlink()
+    
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     for item in SITE_SRC_DIR.iterdir():
         target = DOCS_DIR / item.name
