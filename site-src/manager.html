@@ -10,7 +10,6 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Using exactly Inter 400 & 600 as per index.html -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="./manager.css" />
@@ -29,17 +28,22 @@
     </header>
 
     <main class="form" id="vault-manager">
-      <div class="field">
-        <label for="token-input">GitHub Token</label>
-        <div class="token-row">
-          <div class="field">
-            <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off" autocorrect="off"
-              spellcheck="false" />
+      <div class="field" id="auth-section">
+        <label>Account</label>
+        <div class="auth-row">
+          <div id="auth-status-loading" class="auth-status">Checking connection…</div>
+          <div id="auth-status-signed-in" class="auth-status hidden">
+            <div class="user-info">
+              <img id="user-avatar" src="" alt="" class="user-avatar" />
+              <span id="user-login" class="user-login"></span>
+            </div>
+            <button class="token-toggle danger" id="logout-btn" type="button">Sign Out</button>
           </div>
-          <button class="token-toggle" id="token-toggle" type="button"
-            aria-label="Toggle token visibility">Show</button>
+          <div id="auth-status-signed-out" class="auth-status hidden">
+            <button class="btn-primary-small" id="login-btn" type="button">Sign in with GitHub</button>
+            <p class="field-hint">Uses secure OAuth. No permanent tokens stored in browser.</p>
+          </div>
         </div>
-        <p class="field-hint">Fine-grained PAT · Contents: Read &amp; Write · Not saved locally</p>
       </div>
 
       <div class="field">
@@ -54,35 +58,33 @@
       </div>
 
       <div class="field">
-        <label for="note-title">Title</label>
-        <input type="text" id="note-title" placeholder="Optional note title" autocorrect="on" spellcheck="true" />
-      </div>
-
-      <div class="field">
         <div class="label-row">
-          <label for="note-body">Note</label>
+          <label>Editor</label>
           <span class="draft-tag" id="draft-tag">Draft saved</span>
         </div>
-
+ 
         <div class="editor-toggle" role="tablist" aria-label="Editor mode">
           <button class="editor-tab active" id="write-tab" type="button" role="tab" aria-selected="true"
             aria-controls="write-pane">Write</button>
           <button class="editor-tab" id="preview-tab" type="button" role="tab" aria-selected="false"
             aria-controls="preview-pane">Preview</button>
         </div>
-
+ 
         <div class="editor-pane active" id="write-pane" role="tabpanel" aria-labelledby="write-tab">
-          <textarea id="note-body" placeholder="Start writing…&#10;&#10;Markdown supported. Drag & drop or paste images." autocorrect="on"
-            spellcheck="true"></textarea>
+          <div class="editor-canvas">
+            <input type="text" id="note-title" class="editor-title" placeholder="Note Title" autocorrect="on" spellcheck="true" />
+            <textarea id="note-body" class="editor-body" placeholder="Start writing…&#10;&#10;Markdown supported. Drag & drop or paste images." autocorrect="on"
+              spellcheck="true"></textarea>
+          </div>
           <div class="attach-row">
             <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image from gallery">📎 Attach Image</button>
             <button type="button" id="camera-btn" class="attach-btn attach-btn-camera" aria-label="Capture photo">📷 Camera</button>
             <span id="attach-count" class="attach-count"></span>
           </div>
         </div>
-
+ 
         <div class="editor-pane" id="preview-pane" role="tabpanel" aria-labelledby="preview-tab" aria-hidden="true">
-          <div class="preview-pane">
+          <div class="editor-canvas preview-canvas">
             <h2 class="preview-title hidden" id="preview-title"></h2>
             <div class="preview-body" id="preview-body">
               <p class="preview-empty">Nothing to preview yet</p>
@@ -96,10 +98,12 @@
         <span id="status-text"></span>
       </div>
 
+      <section class="field vault-section" aria-labelledby="vault-notes-title">
+        <div class="label-row">
           <h2 class="section-title" id="vault-notes-title">Vault Notes</h2>
           <span class="section-meta" id="note-count">Syncing</span>
         </div>
-        <div class="field" style="margin-bottom: 10px;">
+        <div class="field vault-search-field">
           <input class="vault-search" type="text" id="note-search" placeholder="Search by path or filename…" />
         </div>
         <div class="vault-list" id="note-list">
@@ -110,13 +114,12 @@
 
     <footer>
       <div class="footer-actions">
-        <button class="btn-secondary hidden" id="cancel-edit-btn" type="button">Cancel Edit</button>
+        <button class="btn secondary hidden" id="cancel-edit-btn" type="button">Cancel Edit</button>
         <button class="btn-upload" id="upload-btn" type="button">Create Note</button>
       </div>
     </footer>
   </div>
 
-  <!-- External dependencies for your js -->
   <script>
     window.MathJax = {
       tex: {
@@ -134,7 +137,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
   <script type="module" src="./manager.js"></script>
 
-  <!-- Hidden inputs for Safari-friendly file attachment -->
   <input type="file" id="file-picker-input" accept="image/*" multiple style="display:none" />
   <input type="file" id="camera-picker-input" accept="image/*" capture="environment" style="display:none" />
 </body>

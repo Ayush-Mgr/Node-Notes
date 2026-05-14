@@ -21,42 +21,22 @@ let canvas, context, simulation;
 let hoveredNode = null;
 let redrawGraph = () => {};
 
+function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 const mathExtension = {
   name: 'math',
   level: 'inline',
-  start(src) {
-    const match = src.match(/\$/);
-    return match ? match.index : -1;
-  },
-  tokenizer(src, tokens) {
-    const blockRule = /^\$\$(?:[\s\S]*?)\$\$/;
-    const inlineRule = /^\$([^$\n]+?)\$/;
-    let match;
-    if ((match = blockRule.exec(src))) {
-      return {
-        type: 'math',
-        raw: match[0],
-        text: match[1],
-        displayMode: true
-      };
-    } else if ((match = inlineRule.exec(src))) {
-      return {
-        type: 'math',
-        raw: match[0],
-        text: match[1],
-        displayMode: false
-      };
-    }
+  start: (src) => src.match(/\$/)?.index ?? -1,
+  tokenizer(src) {
+    const block = /^\$\$(?:[\s\S]*?)\$\$/.exec(src);
+    if (block) return { type: 'math', raw: block[0], text: block[1], displayMode: true };
+    const inline = /^\$([^$\n]+?)\$/.exec(src);
+    if (inline) return { type: 'math', raw: inline[0], text: inline[1], displayMode: false };
   },
   renderer(token) {
-    const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (s) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[s]));
-    if (token.displayMode) {
-      return `\\[${escapeHtml(token.text)}\\]`;
-    } else {
-      return `\\(${escapeHtml(token.text)}\\)`;
-    }
+    return token.displayMode ? `\\[${escapeHtml(token.text)}\\]` : `\\(${escapeHtml(token.text)}\\)`;
   }
 };
 if (typeof marked !== 'undefined') marked.use({ extensions: [mathExtension] });
@@ -597,11 +577,11 @@ function searchNodes(query) {
 
 function highlightMatch(text, query) {
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
-  if (idx < 0) return text;
+  if (idx < 0) return escapeHtml(text);
   const before = text.slice(0, idx);
   const match = text.slice(idx, idx + query.length);
   const after = text.slice(idx + query.length);
-  return `${before}<mark>${match}</mark>${after}`;
+  return `${escapeHtml(before)}<mark>${escapeHtml(match)}</mark>${escapeHtml(after)}`;
 }
 
 function renderSearchResults(nodes, query) {

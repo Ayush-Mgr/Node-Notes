@@ -1,4 +1,3 @@
-    /* 1. BASIC STYLING (Imported from manager.html) */
     :root {
       --bg: #fafafa;
       --surface: #ffffff;
@@ -29,7 +28,6 @@
       line-height: 1.6;
       color: var(--ink-body);
       background-color: var(--bg);
-      /* Background texture loaded from local img/ folder */
       background-image: linear-gradient(rgba(250, 250, 250, 0.8), rgba(250, 250, 250, 0.8)), url('./img/background-texture.webp');
       background-size: cover;
       background-position: center;
@@ -39,7 +37,6 @@
       overscroll-behavior: none;
     }
 
-    /* 2. ADAPTIVE CONTAINER */
     .page {
       display: flex;
       flex-direction: column;
@@ -49,7 +46,6 @@
       margin: 0 auto;
     }
 
-    /* 3. TYPOGRAPHY & HEADERS */
     header {
       padding: 48px 0 32px;
       display: flex;
@@ -87,7 +83,6 @@
       font-weight: 400;
     }
 
-    /* 4. FORM LAYOUT */
     .form {
       flex: 1;
       display: flex;
@@ -113,7 +108,6 @@
       font-size: 0.8rem;
     }
 
-    /* 5. INPUTS (Adapted to index.html box style) */
     input[type="password"],
     input[type="text"],
     textarea {
@@ -137,6 +131,16 @@
       background: var(--surface);
     }
 
+    .vault-search {
+      max-width: 650px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .vault-search-field {
+      margin-bottom: 10px;
+    }
+
     input::placeholder,
     textarea::placeholder {
       color: var(--ink-mid);
@@ -149,14 +153,55 @@
       line-height: 1.65;
     }
 
-    .token-row {
+    .auth-row {
       display: flex;
-      align-items: stretch;
+      flex-direction: column;
       gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--ink-ghost);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.7);
     }
-
-    .token-row .field {
-      flex: 1;
+ 
+    .auth-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+ 
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+ 
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--ink-ghost);
+    }
+ 
+    .user-login {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+ 
+    .btn-primary-small {
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+ 
+    .btn-primary-small:hover {
+      opacity: 0.9;
     }
 
     .token-toggle {
@@ -165,7 +210,7 @@
       color: var(--ink-body);
       border-radius: var(--radius);
       cursor: pointer;
-      padding: 0 16px;
+      padding: 8px 16px;
       font-size: 0.9rem;
       font-weight: 600;
       transition: all 0.3s ease;
@@ -177,7 +222,16 @@
       color: var(--ink);
     }
 
-    /* 6. EDITOR TABS (Exactly matching index.html .tab-header) */
+    .token-toggle.danger {
+      color: var(--error);
+      border-color: rgba(186, 26, 26, 0.2);
+    }
+
+    .token-toggle.danger:hover {
+      background: rgba(186, 26, 26, 0.05);
+      border-color: var(--error);
+    }
+
     .editor-toggle {
       display: flex;
       align-items: stretch;
@@ -205,7 +259,6 @@
       color: var(--ink);
       border: 2px solid var(--ink);
       margin: -1px;
-      /* Compensate for border */
       border-radius: var(--radius);
       background: var(--bg);
     }
@@ -222,7 +275,6 @@
       display: none !important;
     }
 
-    /* Badges & Tags (Matching .badge from index.html) */
     .draft-tag {
       background: #eee;
       padding: 3px 8px;
@@ -243,7 +295,6 @@
       justify-content: space-between;
     }
 
-    /* Chips */
     .chip-row {
       display: flex;
       gap: 8px;
@@ -269,15 +320,58 @@
       background: rgba(0,0,0,0.1);
     }
 
-    /* 7. PREVIEW PANE */
-    .preview-pane {
-      min-height: clamp(200px, 38vh, 380px);
+    .editor-canvas {
+      min-height: clamp(200px, 42vh, 450px);
       border: 1px solid var(--ink-ghost);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.75);
       color: var(--ink-body);
-      padding: 20px;
+      padding: 32px 32px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: all 0.3s ease;
       overflow-y: auto;
+    }
+
+    .editor-canvas:focus-within {
+      border-color: var(--ink);
+      background: var(--surface);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .editor-title {
+      font-size: 2rem !important;
+      font-weight: 600 !important;
+      border: none !important;
+      background: transparent !important;
+      padding: 0 0 16px 0 !important;
+      margin-bottom: 24px !important;
+      border-bottom: 1px solid var(--ink-ghost) !important;
+      border-radius: 0 !important;
+      line-height: 1.2;
+      color: var(--ink) !important;
+    }
+
+    .editor-title:focus {
+      border-bottom-color: var(--ink) !important;
+    }
+
+    .editor-body {
+      flex: 1;
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: 1.05rem !important;
+      line-height: 1.7 !important;
+      resize: none !important;
+      min-height: 300px;
+    }
+
+    .preview-canvas {
+      padding-top: 32px;
+      background: rgba(255, 255, 255, 0.85);
     }
 
     .preview-empty {
@@ -288,13 +382,13 @@
     }
 
     .preview-title {
-      margin: 0 0 16px;
+      margin: 0 0 24px;
       color: var(--ink);
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 600;
       line-height: 1.2;
       border-bottom: 1px solid var(--ink-ghost);
-      padding-bottom: 10px;
+      padding-bottom: 16px;
     }
 
     .preview-body {
@@ -338,7 +432,6 @@
       font-family: monospace;
     }
 
-    /* 8. STATUS BAR */
     .status {
       display: flex;
       align-items: center;
@@ -399,7 +492,6 @@
       animation: pulse 1s ease-in-out infinite;
     }
 
-    /* 9. VAULT / PROJECT SECTION */
     .section-block {
       display: flex;
       flex-direction: column;
@@ -426,7 +518,6 @@
       font-size: 0.9rem;
     }
 
-    /* 10. VAULT CARDS (Matching .proj-box from index.html) */
     .vault-list {
       display: flex;
       flex-direction: column;
@@ -480,7 +571,6 @@
       font-size: 0.85rem;
     }
 
-    /* Small Card Actions */
     .vault-actions {
       display: flex;
       flex-wrap: wrap;
@@ -532,7 +622,6 @@
       font-size: 0.95rem;
     }
 
-    /* 11. FOOTER & MAIN BUTTONS (Matching .button from index.html) */
     footer {
       position: sticky;
       bottom: 20px;
@@ -545,7 +634,7 @@
       gap: 15px;
     }
 
-    .btn-secondary,
+    .btn.secondary,
     .btn-upload {
       display: flex;
       height: 45px;
@@ -562,9 +651,12 @@
       cursor: pointer;
       padding: 0 20px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      max-width: 650px;
+      margin: 0 auto;
+      width: 100%;
     }
 
-    .btn-secondary {
+    .btn.secondary {
       flex: 1;
       border-color: var(--ink-ghost);
       color: var(--ink-mid);
@@ -574,18 +666,24 @@
       flex: 2;
     }
 
+    .highlight-match {
+      background: rgba(0,0,0,0.1);
+      color: inherit;
+      border-radius: 2px;
+    }
+
     .btn-upload:hover:not(:disabled) {
       background-color: var(--ink);
       color: #fff;
     }
 
-    .btn-secondary:hover:not(:disabled) {
+    .btn.secondary:hover:not(:disabled) {
       border-color: var(--ink);
       color: var(--ink);
     }
 
     .btn-upload:disabled,
-    .btn-secondary:disabled {
+    .btn.secondary:disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
@@ -618,7 +716,6 @@
       color: var(--ink-mid);
     }
     
-    /* Make write pane relative for the autocomplete popup */
     #write-pane {
       position: relative;
     }
@@ -627,7 +724,6 @@
       border: 2px dashed var(--ink-mid);
     }
 
-    /* 12. ATTACH ROW */
     .attach-row {
       display: flex;
       align-items: center;
@@ -666,7 +762,6 @@
       font-weight: 500;
     }
 
-    /* Desktop: hide camera button. Mobile: show both */
     .attach-btn-camera {
       display: none;
     }

@@ -15,17 +15,22 @@
 
 <body>
   <nav class="main-nav">
-    <a href="https://ayush-mgr.github.io/">Main</a>
-    <button id="search-trigger" class="nav-search-btn" aria-label="Search notes (/)" type="button">Search</button>
+    <a href="https://ayush-mgr.github.io/" class="back-link" aria-label="Go back to home">←</a>
+    <button id="search-trigger" class="nav-search-btn" aria-label="Search notes (Ctrl+K)" type="button">
+      <span class="search-text">Search</span>
+      <kbd class="search-kbd">CTRL + /</kbd>
+    </button>
   </nav>
 
   <!-- Search overlay -->
   <div id="search-backdrop" class="search-backdrop hidden" aria-hidden="true"></div>
   <div id="search-container" class="search-container hidden" role="dialog" aria-label="Search notes">
-    <input id="search-input" class="search-input" type="text"
-      placeholder="Search notes…" autocomplete="off" autocorrect="off" spellcheck="false" />
+    <input id="search-input" class="search-input" type="text" placeholder="Search notes…" autocomplete="off"
+      autocorrect="off" spellcheck="false" />
     <ul id="search-results" class="search-results" role="listbox"></ul>
-    <div class="search-hint">Press <kbd>/</kbd> to search · <kbd>↑↓</kbd> navigate · <kbd>Enter</kbd> open · <kbd>Esc</kbd> close</div>
+    <div class="search-hint">Press <kbd>/</kbd> to search · <kbd>↑↓</kbd> navigate · <kbd>Enter</kbd> open ·
+      <kbd>Esc</kbd> close
+    </div>
   </div>
 
   <main class="app-shell">
