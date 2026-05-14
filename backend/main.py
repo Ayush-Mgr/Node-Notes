@@ -17,12 +17,25 @@ app = FastAPI()
 
 SESSION_SECRET = os.getenv("SESSION_SECRET", secrets.token_urlsafe(32))
 SESSION_TTL = timedelta(hours=24)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8080/manager.html")
+REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
+REPO_NAME = os.getenv("GITHUB_REPO_NAME")
+DEFAULT_BRANCH = os.getenv("GITHUB_REPO_BRANCH", "main")
+VAULT_PREFIX = "vault/"
+
+
+def is_https_url(url: str) -> bool:
+    return url.lower().startswith("https://")
+
+
+SESSION_COOKIE_SECURE = is_https_url(FRONTEND_URL)
+SESSION_COOKIE_SAMESITE = "none" if SESSION_COOKIE_SECURE else "lax"
 
 app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
-    https_only=True,
-    same_site="none",
+    https_only=SESSION_COOKIE_SECURE,
+    same_site=SESSION_COOKIE_SAMESITE,
 )
 
 app.add_middleware(
@@ -39,10 +52,6 @@ app.add_middleware(
 
 CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
-REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
-REPO_NAME = os.getenv("GITHUB_REPO_NAME")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8080/manager.html")
-VAULT_PREFIX = "vault/"
 
 TOKEN_STORE = {}
 
@@ -171,7 +180,11 @@ async def auth_status(request: Request):
 
 @app.get("/api/vault/notes")
 async def get_notes(request: Request):
-    return await github_proxy(request, "GET", f"/repos/{REPO_OWNER}/{REPO_NAME}/git/trees/main?recursive=1")
+    return await github_proxy(
+        request,
+        "GET",
+        f"/repos/{REPO_OWNER}/{REPO_NAME}/git/trees/{DEFAULT_BRANCH}?recursive=1",
+    )
 
 @app.get("/api/vault/content/{path:path}")
 async def get_content(request: Request, path: str):
