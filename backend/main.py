@@ -2,6 +2,8 @@ import os
 import secrets
 import hashlib
 import base64
+from contextlib import asynccontextmanager
+from urllib.parse import urlparse
 from typing import Optional
 from fastapi import FastAPI, Request, HTTPException, Body
 from fastapi.responses import RedirectResponse, JSONResponse
@@ -13,11 +15,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI()
-
 SESSION_SECRET = os.getenv("SESSION_SECRET", secrets.token_urlsafe(32))
 SESSION_TTL = timedelta(hours=24)
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8080/manager.html")
+ENVIRONMENT = os.getenv("ENVIRONMENT", "").strip().lower()
 REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
 REPO_NAME = os.getenv("GITHUB_REPO_NAME")
 DEFAULT_BRANCH = os.getenv("GITHUB_REPO_BRANCH", "main")
@@ -28,8 +29,38 @@ def is_https_url(url: str) -> bool:
     return url.lower().startswith("https://")
 
 
-SESSION_COOKIE_SECURE = is_https_url(FRONTEND_URL)
+def frontend_origin(url: str) -> str:
+    parsed = urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}" if parsed.scheme and parsed.netloc else ""
+
+
+SESSION_COOKIE_SECURE = ENVIRONMENT == "production" or is_https_url(FRONTEND_URL)
 SESSION_COOKIE_SAMESITE = "none" if SESSION_COOKIE_SECURE else "lax"
+ALLOW_ORIGINS = [
+    origin
+    for origin in {
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+        "https://ayush-mgr.github.io",
+        frontend_origin(FRONTEND_URL),
+    }
+    if origin
+]
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with httpx.AsyncClient(
+        headers={
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "Node-Notes-Proxy",
+        }
+    ) as client:
+        app.state.client = client
+        yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     SessionMiddleware,
@@ -40,11 +71,7 @@ app.add_middleware(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "https://ayush-mgr.github.io",
-    ],
+    allow_origins=ALLOW_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,19 +114,17 @@ async def github_proxy(request: Request, method: str, path: str, json_body: Opti
     url = f"https://api.github.com{path}"
     headers = {
         "Authorization": f"token {token}",
-        "Accept": "application/vnd.github.v3+json",
-        "User-Agent": "Node-Notes-Proxy",
     }
+    client = request.app.state.client
 
-    async with httpx.AsyncClient() as client:
-        if method == "PUT":
-            resp = await client.put(url, headers=headers, json=json_body)
-        elif method == "DELETE":
-            resp = await client.request("DELETE", url, headers=headers, json=json_body)
-        elif method == "GET":
-            resp = await client.get(url, headers=headers)
-        else:
-            resp = await client.request(method, url, headers=headers, json=json_body)
+    if method == "PUT":
+        resp = await client.put(url, headers=headers, json=json_body)
+    elif method == "DELETE":
+        resp = await client.request("DELETE", url, headers=headers, json=json_body)
+    elif method == "GET":
+        resp = await client.get(url, headers=headers)
+    else:
+        resp = await client.request(method, url, headers=headers, json=json_body)
 
     return JSONResponse(status_code=resp.status_code, content=resp.json())
 
@@ -122,42 +147,41 @@ async def callback(request: Request, code: str, state: str):
         raise HTTPException(status_code=400, detail="Invalid state")
 
     verifier = request.session.get("pkce_verifier")
+    client = request.app.state.client
+    response = await client.post(
+        "https://github.com/login/oauth/access_token",
+        data={
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "code": code,
+            "code_verifier": verifier,
+        },
+        headers={"Accept": "application/json"},
+    )
+    data = response.json()
+    token = data.get("access_token")
+    if not token:
+        return JSONResponse(status_code=400, content={"error": "OAuth failed", "details": data})
 
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            "https://github.com/login/oauth/access_token",
-            data={
-                "client_id": CLIENT_ID,
-                "client_secret": CLIENT_SECRET,
-                "code": code,
-                "code_verifier": verifier,
-            },
-            headers={"Accept": "application/json"},
-        )
-        data = response.json()
-        token = data.get("access_token")
-        if not token:
-            return JSONResponse(status_code=400, content={"error": "OAuth failed", "details": data})
+    session_id = secrets.token_urlsafe(32)
+    TOKEN_STORE[session_id] = {
+        "token": token,
+        "created_at": datetime.now(),
+    }
+    request.session["session_id"] = session_id
 
-        session_id = secrets.token_urlsafe(32)
-        TOKEN_STORE[session_id] = {
-            "token": token,
-            "created_at": datetime.now(),
+    user_resp = await client.get(
+        "https://api.github.com/user",
+        headers={"Authorization": f"token {token}"},
+    )
+    if user_resp.status_code == 200:
+        user_data = user_resp.json()
+        request.session["user"] = {
+            "login": user_data.get("login"),
+            "avatar_url": user_data.get("avatar_url"),
         }
-        request.session["session_id"] = session_id
 
-        user_resp = await client.get(
-            "https://api.github.com/user",
-            headers={"Authorization": f"token {token}"},
-        )
-        if user_resp.status_code == 200:
-            user_data = user_resp.json()
-            request.session["user"] = {
-                "login": user_data.get("login"),
-                "avatar_url": user_data.get("avatar_url"),
-            }
-
-        return RedirectResponse(url=FRONTEND_URL)
+    return RedirectResponse(url=FRONTEND_URL)
 
 @app.post("/auth/logout")
 async def logout(request: Request):

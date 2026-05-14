@@ -471,9 +471,15 @@ async function checkAuth() {
   elements.authStatusLoading.classList.remove("hidden");
   elements.authStatusSignedIn.classList.add("hidden");
   elements.authStatusSignedOut.classList.add("hidden");
+  elements.authStatusLoading.textContent = "Checking connection…";
+
+  const coldStartTimer = setTimeout(() => {
+    elements.authStatusLoading.textContent = "Waking up server... this may take a moment.";
+  }, 2000);
 
   try {
     const data = await apiRequest("/auth/status");
+    clearTimeout(coldStartTimer);
     state.isAuthenticated = data.authenticated;
     state.user = data.user || null;
     renderAuth();
@@ -482,6 +488,7 @@ async function checkAuth() {
       await fetchNotes();
     }
   } catch {
+    clearTimeout(coldStartTimer);
     elements.authStatusLoading.textContent = "Backend offline.";
   }
 }
