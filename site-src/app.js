@@ -21,8 +21,10 @@ let canvas, context, simulation;
 let hoveredNode = null;
 let redrawGraph = () => {};
 
-function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => HTML_ESCAPES[char]);
 }
 
 const mathExtension = {
@@ -30,7 +32,7 @@ const mathExtension = {
   level: 'inline',
   start: (src) => src.match(/\$/)?.index ?? -1,
   tokenizer(src) {
-    const block = /^\$\$(?:[\s\S]*?)\$\$/.exec(src);
+    const block = /^\$\$([\s\S]*?)\$\$/.exec(src);
     if (block) return { type: 'math', raw: block[0], text: block[1], displayMode: true };
     const inline = /^\$([^$\n]+?)\$/.exec(src);
     if (inline) return { type: 'math', raw: inline[0], text: inline[1], displayMode: false };
@@ -166,22 +168,19 @@ async function openNote(noteId, pushHash = true) {
   if (!node) return;
 
   setStatus(`Opening ${node.title}`);
-  let markdown;
-  try {
-    const response = await fetch(`content/${encodeURI(node.path)}`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    markdown = await response.text();
-  } catch (err) {
-    setStatus(`Failed to load note: ${err.message}`);
+  const response = await fetch(`content/${encodeURI(node.path)}`);
+  if (!response.ok) {
+    setStatus(`Failed to load note: HTTP ${response.status}`);
     return;
   }
+  const markdown = await response.text();
   const processed = preprocessObsidianMarkdown(markdown);
 
   noteTitle.textContent = node.title;
   noteContent.innerHTML = DOMPurify.sanitize(marked.parse(processed, { breaks: true, gfm: true }));
   
   if (window.MathJax) {
-    MathJax.typesetPromise([noteContent]).catch(err => console.log('MathJax error', err));
+    MathJax.typesetPromise([noteContent]).catch(() => {});
   }
 
   notePanel.classList.remove("hidden");
@@ -214,8 +213,7 @@ function closeNote(clearHash = true) {
   noteContent.innerHTML = "";
   state.activeNoteId = null;
   redrawGraph();
-  const noteCount = (state.data && state.data.nodes) ? state.data.nodes.length : 0;
-  setStatus(`${noteCount} notes`);
+  setStatus(`${state.data?.nodes.length ?? 0} notes`);
   if (clearHash) {
     history.replaceState(null, "", window.location.pathname);
   }
@@ -500,16 +498,12 @@ function syncHashToNote() {
 
 async function init() {
   setStatus("Loading graph...");
-  let data;
-  try {
-    const response = await fetch("./graph-data.json");
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    data = await response.json();
-  } catch (err) {
-    setStatus(`Failed to load graph: ${err.message}`);
+  const response = await fetch("./graph-data.json");
+  if (!response.ok) {
+    setStatus(`Failed to load graph: HTTP ${response.status}`);
     return;
   }
-  state.data = data;
+  state.data = await response.json();
   state.resolveAssetTarget = buildAssetResolver();
   state.resolveNoteTarget = buildInternalLinkResolver();
   state.nodeById = new Map(state.data.nodes.map((node) => {

@@ -28,7 +28,7 @@
     </header>
 
     <main class="form" id="vault-manager">
-      <div class="field" id="auth-section">
+      <section class="field" id="auth-section">
         <label>Account</label>
         <div class="auth-row">
           <div id="auth-status-loading" class="auth-status">Checking connection…</div>
@@ -44,12 +44,12 @@
             <p class="field-hint">Uses secure OAuth. No permanent tokens stored in browser.</p>
           </div>
         </div>
-      </div>
+      </section>
 
       <div class="field">
         <div class="label-row">
           <label for="note-folder">Folder Path</label>
-          <button type="button" id="private-mode-toggle" class="token-toggle" style="height: 24px; font-size: 0.75rem; padding: 0 8px;" aria-label="Toggle Private Capture Mode">Private: OFF</button>
+          <button type="button" id="private-mode-toggle" class="token-toggle private-toggle" aria-label="Toggle Private Capture Mode">Private: OFF</button>
         </div>
         <input type="text" id="note-folder" list="folder-suggestions" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
         <datalist id="folder-suggestions"></datalist>
@@ -57,7 +57,7 @@
         <p id="folder-hint" class="field-hint hidden"></p>
       </div>
 
-      <div class="field">
+      <section class="field" id="editor-section">
         <div class="label-row">
           <label>Editor</label>
           <span class="draft-tag" id="draft-tag">Draft saved</span>
@@ -91,7 +91,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div class="status" id="status-bar" role="status" aria-live="polite">
         <span class="status-dot"></span>
@@ -137,8 +137,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
   <script type="module" src="./manager.js"></script>
 
-  <input type="file" id="file-picker-input" accept="image/*" multiple style="display:none" />
-  <input type="file" id="camera-picker-input" accept="image/*" capture="environment" style="display:none" />
+  <input type="file" id="file-picker-input" class="hidden-file-input" accept="image/*" multiple />
+  <input type="file" id="camera-picker-input" class="hidden-file-input" accept="image/*" capture="environment" />
 </body>
 
 </html>
