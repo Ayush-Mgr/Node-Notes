@@ -1,5 +1,7 @@
 const CONFIG = {
-  apiBase: "http://localhost:8000",
+  apiBase: window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:8000"
+    : "https://node-notes-api-zaxk.onrender.com",
   vaultPrefix: "vault/",
   noteSuffix: ".md",
   deleteConfirmMs: 4000,
