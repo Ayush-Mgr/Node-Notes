@@ -108,7 +108,12 @@
       background: var(--surface-soft);
       backdrop-filter: blur(14px);
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04);
+      position: relative;
     }
+
+    #folder-section { z-index: 30; }
+    #editor-section { z-index: 20; }
+    #vault-section  { z-index: 10; }
 
     .input-wrapper {
       position: relative;
