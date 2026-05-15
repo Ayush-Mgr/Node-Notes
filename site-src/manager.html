@@ -52,8 +52,10 @@
           <label for="note-folder">Folder Path</label>
           <button type="button" id="private-mode-toggle" class="token-toggle private-toggle" aria-label="Toggle Private Capture Mode">Private: OFF</button>
         </div>
-        <input type="text" id="note-folder" list="folder-suggestions" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
-        <datalist id="folder-suggestions"></datalist>
+        <div class="input-wrapper">
+          <input type="text" id="note-folder" aria-controls="folder-menu" aria-expanded="false" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
+          <div id="folder-menu" class="folder-menu hidden" role="listbox"></div>
+        </div>
         <div id="folder-chips" class="chip-row"></div>
         <p id="folder-hint" class="field-hint hidden"></p>
       </div>

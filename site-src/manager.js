@@ -28,7 +28,7 @@ const elements = {
   logoutBtn: $("logout-btn"),
   folderInput: $("note-folder"),
   privateModeToggle: $("private-mode-toggle"),
-  folderDatalist: $("folder-suggestions"),
+  folderMenu: $("folder-menu"),
   folderHint: $("folder-hint"),
   folderChips: $("folder-chips"),
   titleInput: $("note-title"),
@@ -67,6 +67,9 @@ const state = {
   privateMode: false,
   folderHistory: [],
   folderIndex: [],
+  folderMenuOpen: false,
+  activeFolderIndex: -1,
+  filteredFolders: [],
   isAuthenticated: false,
   user: null,
 };
@@ -230,10 +233,82 @@ function extractAutoTitle(body) {
   return firstLine ? firstLine.trim().slice(0, 80).replace(/[\\/:*?"<>|]/g, "") : "";
 }
 
-function renderFolderSuggestions() {
-  elements.folderDatalist.innerHTML = state.folderIndex
-    .map((path) => `<option value="${escapeHtml(path)}"></option>`)
+function renderFolderMenu(query = "") {
+  if (state.privateMode) {
+    closeFolderMenu();
+    return;
+  }
+
+  const q = query.trim().toLowerCase();
+  let matches = state.folderIndex;
+
+  if (q) {
+    const startsWithMatches = [];
+    const includesMatches = [];
+    for (const folder of state.folderIndex) {
+      const fLower = folder.toLowerCase();
+      if (fLower.startsWith(q)) {
+        startsWithMatches.push(folder);
+      } else if (fLower.includes(q)) {
+        includesMatches.push(folder);
+      }
+    }
+    matches = [...startsWithMatches, ...includesMatches];
+  }
+
+  state.filteredFolders = matches.slice(0, 10);
+
+  if (state.filteredFolders.length === 0) {
+    closeFolderMenu();
+    return;
+  }
+
+  elements.folderMenu.innerHTML = state.filteredFolders
+    .map((folder, i) => `
+      <div class="folder-menu-item" 
+           role="option" 
+           id="folder-opt-${i}"
+           aria-selected="${i === state.activeFolderIndex}" 
+           data-index="${i}">
+        ${escapeHtml(folder)}
+      </div>
+    `)
     .join("");
+
+  elements.folderMenu.classList.remove("hidden");
+  elements.folderInput.setAttribute("aria-expanded", "true");
+  state.folderMenuOpen = true;
+
+  if (state.activeFolderIndex >= state.filteredFolders.length) {
+    state.activeFolderIndex = -1;
+  }
+
+  if (state.activeFolderIndex >= 0) {
+    const selectedEl = elements.folderMenu.querySelector(`[data-index="${state.activeFolderIndex}"]`);
+    if (selectedEl) {
+      selectedEl.scrollIntoView({ block: "nearest" });
+    }
+  }
+}
+
+function closeFolderMenu() {
+  state.folderMenuOpen = false;
+  state.activeFolderIndex = -1;
+  elements.folderMenu.classList.add("hidden");
+  elements.folderInput.setAttribute("aria-expanded", "false");
+}
+
+function selectFolderSuggestion(index) {
+  const folder = state.filteredFolders[index];
+  if (!folder) return;
+
+  elements.folderInput.value = folder;
+  closeFolderMenu();
+  
+  // Follow same path as manual typing
+  saveDraftSoon();
+  updateFolderHint();
+  elements.folderInput.focus();
 }
 
 function updateFolderIndex(tree) {
@@ -253,7 +328,7 @@ function updateFolderIndex(tree) {
   }
 
   state.folderIndex = [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a));
-  renderFolderSuggestions();
+  if (state.folderMenuOpen) renderFolderMenu(elements.folderInput.value);
 }
 
 function renderFolderChips() {
@@ -709,9 +784,7 @@ function togglePrivateMode() {
   elements.privateModeToggle.textContent = state.privateMode ? "Private: ON" : "Private: OFF";
   elements.privateModeToggle.classList.toggle("is-active", state.privateMode);
   if (state.privateMode) {
-    elements.folderInput.removeAttribute("list");
-  } else {
-    elements.folderInput.setAttribute("list", "folder-suggestions");
+    closeFolderMenu();
   }
   elements.folderChips.classList.toggle("hidden", state.privateMode);
   elements.folderHint.classList.toggle("hidden", state.privateMode);
@@ -728,6 +801,50 @@ function bindEvents() {
   elements.folderInput.addEventListener("input", () => {
     saveDraftSoon();
     updateFolderHint();
+    renderFolderMenu(elements.folderInput.value);
+  });
+
+  elements.folderInput.addEventListener("focus", () => {
+    if (state.folderIndex.length > 0) {
+      renderFolderMenu(elements.folderInput.value);
+    }
+  });
+
+  elements.folderInput.addEventListener("blur", () => {
+    // Small timeout to allow mousedown to trigger first
+    setTimeout(() => {
+      closeFolderMenu();
+    }, 200);
+  });
+
+  elements.folderInput.addEventListener("keydown", (e) => {
+    if (!state.folderMenuOpen) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      state.activeFolderIndex = (state.activeFolderIndex + 1) % state.filteredFolders.length;
+      renderFolderMenu(elements.folderInput.value);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      state.activeFolderIndex = (state.activeFolderIndex - 1 + state.filteredFolders.length) % state.filteredFolders.length;
+      renderFolderMenu(elements.folderInput.value);
+    } else if (e.key === "Enter") {
+      if (state.activeFolderIndex >= 0) {
+        e.preventDefault();
+        selectFolderSuggestion(state.activeFolderIndex);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      closeFolderMenu();
+    }
+  });
+
+  elements.folderMenu.addEventListener("mousedown", (e) => {
+    const item = e.target.closest(".folder-menu-item");
+    if (item) {
+      e.preventDefault(); // Prevent blur from firing before mousedown
+      selectFolderSuggestion(parseInt(item.dataset.index, 10));
+    }
   });
 
   elements.folderChips.addEventListener("click", (event) => {
