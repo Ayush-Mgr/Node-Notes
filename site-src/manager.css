@@ -772,7 +772,7 @@
       position: sticky;
       bottom: 16px;
       padding-bottom: var(--safe-bottom);
-      z-index: 10;
+      z-index: 2000;
     }
 
     .footer-actions {
