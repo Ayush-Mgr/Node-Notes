@@ -47,15 +47,15 @@
     }
 
     header {
-      padding: 48px 0 32px;
+      padding: 24px 0 16px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
     }
     
     .header-logo {
-      width: 72px;
-      height: 72px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
       opacity: 0.9;
     }
@@ -87,14 +87,14 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 32px;
-      padding: 24px 0;
+      gap: 24px;
+      padding: 12px 0;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .input-wrapper {
@@ -194,8 +194,8 @@
     .auth-row {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 12px 14px;
+      gap: 10px;
+      padding: 8px 12px;
       border: 1px solid var(--ink-ghost);
       border-radius: var(--radius);
       background: rgba(255, 255, 255, 0.7);
@@ -261,13 +261,16 @@
     }
 
     .token-toggle.danger {
-      color: var(--error);
-      border-color: rgba(186, 26, 26, 0.2);
+      color: var(--ink-light);
+      border-color: var(--ink-ghost);
+      background: transparent;
+      padding: 6px 12px;
     }
 
     .token-toggle.danger:hover {
       background: rgba(186, 26, 26, 0.05);
       border-color: var(--error);
+      color: var(--error);
     }
 
     .token-toggle.is-active {
@@ -346,6 +349,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 2px;
     }
 
     .chip-row {
@@ -560,6 +564,54 @@
       padding-bottom: 5px;
     }
 
+    .vault-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .vault-toggle {
+      background: transparent;
+      border: 1px solid var(--ink-ghost);
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .vault-toggle:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .chevron {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid var(--ink-mid);
+      border-bottom: 2px solid var(--ink-mid);
+      transform: rotate(45deg);
+      transition: transform 0.3s ease;
+      margin-top: -4px;
+    }
+
+    .is-collapsed .chevron {
+      transform: rotate(-135deg);
+      margin-top: 2px;
+    }
+
+    .vault-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .is-collapsed .vault-body {
+      display: none;
+    }
+
     .section-title {
       color: var(--ink);
       font-weight: 600;
@@ -581,11 +633,11 @@
     .vault-card {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       border: 1px solid var(--ink-ghost);
       background: rgba(255, 255, 255, 0.7);
       border-radius: 10px;
-      padding: 16px 18px;
+      padding: 12px 14px;
       transition: transform 0.6s ease;
     }
 
@@ -629,7 +681,7 @@
       flex-wrap: wrap;
       justify-content: flex-end;
       gap: 8px;
-      margin-top: 5px;
+      margin-top: 2px;
     }
 
     .action-btn {
@@ -825,8 +877,20 @@
       }
 
       .auth-status {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .user-info {
+        flex: 1;
+        min-width: 0; /* Allow truncation of children if needed */
+      }
+
+      .user-login {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }

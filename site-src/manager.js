@@ -14,6 +14,7 @@ const CONFIG = {
   draftFolderKey: "nn_draft_folder",
   folderHistoryKey: "nn_folder_history",
   lastFolderKey: "nn_last_folder",
+  vaultCollapsedKey: "nn_vault_collapsed",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -49,6 +50,9 @@ const elements = {
   previewBody: $("preview-body"),
   attachBtn: $("attach-btn"),
   cameraBtn: $("camera-btn"),
+  vaultSection: $("vault-section"),
+  vaultToggle: $("vault-toggle"),
+  vaultBody: $("vault-body"),
 };
 
 const state = {
@@ -70,6 +74,7 @@ const state = {
   folderMenuOpen: false,
   activeFolderIndex: -1,
   filteredFolders: [],
+  vaultCollapsed: false,
   isAuthenticated: false,
   user: null,
 };
@@ -791,6 +796,28 @@ function togglePrivateMode() {
   if (!state.privateMode) updateFolderHint();
 }
 
+function toggleVaultCollapse() {
+  state.vaultCollapsed = !state.vaultCollapsed;
+  applyVaultCollapse();
+  storage.setJson(CONFIG.vaultCollapsedKey, state.vaultCollapsed);
+  if (state.vaultCollapsed) {
+    clearDeleteConfirmation();
+    renderNoteList();
+  }
+}
+
+function applyVaultCollapse() {
+  const collapsed = state.vaultCollapsed;
+  elements.vaultSection.classList.toggle("is-collapsed", collapsed);
+  elements.vaultToggle.setAttribute("aria-expanded", !collapsed);
+}
+
+function restoreVaultState() {
+  state.vaultCollapsed = storage.getJson(CONFIG.vaultCollapsedKey, false);
+  applyVaultCollapse();
+}
+
+restoreVaultState();
 setupEditor(elements.bodyInput, () => state);
 
 function bindEvents() {
@@ -902,6 +929,7 @@ function bindEvents() {
   });
 
   elements.uploadBtn.addEventListener("click", handleSave);
+  elements.vaultToggle.addEventListener("click", toggleVaultCollapse);
   elements.attachBtn.addEventListener("click", () => triggerFilePicker(elements.bodyInput, () => state));
   elements.cameraBtn.addEventListener("click", () => triggerCameraCapture(elements.bodyInput, () => state));
 }

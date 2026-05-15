@@ -101,16 +101,23 @@
         <span id="status-text"></span>
       </div>
 
-      <section class="field vault-section" aria-labelledby="vault-notes-title">
+      <section class="field vault-section" id="vault-section" aria-labelledby="vault-notes-title">
         <div class="label-row">
-          <h2 class="section-title" id="vault-notes-title">Vault Notes</h2>
-          <span class="section-meta" id="note-count">Syncing</span>
+          <div class="vault-header-left">
+            <h2 class="section-title" id="vault-notes-title">Vault Notes</h2>
+            <span class="section-meta" id="note-count">Syncing</span>
+          </div>
+          <button type="button" id="vault-toggle" class="vault-toggle" aria-expanded="true" aria-controls="vault-body" aria-label="Toggle Vault Notes">
+            <span class="chevron"></span>
+          </button>
         </div>
-        <div class="field vault-search-field">
-          <input class="vault-search" type="text" id="note-search" placeholder="Search by path or filename…" />
-        </div>
-        <div class="vault-list" id="note-list">
-          <p class="list-state">Loading vault notes…</p>
+        <div id="vault-body" class="vault-body">
+          <div class="field vault-search-field">
+            <input class="vault-search" type="text" id="note-search" placeholder="Search by path or filename…" />
+          </div>
+          <div class="vault-list" id="note-list">
+            <p class="list-state">Loading vault notes…</p>
+          </div>
         </div>
       </section>
     </main>
