@@ -160,6 +160,7 @@
       padding: 12px 14px;
       transition: all 0.3s ease;
       -webkit-appearance: none;
+      appearance: none;
     }
 
     input[type="password"]:focus,
