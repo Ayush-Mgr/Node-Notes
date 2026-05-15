@@ -29,7 +29,7 @@
     </header>
 
     <main class="form" id="vault-manager">
-      <section class="field" id="auth-section">
+      <section class="field section-surface" id="auth-section">
         <label>Account</label>
         <div class="auth-row">
           <div id="auth-status-loading" class="auth-status">Checking connection…</div>
@@ -47,7 +47,7 @@
         </div>
       </section>
 
-      <div class="field">
+      <section class="field section-surface" id="folder-section">
         <div class="label-row">
           <label for="note-folder">Folder Path</label>
           <button type="button" id="private-mode-toggle" class="token-toggle private-toggle" aria-label="Toggle Private Capture Mode">Private: OFF</button>
@@ -58,9 +58,9 @@
         </div>
         <div id="folder-chips" class="chip-row"></div>
         <p id="folder-hint" class="field-hint hidden"></p>
-      </div>
+      </section>
 
-      <section class="field" id="editor-section">
+      <section class="field section-surface" id="editor-section">
         <div class="label-row">
           <label>Editor</label>
           <span class="draft-tag" id="draft-tag">Draft saved</span>
@@ -101,7 +101,7 @@
         <span id="status-text"></span>
       </div>
 
-      <section class="field vault-section" id="vault-section" aria-labelledby="vault-notes-title">
+      <section class="field section-surface vault-section" id="vault-section" aria-labelledby="vault-notes-title">
         <div class="label-row">
           <div class="vault-header-left">
             <h2 class="section-title" id="vault-notes-title">Vault Notes</h2>
