@@ -1,5 +1,5 @@
 import { insertTextAtCursor, replaceTextRange } from "./utils.js";
-import { putFile } from "../manager.js";
+import { registerPendingAsset } from "../manager.js";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
 const ALLOWED_MIMES = [
@@ -205,7 +205,7 @@ async function uploadFile(file, textarea, getState) {
     return;
   }
 
-  uploadQueue.push({ file, textarea, getState });
+  uploadQueue.push({ file, textarea });
   processQueue();
 }
 
@@ -213,41 +213,40 @@ async function processQueue() {
   if (uploadActive || uploadQueue.length === 0) return;
   uploadActive = true;
 
-  const { file, textarea, getState } = uploadQueue.shift();
-  const uploadId = `upload_${++uploadIdCounter}_${Date.now()}`;
-  const placeholder = `<!-- uploading:${uploadId} -->`;
+  const { file, textarea } = uploadQueue.shift();
+  const pendingId = `img_${++uploadIdCounter}_${Date.now().toString(36)}`;
+  const placeholder = `![[pending:${pendingId}]]`;
   insertTextAtCursor(textarea, placeholder);
 
   const attachBtn = document.getElementById("attach-btn");
   if (attachBtn) {
-    attachBtn.textContent = "⏳ Uploading…";
+    attachBtn.textContent = "⏳ Processing…";
     attachBtn.disabled = true;
   }
 
   try {
     const processed = await maybeCompress(file);
-    const content = await readFileAsUint8Array(processed);
+    const blobUrl = URL.createObjectURL(processed);
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const shortHash = Math.random().toString(36).substring(2, 6);
     const safeName = processed.name.replace(/[^a-zA-Z0-9.]/g, "_");
-    const fileName = `Pasted_image_${timestamp}_${safeName}`;
+    const fileName = `Pasted_image_${timestamp}_${shortHash}_${safeName}`;
 
     const folderInput = document.getElementById("note-folder");
     const folderVal = folderInput ? folderInput.value : "";
     const noteFolder = folderVal.trim().replace(/^\/+|\/+$/g, "");
     const assetFolder = noteFolder ? `Assets/${noteFolder}` : "Assets";
     const path = `vault/${assetFolder}/${fileName}`;
- 
-    await putFile(path, content, null, `Upload asset: ${fileName}`);
 
-    const wikilink = `![[${fileName}]]`;
-    const currentText = textarea.value;
-    const phIdx = currentText.indexOf(placeholder);
-    if (phIdx >= 0) {
-      replaceTextRange(textarea, phIdx, phIdx + placeholder.length, wikilink);
-    } else {
-      insertTextAtCursor(textarea, wikilink);
-    }
+    registerPendingAsset({
+      pendingId,
+      finalName: fileName,
+      path,
+      file: processed,
+      blobUrl,
+      status: "pending"
+    });
 
     textarea.dispatchEvent(new Event("input", { bubbles: true }));
     updateAttachCount(textarea);
@@ -259,11 +258,11 @@ async function processQueue() {
       replaceTextRange(textarea, phIdx, phIdx + placeholder.length, errorMark);
     }
     textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    alert("Upload failed: " + err.message);
+    alert("Processing failed: " + err.message);
   } finally {
     if (attachBtn) {
       const remaining = uploadQueue.length;
-      attachBtn.textContent = remaining > 0 ? `⏳ Uploading (${remaining})…` : "📎 Attach Image";
+      attachBtn.textContent = remaining > 0 ? `⏳ Processing (${remaining})…` : "📎 Attach Image";
       attachBtn.disabled = remaining > 0;
     }
     uploadActive = false;

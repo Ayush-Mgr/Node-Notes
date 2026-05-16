@@ -77,6 +77,7 @@ const state = {
   vaultCollapsed: false,
   isAuthenticated: false,
   user: null,
+  pendingAssets: new Map(),
 };
 
 const storage = {
@@ -137,6 +138,19 @@ function typesetMath(target) {
   }
 }
 
+function preprocessMarkdown(markdown) {
+  return markdown.replace(/!\[\[([^\]]+)\]\]/g, (match, inner) => {
+    if (inner.startsWith("pending:")) {
+      const id = inner.replace("pending:", "");
+      const asset = state.pendingAssets.get(id);
+      if (asset && asset.blobUrl) {
+        return `![${asset.finalName}](${asset.blobUrl})`;
+      }
+    }
+    return match;
+  });
+}
+
 function renderPreview() {
   const title = elements.titleInput.value.trim();
   const body = elements.bodyInput.value;
@@ -149,7 +163,8 @@ function renderPreview() {
     return;
   }
 
-  elements.previewBody.innerHTML = DOMPurify.sanitize(marked.parse(body, { breaks: true, gfm: true }));
+  const processedBody = preprocessMarkdown(body);
+  elements.previewBody.innerHTML = DOMPurify.sanitize(marked.parse(processedBody, { breaks: true, gfm: true }));
   typesetMath(elements.previewBody);
 }
 
@@ -236,6 +251,47 @@ function extractAutoTitle(body) {
 
   const firstLine = body.split("\n").find((line) => line.trim());
   return firstLine ? firstLine.trim().slice(0, 80).replace(/[\\/:*?"<>|]/g, "") : "";
+}
+
+export function registerPendingAsset(asset) {
+  state.pendingAssets.set(asset.pendingId, asset);
+  renderPendingGallery();
+  renderPreview();
+}
+
+function renderPendingGallery() {
+  const gallery = document.getElementById("pending-gallery");
+  if (!gallery) return;
+
+  if (state.pendingAssets.size === 0) {
+    gallery.classList.add("hidden");
+    gallery.innerHTML = "";
+    return;
+  }
+
+  gallery.classList.remove("hidden");
+  gallery.innerHTML = Array.from(state.pendingAssets.values()).map(asset => `
+    <div class="pending-thumbnail ${asset.status}" title="${asset.finalName}" data-id="${asset.pendingId}">
+      <img src="${asset.blobUrl}" alt="${asset.finalName}" />
+      ${asset.status === "uploading" ? '<div class="spinner"></div>' : ''}
+      ${asset.status === "failed" ? '<div class="error-icon">!</div>' : ''}
+    </div>
+  `).join("");
+
+  gallery.querySelectorAll(".pending-thumbnail").forEach(thumb => {
+    thumb.addEventListener("click", () => {
+      const id = thumb.dataset.id;
+      const text = elements.bodyInput.value;
+      const idx = text.indexOf(`![[pending:${id}]]`);
+      if (idx >= 0) {
+        elements.bodyInput.focus();
+        elements.bodyInput.setSelectionRange(idx, idx + `![[pending:${id}]]`.length);
+        // rudimentary scroll, works well enough for textareas
+        elements.bodyInput.blur();
+        elements.bodyInput.focus();
+      }
+    });
+  });
 }
 
 function renderFolderMenu(query = "") {
@@ -733,12 +789,13 @@ async function handleSave() {
     setStatus("error", "Please sign in to save notes.");
     return;
   }
+  if (state.isMutating) return;
 
   const title = elements.titleInput.value.trim();
-  const body = elements.bodyInput.value;
+  let bodySnapshot = elements.bodyInput.value;
   const folder = normalizeFolderPath(elements.folderInput.value) || (state.mode === "create" ? defaultFolder() : "");
 
-  if (!body.trim()) {
+  if (!bodySnapshot.trim()) {
     setStatus("error", "Note is empty.");
     elements.bodyInput.focus();
     return;
@@ -746,6 +803,47 @@ async function handleSave() {
 
   clearDeleteConfirmation();
   setMutationState(true);
+
+  // 1. Process pending assets
+  const pendingIdsToUpload = [];
+  const matches = bodySnapshot.matchAll(/!\[\[pending:([^\]]+)\]\]/g);
+  for (const match of matches) {
+    const id = match[1];
+    if (state.pendingAssets.has(id)) {
+      pendingIdsToUpload.push(id);
+    }
+  }
+
+  if (pendingIdsToUpload.length > 0) {
+    setStatus("uploading", `Uploading ${pendingIdsToUpload.length} asset(s)…`);
+    try {
+      for (const id of pendingIdsToUpload) {
+        const asset = state.pendingAssets.get(id);
+        if (asset.status === "uploaded") continue;
+        
+        asset.status = "uploading";
+        renderPendingGallery();
+        
+        const content = new Uint8Array(await asset.file.arrayBuffer());
+        const response = await putFile(asset.path, content, null, `Upload asset: ${asset.finalName}`);
+        
+        asset.status = "uploaded";
+        asset.sha = response.content?.sha;
+        renderPendingGallery();
+      }
+    } catch (err) {
+      setStatus("error", "Asset upload failed. Please check gallery and try again.");
+      setMutationState(false);
+      return; // Abort save
+    }
+  }
+
+  // 2. Replace pending placeholders with final names in the snapshot
+  for (const id of pendingIdsToUpload) {
+    const asset = state.pendingAssets.get(id);
+    bodySnapshot = bodySnapshot.replace(new RegExp(`!\\[\\[pending:${id}\\]\\]`, 'g'), `![[${asset.finalName}]]`);
+  }
+
   setStatus("uploading", state.mode === "edit" ? "Updating vault note…" : "Saving to vault…");
 
   try {
@@ -757,13 +855,27 @@ async function handleSave() {
       ? `vault: update ${path.split("/").pop()}`
       : `vault: add ${path.split("/").pop()}`;
 
-    await putFile(path, buildMarkdown(title, body, fallbackTitle), state.editingSha, message);
+    await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), state.editingSha, message);
     await fetchNotes();
 
     if (!state.privateMode) {
       saveFolderHistory(folder);
       sessionStorage.setItem(CONFIG.lastFolderKey, folder);
     }
+
+    // 3. Cleanup state
+    for (const id of pendingIdsToUpload) {
+      const asset = state.pendingAssets.get(id);
+      URL.revokeObjectURL(asset.blobUrl);
+      state.pendingAssets.delete(id);
+    }
+    
+    // Cleanup any orphaned assets that were deleted from text before saving
+    for (const [id, asset] of state.pendingAssets.entries()) {
+      URL.revokeObjectURL(asset.blobUrl);
+      state.pendingAssets.delete(id);
+    }
+    renderPendingGallery();
 
     if (state.mode === "edit") {
       exitEditMode({ restoreDraft: true });
@@ -953,6 +1065,13 @@ const mathExtension = {
 if (typeof marked !== "undefined") {
   marked.use({ extensions: [mathExtension] });
 }
+
+window.addEventListener("beforeunload", (e) => {
+  if (state.pendingAssets.size > 0) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 
 function boot() {
   state.folderHistory = storage.getJson(CONFIG.folderHistoryKey, []);
