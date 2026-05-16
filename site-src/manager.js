@@ -1,5 +1,6 @@
 import { setupEditor } from "./editor/editor.js";
-import { triggerFilePicker, triggerCameraCapture } from "./editor/assets.js";
+import { insertTextAtCursor, replaceTextRange } from "./editor/utils.js";
+import { compressImage, generateAssetMeta, validateImageFile } from "./editor/assets.js";
 
 const CONFIG = {
   apiBase:
@@ -15,6 +16,10 @@ const CONFIG = {
   folderHistoryKey: "nn_folder_history",
   lastFolderKey: "nn_last_folder",
   vaultCollapsedKey: "nn_vault_collapsed",
+};
+
+const SANITIZE_CONFIG = {
+  ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|blob|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 };
 
 const $ = (id) => document.getElementById(id);
@@ -56,28 +61,38 @@ const elements = {
 };
 
 const state = {
-  mode: "create",
-  editingPath: null,
-  editingSha: null,
-  draftSnapshot: null,
-  notes: [],
-  searchQuery: "",
-  listStatus: "idle",
-  listError: "",
-  isMutating: false,
-  confirmDeletePath: null,
-  deleteConfirmTimer: null,
-  titleEdited: false,
-  privateMode: false,
-  folderHistory: [],
-  folderIndex: [],
-  folderMenuOpen: false,
-  activeFolderIndex: -1,
-  filteredFolders: [],
-  vaultCollapsed: false,
-  isAuthenticated: false,
-  user: null,
-  pendingAssets: new Map(),
+  editor: {
+    mode: "create",
+    editingPath: null,
+    editingSha: null,
+    draftSnapshot: null,
+    titleEdited: false,
+    searchQuery: "",
+  },
+  ui: {
+    listStatus: "idle",
+    listError: "",
+    isMutating: false,
+    confirmDeletePath: null,
+    deleteConfirmTimer: null,
+    folderMenuOpen: false,
+    activeFolderIndex: -1,
+    vaultCollapsed: false,
+    privateMode: false,
+  },
+  vault: {
+    notes: [],
+    folderHistory: [],
+    folderIndex: [],
+    filteredFolders: [],
+  },
+  assets: {
+    pending: new Map(),
+  },
+  auth: {
+    isAuthenticated: false,
+    user: null,
+  }
 };
 
 const storage = {
@@ -138,16 +153,32 @@ function typesetMath(target) {
   }
 }
 
+function parsePendingReferences(markdown) {
+  const matches = [];
+  const regex = /!\[\[pending:([^\]]+)\]\]/g;
+  let match;
+  while ((match = regex.exec(markdown)) !== null) {
+    matches.push({
+      id: match[1],
+      match: match[0],
+      start: match.index,
+      end: match.index + match[0].length
+    });
+  }
+  return matches;
+}
+
 function preprocessMarkdown(markdown) {
   return markdown.replace(/!\[\[([^\]]+)\]\]/g, (match, inner) => {
     if (inner.startsWith("pending:")) {
       const id = inner.replace("pending:", "");
-      const asset = state.pendingAssets.get(id);
+      const asset = state.assets.pending.get(id);
       if (asset && asset.blobUrl) {
         return `![${asset.finalName}](${asset.blobUrl})`;
       }
     }
-    return match;
+    // Better fallback for standard wikilinks in preview
+    return `![${inner}](vault/Assets/${inner})`;
   });
 }
 
@@ -164,7 +195,10 @@ function renderPreview() {
   }
 
   const processedBody = preprocessMarkdown(body);
-  elements.previewBody.innerHTML = DOMPurify.sanitize(marked.parse(processedBody, { breaks: true, gfm: true }));
+  const purifyConfig = {
+    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|blob|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+  };
+  elements.previewBody.innerHTML = DOMPurify.sanitize(marked.parse(processedBody, { breaks: true, gfm: true }), purifyConfig);
   typesetMath(elements.previewBody);
 }
 
@@ -253,60 +287,116 @@ function extractAutoTitle(body) {
   return firstLine ? firstLine.trim().slice(0, 80).replace(/[\\/:*?"<>|]/g, "") : "";
 }
 
-export function registerPendingAsset(asset) {
-  state.pendingAssets.set(asset.pendingId, asset);
-  renderPendingGallery();
-  renderPreview();
+export async function createPendingAsset(file) {
+  const attachBtn = document.getElementById("attach-btn");
+  if (attachBtn) {
+    attachBtn.textContent = "⏳ Processing…";
+    attachBtn.disabled = true;
+  }
+
+  try {
+    const error = validateImageFile(file);
+    if (error) {
+      alert(error);
+      return;
+    }
+
+    if (!state.auth.isAuthenticated) {
+      alert("Please sign in with GitHub to upload images.");
+      return;
+    }
+
+    const processed = await compressImage(file);
+    const blobUrl = URL.createObjectURL(processed);
+    
+    const folderInput = document.getElementById("note-folder");
+    const folderVal = folderInput ? folderInput.value : "";
+    const { fileName, path } = generateAssetMeta(processed, folderVal);
+
+    const pendingId = `img_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
+    const placeholder = `![[pending:${pendingId}]]`;
+    insertTextAtCursor(elements.bodyInput, placeholder);
+
+    const asset = {
+      pendingId,
+      finalName: fileName,
+      path,
+      file: processed,
+      blobUrl,
+      status: "pending"
+    };
+
+    state.assets.pending.set(pendingId, asset);
+    
+    elements.bodyInput.dispatchEvent(new Event("input", { bubbles: true }));
+    renderPendingAssets();
+  } catch (err) {
+    alert("Processing failed: " + err.message);
+  } finally {
+    if (attachBtn) {
+      attachBtn.textContent = "📎 Attach Image";
+      attachBtn.disabled = false;
+    }
+  }
 }
 
-function renderPendingGallery() {
+export function removePendingAsset(id) {
+  const asset = state.assets.pending.get(id);
+  if (!asset) return;
+
+  // Cleanup memory
+  URL.revokeObjectURL(asset.blobUrl);
+  state.assets.pending.delete(id);
+
+  // Update markdown
+  elements.bodyInput.value = elements.bodyInput.value.replace(new RegExp(`!\\[\\[pending:${id}\\]\\]\\n?`, 'g'), '');
+  
+  // Update UI
+  renderPendingAssets();
+  renderPreview();
+  saveDraftSoon();
+  
+  const count = (elements.bodyInput.value.match(/!\[\[.*?\]\]/g) || []).length;
+  const badge = document.getElementById("attach-count");
+  if (badge) {
+    badge.textContent = count > 0 ? `${count} image${count > 1 ? "s" : ""}` : "";
+  }
+}
+
+function renderPendingAssets() {
   const gallery = document.getElementById("pending-gallery");
   if (!gallery) return;
 
-  if (state.pendingAssets.size === 0) {
+  if (state.assets.pending.size === 0) {
     gallery.classList.add("hidden");
     gallery.innerHTML = "";
     return;
   }
 
   gallery.classList.remove("hidden");
-  gallery.innerHTML = Array.from(state.pendingAssets.values()).map(asset => `
-    <div class="pending-thumbnail ${asset.status}" title="${asset.finalName}" data-id="${asset.pendingId}">
+  gallery.innerHTML = Array.from(state.assets.pending.values()).map(asset => `
+    <div class="pending-thumbnail is-${asset.status}" title="${asset.finalName}" data-id="${asset.pendingId}">
       <img src="${asset.blobUrl}" alt="${asset.finalName}" />
+      <button type="button" class="remove-asset-btn" data-id="${asset.pendingId}" title="Remove image">×</button>
       ${asset.status === "uploading" ? '<div class="spinner"></div>' : ''}
       ${asset.status === "failed" ? '<div class="error-icon">!</div>' : ''}
     </div>
   `).join("");
-
-  gallery.querySelectorAll(".pending-thumbnail").forEach(thumb => {
-    thumb.addEventListener("click", () => {
-      const id = thumb.dataset.id;
-      const text = elements.bodyInput.value;
-      const idx = text.indexOf(`![[pending:${id}]]`);
-      if (idx >= 0) {
-        elements.bodyInput.focus();
-        elements.bodyInput.setSelectionRange(idx, idx + `![[pending:${id}]]`.length);
-        // rudimentary scroll, works well enough for textareas
-        elements.bodyInput.blur();
-        elements.bodyInput.focus();
-      }
-    });
-  });
 }
 
 function renderFolderMenu(query = "") {
-  if (state.privateMode) {
+  if (state.ui.privateMode) {
     closeFolderMenu();
     return;
   }
 
   const q = query.trim().toLowerCase();
-  let matches = state.folderIndex;
+  let matches = state.vault.folderIndex;
 
   if (q) {
     const startsWithMatches = [];
     const includesMatches = [];
-    for (const folder of state.folderIndex) {
+    for (const folder of state.vault.folderIndex) {
       const fLower = folder.toLowerCase();
       if (fLower.startsWith(q)) {
         startsWithMatches.push(folder);
@@ -317,19 +407,19 @@ function renderFolderMenu(query = "") {
     matches = [...startsWithMatches, ...includesMatches];
   }
 
-  state.filteredFolders = matches.slice(0, 10);
+  state.vault.filteredFolders = matches.slice(0, 10);
 
-  if (state.filteredFolders.length === 0) {
+  if (state.vault.filteredFolders.length === 0) {
     closeFolderMenu();
     return;
   }
 
-  elements.folderMenu.innerHTML = state.filteredFolders
+  elements.folderMenu.innerHTML = state.vault.filteredFolders
     .map((folder, i) => `
       <div class="folder-menu-item" 
            role="option" 
            id="folder-opt-${i}"
-           aria-selected="${i === state.activeFolderIndex}" 
+           aria-selected="${i === state.ui.activeFolderIndex}" 
            data-index="${i}">
         ${escapeHtml(folder)}
       </div>
@@ -338,14 +428,14 @@ function renderFolderMenu(query = "") {
 
   elements.folderMenu.classList.remove("hidden");
   elements.folderInput.setAttribute("aria-expanded", "true");
-  state.folderMenuOpen = true;
+  state.ui.folderMenuOpen = true;
 
-  if (state.activeFolderIndex >= state.filteredFolders.length) {
-    state.activeFolderIndex = -1;
+  if (state.ui.activeFolderIndex >= state.vault.filteredFolders.length) {
+    state.ui.activeFolderIndex = -1;
   }
 
-  if (state.activeFolderIndex >= 0) {
-    const selectedEl = elements.folderMenu.querySelector(`[data-index="${state.activeFolderIndex}"]`);
+  if (state.ui.activeFolderIndex >= 0) {
+    const selectedEl = elements.folderMenu.querySelector(`[data-index="${state.ui.activeFolderIndex}"]`);
     if (selectedEl) {
       selectedEl.scrollIntoView({ block: "nearest" });
     }
@@ -353,14 +443,14 @@ function renderFolderMenu(query = "") {
 }
 
 function closeFolderMenu() {
-  state.folderMenuOpen = false;
-  state.activeFolderIndex = -1;
+  state.ui.folderMenuOpen = false;
+  state.ui.activeFolderIndex = -1;
   elements.folderMenu.classList.add("hidden");
   elements.folderInput.setAttribute("aria-expanded", "false");
 }
 
 function selectFolderSuggestion(index) {
-  const folder = state.filteredFolders[index];
+  const folder = state.vault.filteredFolders[index];
   if (!folder) return;
 
   elements.folderInput.value = folder;
@@ -388,19 +478,19 @@ function updateFolderIndex(tree) {
     }
   }
 
-  state.folderIndex = [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a));
-  if (state.folderMenuOpen) renderFolderMenu(elements.folderInput.value);
+  state.vault.folderIndex = [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a));
+  if (state.ui.folderMenuOpen) renderFolderMenu(elements.folderInput.value);
 }
 
 function renderFolderChips() {
-  elements.folderChips.innerHTML = state.folderHistory
+  elements.folderChips.innerHTML = state.vault.folderHistory
     .map((folder) => `<button type="button" class="folder-chip" data-folder="${escapeHtml(folder)}">${escapeHtml(folder)}</button>`)
     .join("");
 }
 
 function updateFolderHint() {
   const folder = normalizeFolderPath(elements.folderInput.value);
-  if (!folder || state.folderIndex.includes(folder) || state.privateMode) {
+  if (!folder || state.vault.folderIndex.includes(folder) || state.ui.privateMode) {
     elements.folderHint.classList.add("hidden");
     return;
   }
@@ -410,9 +500,9 @@ function updateFolderHint() {
 }
 
 function saveFolderHistory(folder) {
-  if (!folder || state.privateMode) return;
-  state.folderHistory = [folder, ...state.folderHistory.filter((item) => item !== folder)].slice(0, 5);
-  storage.setJson(CONFIG.folderHistoryKey, state.folderHistory);
+  if (!folder || state.ui.privateMode) return;
+  state.vault.folderHistory = [folder, ...state.vault.folderHistory.filter((item) => item !== folder)].slice(0, 5);
+  storage.setJson(CONFIG.folderHistoryKey, state.vault.folderHistory);
   renderFolderChips();
 }
 
@@ -424,7 +514,7 @@ function restoreSavedDraft() {
   if (body) elements.bodyInput.value = body;
   if (title) {
     elements.titleInput.value = title;
-    state.titleEdited = true;
+    state.editor.titleEdited = true;
   }
   if (folder) elements.folderInput.value = folder;
 
@@ -438,7 +528,7 @@ function saveDraftSoon() {
     storage.set(CONFIG.draftTitleKey, elements.titleInput.value);
 
     const folder = elements.folderInput.value;
-    if (folder && !state.privateMode) {
+    if (folder && !state.ui.privateMode) {
       storage.set(CONFIG.draftFolderKey, folder);
     } else {
       storage.remove(CONFIG.draftFolderKey);
@@ -459,53 +549,53 @@ function clearSavedDraft() {
 }
 
 function clearDeleteConfirmation() {
-  state.confirmDeletePath = null;
-  clearTimeout(state.deleteConfirmTimer);
-  state.deleteConfirmTimer = null;
+  state.ui.confirmDeletePath = null;
+  clearTimeout(state.ui.deleteConfirmTimer);
+  state.ui.deleteConfirmTimer = null;
 }
 
 function armDeleteConfirmation(path) {
   clearDeleteConfirmation();
-  state.confirmDeletePath = path;
-  state.deleteConfirmTimer = setTimeout(() => {
+  state.ui.confirmDeletePath = path;
+  state.ui.deleteConfirmTimer = setTimeout(() => {
     clearDeleteConfirmation();
     renderNoteList();
   }, CONFIG.deleteConfirmMs);
 }
 
 function setMutationState(isMutating) {
-  state.isMutating = isMutating;
+  state.ui.isMutating = isMutating;
   elements.uploadBtn.disabled = isMutating;
   elements.cancelEditBtn.disabled = isMutating;
   renderNoteList();
 }
 
 function filteredNotes() {
-  const query = state.searchQuery.trim().toLowerCase();
+  const query = state.editor.searchQuery.trim().toLowerCase();
   return query
-    ? state.notes.filter((note) => note.displayPath.toLowerCase().includes(query))
-    : state.notes;
+    ? state.vault.notes.filter((note) => note.displayPath.toLowerCase().includes(query))
+    : state.vault.notes;
 }
 
 function renderNoteList() {
-  if (state.listStatus === "loading") {
+  if (state.ui.listStatus === "loading") {
     elements.noteList.innerHTML = '<p class="list-state">Scanning vault notes…</p>';
     elements.noteCount.textContent = "Syncing";
     return;
   }
 
-  if (state.listStatus === "error") {
-    elements.noteList.innerHTML = `<p class="list-state">${escapeHtml(state.listError || "Unable to load notes.")}</p>`;
+  if (state.ui.listStatus === "error") {
+    elements.noteList.innerHTML = `<p class="list-state">${escapeHtml(state.ui.listError || "Unable to load notes.")}</p>`;
     elements.noteCount.textContent = "Error";
     return;
   }
 
   const notes = filteredNotes();
   if (!notes.length) {
-    const message = !state.isAuthenticated
+    const message = !state.auth.isAuthenticated
       ? "Please sign in with GitHub to manage vault notes."
-      : state.searchQuery
-        ? `No matches for "${escapeHtml(state.searchQuery)}".`
+      : state.editor.searchQuery
+        ? `No matches for "${escapeHtml(state.editor.searchQuery)}".`
         : "No notes found in vault.";
     elements.noteList.innerHTML = `<p class="list-state">${message}</p>`;
     elements.noteCount.textContent = "0 files";
@@ -514,7 +604,7 @@ function renderNoteList() {
 
   elements.noteCount.textContent = `${notes.length} files`;
   elements.noteList.innerHTML = notes.map((note) => {
-    const confirming = state.confirmDeletePath === note.path;
+    const confirming = state.ui.confirmDeletePath === note.path;
     return `
       <article class="vault-card">
         <div class="vault-card__top">
@@ -523,8 +613,8 @@ function renderNoteList() {
           </div>
         </div>
         <div class="vault-actions">
-          <button class="action-btn" type="button" data-action="edit" data-path="${escapeHtml(note.path)}" ${state.isMutating || !state.isAuthenticated ? "disabled" : ""}>Edit</button>
-          <button class="action-btn danger ${confirming ? "active-danger" : ""}" type="button" data-action="delete" data-path="${escapeHtml(note.path)}" data-sha="${escapeHtml(note.sha || "")}" ${state.isMutating || !state.isAuthenticated ? "disabled" : ""}>${confirming ? "Confirm Delete" : "Delete"}</button>
+          <button class="action-btn" type="button" data-action="edit" data-path="${escapeHtml(note.path)}" ${state.ui.isMutating || !state.auth.isAuthenticated ? "disabled" : ""}>Edit</button>
+          <button class="action-btn danger ${confirming ? "active-danger" : ""}" type="button" data-action="delete" data-path="${escapeHtml(note.path)}" data-sha="${escapeHtml(note.sha || "")}" ${state.ui.isMutating || !state.auth.isAuthenticated ? "disabled" : ""}>${confirming ? "Confirm Delete" : "Delete"}</button>
         </div>
       </article>
     `;
@@ -532,28 +622,28 @@ function renderNoteList() {
 }
 
 function updateModeUi() {
-  const editing = state.mode === "edit";
+  const editing = state.editor.mode === "edit";
   elements.uploadBtn.textContent = editing ? "Update Note" : "Save to Vault";
   elements.cancelEditBtn.classList.toggle("hidden", !editing);
   elements.folderInput.disabled = editing;
 }
 
 function restoreDraftSnapshot() {
-  if (!state.draftSnapshot) return;
-  elements.titleInput.value = state.draftSnapshot.title;
-  elements.bodyInput.value = state.draftSnapshot.body;
-  elements.folderInput.value = state.draftSnapshot.folder;
-  state.titleEdited = Boolean(state.draftSnapshot.title);
-  state.draftSnapshot = null;
+  if (!state.editor.draftSnapshot) return;
+  elements.titleInput.value = state.editor.draftSnapshot.title;
+  elements.bodyInput.value = state.editor.draftSnapshot.body;
+  elements.folderInput.value = state.editor.draftSnapshot.folder;
+  state.editor.titleEdited = Boolean(state.editor.draftSnapshot.title);
+  state.editor.draftSnapshot = null;
   saveDraftSoon();
   renderPreview();
 }
 
 function enterCreateMode() {
-  state.mode = "create";
-  state.editingPath = null;
-  state.editingSha = null;
-  state.titleEdited = Boolean(elements.titleInput.value.trim());
+  state.editor.mode = "create";
+  state.editor.editingPath = null;
+  state.editor.editingSha = null;
+  state.editor.titleEdited = Boolean(elements.titleInput.value.trim());
 
   if (!elements.folderInput.value) {
     elements.folderInput.value = sessionStorage.getItem(CONFIG.lastFolderKey) || "";
@@ -568,7 +658,7 @@ function exitEditMode({ restoreDraft = true } = {}) {
   if (restoreDraft) {
     restoreDraftSnapshot();
   } else {
-    state.draftSnapshot = null;
+    state.editor.draftSnapshot = null;
   }
 }
 
@@ -579,7 +669,7 @@ async function apiRequest(endpoint, options = {}) {
   });
 
   if (response.status === 401) {
-    state.isAuthenticated = false;
+    state.auth.isAuthenticated = false;
     renderAuth();
     throw new Error("Unauthorized. Please sign in again.");
   }
@@ -594,12 +684,12 @@ async function apiRequest(endpoint, options = {}) {
 
 function renderAuth() {
   elements.authStatusLoading.classList.add("hidden");
-  elements.authStatusSignedIn.classList.toggle("hidden", !state.isAuthenticated);
-  elements.authStatusSignedOut.classList.toggle("hidden", state.isAuthenticated);
+  elements.authStatusSignedIn.classList.toggle("hidden", !state.auth.isAuthenticated);
+  elements.authStatusSignedOut.classList.toggle("hidden", state.auth.isAuthenticated);
 
-  if (state.isAuthenticated && state.user) {
-    elements.userLogin.textContent = state.user.login;
-    elements.userAvatar.src = state.user.avatar_url;
+  if (state.auth.isAuthenticated && state.auth.user) {
+    elements.userLogin.textContent = state.auth.user.login;
+    elements.userAvatar.src = state.auth.user.avatar_url;
   }
 }
 
@@ -616,11 +706,11 @@ async function checkAuth() {
   try {
     const data = await apiRequest("/auth/status");
     clearTimeout(coldStartTimer);
-    state.isAuthenticated = data.authenticated;
-    state.user = data.user || null;
+    state.auth.isAuthenticated = data.authenticated;
+    state.auth.user = data.user || null;
     renderAuth();
 
-    if (state.isAuthenticated) {
+    if (state.auth.isAuthenticated) {
       await fetchNotes();
     }
   } catch {
@@ -666,10 +756,10 @@ async function deleteFile(path, sha, message) {
 }
 
 async function fetchNotes() {
-  if (!state.isAuthenticated) return;
+  if (!state.auth.isAuthenticated) return;
 
-  state.listStatus = "loading";
-  state.listError = "";
+  state.ui.listStatus = "loading";
+  state.ui.listError = "";
   clearDeleteConfirmation();
   renderNoteList();
 
@@ -677,7 +767,7 @@ async function fetchNotes() {
     const data = await apiRequest("/api/vault/notes");
     const tree = data.tree || [];
     updateFolderIndex(tree);
-    state.notes = tree
+    state.vault.notes = tree
       .filter((entry) => entry.type === "blob" && isVaultPathSafe(entry.path))
       .sort((a, b) => b.path.localeCompare(a.path))
       .map((entry) => ({
@@ -685,18 +775,18 @@ async function fetchNotes() {
         displayPath: entry.path.replace(/^vault\//, ""),
         sha: entry.sha || null,
       }));
-    state.listStatus = "ready";
+    state.ui.listStatus = "ready";
   } catch (error) {
-    state.listStatus = "error";
-    state.listError = error.message || "Unable to load notes.";
+    state.ui.listStatus = "error";
+    state.ui.listError = error.message || "Unable to load notes.";
   }
 
   renderNoteList();
 }
 
 async function startEditing(path) {
-  if (state.isMutating || !state.isAuthenticated) {
-    if (!state.isAuthenticated) setStatus("error", "Please sign in to edit notes.");
+  if (state.ui.isMutating || !state.auth.isAuthenticated) {
+    if (!state.auth.isAuthenticated) setStatus("error", "Please sign in to edit notes.");
     return;
   }
 
@@ -705,8 +795,8 @@ async function startEditing(path) {
   setStatus("uploading", "Loading note…");
 
   try {
-    if (!state.draftSnapshot) {
-      state.draftSnapshot = {
+    if (!state.editor.draftSnapshot) {
+      state.editor.draftSnapshot = {
         title: elements.titleInput.value,
         body: elements.bodyInput.value,
         folder: elements.folderInput.value,
@@ -723,28 +813,28 @@ async function startEditing(path) {
     elements.titleInput.value = title;
     elements.bodyInput.value = body;
     elements.folderInput.value = folder;
-    state.mode = "edit";
-    state.editingPath = path;
-    state.editingSha = data.sha || null;
-    state.titleEdited = true;
+    state.editor.mode = "edit";
+    state.editor.editingPath = path;
+    state.editor.editingSha = data.sha || null;
+    state.editor.titleEdited = true;
     updateModeUi();
     renderPreview();
     setStatus("success", "Editing vault note.");
   } catch (error) {
     setStatus("error", error.message || "Unable to load note.");
-    if (state.mode !== "edit") state.draftSnapshot = null;
+    if (state.editor.mode !== "edit") state.editor.draftSnapshot = null;
   } finally {
     setMutationState(false);
   }
 }
 
 async function handleDelete(path, shaHint) {
-  if (!state.isAuthenticated) {
+  if (!state.auth.isAuthenticated) {
     setStatus("error", "Please sign in to delete notes.");
     return;
   }
 
-  if (state.confirmDeletePath !== path) {
+  if (state.ui.confirmDeletePath !== path) {
     armDeleteConfirmation(path);
     renderNoteList();
     setStatus("error", "Tap delete again to confirm.");
@@ -756,10 +846,10 @@ async function handleDelete(path, shaHint) {
   setStatus("uploading", "Deleting note…");
 
   try {
-    const sha = shaHint || state.notes.find((note) => note.path === path)?.sha;
+    const sha = shaHint || state.vault.notes.find((note) => note.path === path)?.sha;
     if (!sha) throw new Error("Missing file SHA for delete.");
     await deleteFile(path, sha, `vault: delete ${path.split("/").pop()}`);
-    if (state.editingPath === path) {
+    if (state.editor.editingPath === path) {
       exitEditMode({ restoreDraft: true });
     }
     await fetchNotes();
@@ -784,18 +874,72 @@ function defaultFolder() {
   return `Notes/${date}`;
 }
 
+async function commitPendingAssets(snapshot) {
+  const references = parsePendingReferences(snapshot);
+  if (references.length === 0) return snapshot;
+
+  let resolvedSnapshot = snapshot;
+  setStatus("uploading", `Uploading ${references.length} asset(s)…`);
+
+  for (const { id, match } of references) {
+    const asset = state.assets.pending.get(id);
+    if (!asset || asset.status === "uploaded") continue;
+
+    asset.status = "uploading";
+    renderPendingAssets();
+
+    try {
+      const content = new Uint8Array(await asset.file.arrayBuffer());
+      const response = await putFile(asset.path, content, null, `Upload asset: ${asset.finalName}`);
+      
+      asset.status = "uploaded";
+      asset.sha = response.content?.sha;
+      renderPendingAssets();
+    } catch (err) {
+      asset.status = "failed";
+      renderPendingAssets();
+      throw new Error("Asset upload failed. Please check gallery and try again.");
+    }
+  }
+
+  for (const { id, match } of references) {
+    const asset = state.assets.pending.get(id);
+    if (asset) {
+      resolvedSnapshot = resolvedSnapshot.replace(new RegExp(`!\\[\\[pending:${id}\\]\\]`, 'g'), `![[${asset.finalName}]]`);
+    }
+  }
+
+  // Cleanup referenced successfully uploaded assets from memory
+  for (const { id } of references) {
+    const asset = state.assets.pending.get(id);
+    if (asset) {
+      URL.revokeObjectURL(asset.blobUrl);
+      state.assets.pending.delete(id);
+    }
+  }
+
+  // Cleanup unreferenced orphaned assets from memory
+  for (const [id, asset] of state.assets.pending.entries()) {
+    URL.revokeObjectURL(asset.blobUrl);
+    state.assets.pending.delete(id);
+  }
+
+  renderPendingAssets();
+  return resolvedSnapshot;
+}
+
 async function handleSave() {
-  if (!state.isAuthenticated) {
+  if (!state.auth.isAuthenticated) {
     setStatus("error", "Please sign in to save notes.");
     return;
   }
-  if (state.isMutating) return;
+  if (state.ui.isMutating) return;
 
   const title = elements.titleInput.value.trim();
-  let bodySnapshot = elements.bodyInput.value;
-  const folder = normalizeFolderPath(elements.folderInput.value) || (state.mode === "create" ? defaultFolder() : "");
+  const rawBody = elements.bodyInput.value;
+  const folder = normalizeFolderPath(elements.folderInput.value) || (state.editor.mode === "create" ? defaultFolder() : "");
 
-  if (!bodySnapshot.trim()) {
+  if (!rawBody.trim()) {
     setStatus("error", "Note is empty.");
     elements.bodyInput.focus();
     return;
@@ -804,80 +948,35 @@ async function handleSave() {
   clearDeleteConfirmation();
   setMutationState(true);
 
-  // 1. Process pending assets
-  const pendingIdsToUpload = [];
-  const matches = bodySnapshot.matchAll(/!\[\[pending:([^\]]+)\]\]/g);
-  for (const match of matches) {
-    const id = match[1];
-    if (state.pendingAssets.has(id)) {
-      pendingIdsToUpload.push(id);
-    }
+  let bodySnapshot;
+  try {
+    bodySnapshot = await commitPendingAssets(rawBody);
+  } catch (err) {
+    setStatus("error", err.message);
+    setMutationState(false);
+    return; // Abort save on asset failure
   }
 
-  if (pendingIdsToUpload.length > 0) {
-    setStatus("uploading", `Uploading ${pendingIdsToUpload.length} asset(s)…`);
-    try {
-      for (const id of pendingIdsToUpload) {
-        const asset = state.pendingAssets.get(id);
-        if (asset.status === "uploaded") continue;
-        
-        asset.status = "uploading";
-        renderPendingGallery();
-        
-        const content = new Uint8Array(await asset.file.arrayBuffer());
-        const response = await putFile(asset.path, content, null, `Upload asset: ${asset.finalName}`);
-        
-        asset.status = "uploaded";
-        asset.sha = response.content?.sha;
-        renderPendingGallery();
-      }
-    } catch (err) {
-      setStatus("error", "Asset upload failed. Please check gallery and try again.");
-      setMutationState(false);
-      return; // Abort save
-    }
-  }
-
-  // 2. Replace pending placeholders with final names in the snapshot
-  for (const id of pendingIdsToUpload) {
-    const asset = state.pendingAssets.get(id);
-    bodySnapshot = bodySnapshot.replace(new RegExp(`!\\[\\[pending:${id}\\]\\]`, 'g'), `![[${asset.finalName}]]`);
-  }
-
-  setStatus("uploading", state.mode === "edit" ? "Updating vault note…" : "Saving to vault…");
+  setStatus("uploading", state.editor.mode === "edit" ? "Updating vault note…" : "Saving to vault…");
 
   try {
     const filename = buildFilename(title);
     const fullPath = folder ? `${folder}/${filename}` : filename;
-    const path = state.mode === "edit" ? state.editingPath : `${CONFIG.vaultPrefix}${fullPath}`;
+    const path = state.editor.mode === "edit" ? state.editor.editingPath : `${CONFIG.vaultPrefix}${fullPath}`;
     const fallbackTitle = noteStemFromPath(path);
-    const message = state.mode === "edit"
+    const message = state.editor.mode === "edit"
       ? `vault: update ${path.split("/").pop()}`
       : `vault: add ${path.split("/").pop()}`;
 
-    await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), state.editingSha, message);
+    await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), state.editor.editingSha, message);
     await fetchNotes();
 
-    if (!state.privateMode) {
+    if (!state.ui.privateMode) {
       saveFolderHistory(folder);
       sessionStorage.setItem(CONFIG.lastFolderKey, folder);
     }
 
-    // 3. Cleanup state
-    for (const id of pendingIdsToUpload) {
-      const asset = state.pendingAssets.get(id);
-      URL.revokeObjectURL(asset.blobUrl);
-      state.pendingAssets.delete(id);
-    }
-    
-    // Cleanup any orphaned assets that were deleted from text before saving
-    for (const [id, asset] of state.pendingAssets.entries()) {
-      URL.revokeObjectURL(asset.blobUrl);
-      state.pendingAssets.delete(id);
-    }
-    renderPendingGallery();
-
-    if (state.mode === "edit") {
+    if (state.editor.mode === "edit") {
       exitEditMode({ restoreDraft: true });
       setStatus("success", "Note updated.");
     } else {
@@ -885,7 +984,7 @@ async function handleSave() {
       elements.titleInput.value = "";
       elements.folderInput.value = "";
       elements.bodyInput.value = "";
-      state.titleEdited = false;
+      state.editor.titleEdited = false;
       renderPreview();
       setStatus("success", `Uploaded ${path.split("/").pop()}. Site rebuilding (~60s)`);
     }
@@ -897,35 +996,35 @@ async function handleSave() {
 }
 
 function togglePrivateMode() {
-  state.privateMode = !state.privateMode;
-  elements.privateModeToggle.textContent = state.privateMode ? "Private: ON" : "Private: OFF";
-  elements.privateModeToggle.classList.toggle("is-active", state.privateMode);
-  if (state.privateMode) {
+  state.ui.privateMode = !state.ui.privateMode;
+  elements.privateModeToggle.textContent = state.ui.privateMode ? "Private: ON" : "Private: OFF";
+  elements.privateModeToggle.classList.toggle("is-active", state.ui.privateMode);
+  if (state.ui.privateMode) {
     closeFolderMenu();
   }
-  elements.folderChips.classList.toggle("hidden", state.privateMode);
-  elements.folderHint.classList.toggle("hidden", state.privateMode);
-  if (!state.privateMode) updateFolderHint();
+  elements.folderChips.classList.toggle("hidden", state.ui.privateMode);
+  elements.folderHint.classList.toggle("hidden", state.ui.privateMode);
+  if (!state.ui.privateMode) updateFolderHint();
 }
 
 function toggleVaultCollapse() {
-  state.vaultCollapsed = !state.vaultCollapsed;
+  state.ui.vaultCollapsed = !state.ui.vaultCollapsed;
   applyVaultCollapse();
-  storage.setJson(CONFIG.vaultCollapsedKey, state.vaultCollapsed);
-  if (state.vaultCollapsed) {
+  storage.setJson(CONFIG.vaultCollapsedKey, state.ui.vaultCollapsed);
+  if (state.ui.vaultCollapsed) {
     clearDeleteConfirmation();
     renderNoteList();
   }
 }
 
 function applyVaultCollapse() {
-  const collapsed = state.vaultCollapsed;
+  const collapsed = state.ui.vaultCollapsed;
   elements.vaultSection.classList.toggle("is-collapsed", collapsed);
   elements.vaultToggle.setAttribute("aria-expanded", !collapsed);
 }
 
 function restoreVaultState() {
-  state.vaultCollapsed = storage.getJson(CONFIG.vaultCollapsedKey, false);
+  state.ui.vaultCollapsed = storage.getJson(CONFIG.vaultCollapsedKey, false);
   applyVaultCollapse();
 }
 
@@ -944,7 +1043,7 @@ function bindEvents() {
   });
 
   elements.folderInput.addEventListener("focus", () => {
-    if (state.folderIndex.length > 0) {
+    if (state.vault.folderIndex.length > 0) {
       renderFolderMenu(elements.folderInput.value);
     }
   });
@@ -957,20 +1056,20 @@ function bindEvents() {
   });
 
   elements.folderInput.addEventListener("keydown", (e) => {
-    if (!state.folderMenuOpen) return;
+    if (!state.ui.folderMenuOpen) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      state.activeFolderIndex = (state.activeFolderIndex + 1) % state.filteredFolders.length;
+      state.ui.activeFolderIndex = (state.ui.activeFolderIndex + 1) % state.vault.filteredFolders.length;
       renderFolderMenu(elements.folderInput.value);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      state.activeFolderIndex = (state.activeFolderIndex - 1 + state.filteredFolders.length) % state.filteredFolders.length;
+      state.ui.activeFolderIndex = (state.ui.activeFolderIndex - 1 + state.vault.filteredFolders.length) % state.vault.filteredFolders.length;
       renderFolderMenu(elements.folderInput.value);
     } else if (e.key === "Enter") {
-      if (state.activeFolderIndex >= 0) {
+      if (state.ui.activeFolderIndex >= 0) {
         e.preventDefault();
-        selectFolderSuggestion(state.activeFolderIndex);
+        selectFolderSuggestion(state.ui.activeFolderIndex);
       }
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -988,20 +1087,20 @@ function bindEvents() {
 
   elements.folderChips.addEventListener("click", (event) => {
     const chip = event.target.closest(".folder-chip");
-    if (!chip || state.mode === "edit") return;
+    if (!chip || state.editor.mode === "edit") return;
     elements.folderInput.value = chip.dataset.folder;
     saveDraftSoon();
     updateFolderHint();
   });
 
   elements.titleInput.addEventListener("input", () => {
-    state.titleEdited = true;
+    state.editor.titleEdited = true;
     saveDraftSoon();
     renderPreview();
   });
 
   elements.bodyInput.addEventListener("input", () => {
-    if (!state.titleEdited && state.mode === "create") {
+    if (!state.editor.titleEdited && state.editor.mode === "create") {
       elements.titleInput.value = extractAutoTitle(elements.bodyInput.value);
     }
     saveDraftSoon();
@@ -1012,14 +1111,14 @@ function bindEvents() {
   elements.previewTab.addEventListener("click", () => setEditorMode("preview"));
 
   elements.noteSearchInput.addEventListener("input", () => {
-    state.searchQuery = elements.noteSearchInput.value;
+    state.editor.searchQuery = elements.noteSearchInput.value;
     clearDeleteConfirmation();
     renderNoteList();
   });
 
   elements.noteList.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-action]");
-    if (!button || state.isMutating) return;
+    if (!button || state.ui.isMutating) return;
 
     const path = button.dataset.path;
     if (!isVaultPathSafe(path)) {
@@ -1035,15 +1134,96 @@ function bindEvents() {
   });
 
   elements.cancelEditBtn.addEventListener("click", () => {
-    if (state.isMutating) return;
+    if (state.ui.isMutating) return;
     exitEditMode({ restoreDraft: true });
     setStatus("success", "Edit cancelled. Draft restored.");
   });
 
   elements.uploadBtn.addEventListener("click", handleSave);
   elements.vaultToggle.addEventListener("click", toggleVaultCollapse);
-  elements.attachBtn.addEventListener("click", () => triggerFilePicker(elements.bodyInput, () => state));
-  elements.cameraBtn.addEventListener("click", () => triggerCameraCapture(elements.bodyInput, () => state));
+
+  // Gallery Delegation
+  const gallery = document.getElementById("pending-gallery");
+  if (gallery) {
+    gallery.addEventListener("click", (e) => {
+      const removeBtn = e.target.closest(".remove-asset-btn");
+      if (removeBtn) {
+        removePendingAsset(removeBtn.dataset.id);
+        return;
+      }
+
+      const thumb = e.target.closest(".pending-thumbnail");
+      if (thumb) {
+        const id = thumb.dataset.id;
+        const text = elements.bodyInput.value;
+        const idx = text.indexOf(`![[pending:${id}]]`);
+        if (idx >= 0) {
+          elements.bodyInput.focus();
+          elements.bodyInput.setSelectionRange(idx, idx + `![[pending:${id}]]`.length);
+          elements.bodyInput.blur();
+          elements.bodyInput.focus();
+        }
+      }
+    });
+  }
+
+  // Asset Attachments
+  elements.attachBtn.addEventListener("click", () => triggerFilePicker());
+  elements.cameraBtn.addEventListener("click", () => triggerCameraCapture());
+
+  elements.bodyInput.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    elements.bodyInput.classList.add("drag-over");
+  });
+
+  elements.bodyInput.addEventListener("dragleave", () => {
+    elements.bodyInput.classList.remove("drag-over");
+  });
+
+  elements.bodyInput.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    elements.bodyInput.classList.remove("drag-over");
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/") || validateImageFile(f) === null);
+    for (const file of files) await createPendingAsset(file);
+  });
+
+  elements.bodyInput.addEventListener("paste", async (e) => {
+    const items = Array.from(e.clipboardData.items);
+    for (const item of items) {
+      if (item.type.startsWith("image/")) {
+        await createPendingAsset(item.getAsFile());
+      }
+    }
+  });
+
+  bindInput(document.getElementById("file-picker-input"), async (event) => {
+    const files = Array.from(event.currentTarget.files || []);
+    for (const file of files) await createPendingAsset(file);
+    event.currentTarget.value = "";
+  });
+
+  bindInput(document.getElementById("camera-picker-input"), async (event) => {
+    const [file] = event.currentTarget.files || [];
+    if (file) await createPendingAsset(file);
+    event.currentTarget.value = "";
+  });
+}
+
+function bindInput(input, handler) {
+  if (!input) return;
+  const replacement = input.cloneNode(true);
+  input.parentNode.replaceChild(replacement, input);
+  replacement.addEventListener("change", handler);
+}
+
+function triggerFilePicker() {
+  const input = document.getElementById("file-picker-input");
+  if (input) input.click();
+}
+
+function triggerCameraCapture() {
+  const input = document.getElementById("camera-picker-input");
+  if (input) input.click();
 }
 
 const mathExtension = {
@@ -1067,14 +1247,14 @@ if (typeof marked !== "undefined") {
 }
 
 window.addEventListener("beforeunload", (e) => {
-  if (state.pendingAssets.size > 0) {
+  if (state.assets.pending.size > 0) {
     e.preventDefault();
     e.returnValue = "";
   }
 });
 
 function boot() {
-  state.folderHistory = storage.getJson(CONFIG.folderHistoryKey, []);
+  state.vault.folderHistory = storage.getJson(CONFIG.folderHistoryKey, []);
   renderFolderChips();
   restoreSavedDraft();
   bindEvents();

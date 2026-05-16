@@ -4,8 +4,6 @@ import { handleLists } from "./lists.js";
 import { handleIndent } from "./indent.js";
 import { handleShortcuts } from "./shortcuts.js";
 import { handleAutocomplete } from "./autocomplete.js";
-import { handleAssets } from "./assets.js";
-
 export function setupEditor(textarea, getState) {
   textarea.addEventListener("keydown", (e) => {
     if (handleAutocomplete(e, textarea, getState)) return;
@@ -15,6 +13,4 @@ export function setupEditor(textarea, getState) {
     if (handleLists(e, textarea)) return;
     if (handlePairs(e, textarea)) return;
   });
-
-  handleAssets(textarea, getState);
 }
