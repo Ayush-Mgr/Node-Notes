@@ -5,6 +5,63 @@ let autocompleteStart = -1;
 let selectedIndex = 0;
 let suggestions = [];
 let suggestionPanel = null;
+let activeTextarea = null;
+
+function getEditorWrapper() {
+  return document.querySelector(".editor-pane.active .editor-wrapper");
+}
+
+function getCaretPositionInWrapper(textarea, position) {
+  const wrapper = getEditorWrapper();
+  if (!wrapper) return null;
+
+  const mirror = document.createElement("div");
+  const mirrorStyle = window.getComputedStyle(textarea);
+  const wrapperRect = wrapper.getBoundingClientRect();
+  const textareaRect = textarea.getBoundingClientRect();
+
+  mirror.style.position = "absolute";
+  mirror.style.visibility = "hidden";
+  mirror.style.pointerEvents = "none";
+  mirror.style.whiteSpace = "pre-wrap";
+  mirror.style.wordBreak = "break-word";
+  mirror.style.overflowWrap = "break-word";
+  mirror.style.top = `${textarea.offsetTop}px`;
+  mirror.style.left = `${textarea.offsetLeft}px`;
+  mirror.style.width = `${textarea.clientWidth}px`;
+  mirror.style.padding = mirrorStyle.padding;
+  mirror.style.border = "0";
+  mirror.style.font = mirrorStyle.font;
+  mirror.style.fontSize = mirrorStyle.fontSize;
+  mirror.style.fontFamily = mirrorStyle.fontFamily;
+  mirror.style.fontWeight = mirrorStyle.fontWeight;
+  mirror.style.fontStyle = mirrorStyle.fontStyle;
+  mirror.style.letterSpacing = mirrorStyle.letterSpacing;
+  mirror.style.lineHeight = mirrorStyle.lineHeight;
+  mirror.style.textTransform = mirrorStyle.textTransform;
+  mirror.style.textIndent = mirrorStyle.textIndent;
+  mirror.style.tabSize = mirrorStyle.tabSize;
+
+  const before = document.createTextNode(textarea.value.slice(0, position));
+  const marker = document.createElement("span");
+  marker.textContent = "\u200b";
+
+  mirror.append(before, marker);
+  wrapper.appendChild(mirror);
+
+  const markerRect = marker.getBoundingClientRect();
+  const top = markerRect.top - wrapperRect.top - textarea.scrollTop;
+  const left = markerRect.left - wrapperRect.left - textarea.scrollLeft;
+  const lineHeight = Number.parseFloat(mirrorStyle.lineHeight) || Number.parseFloat(mirrorStyle.fontSize) * 1.4;
+  const maxLeft = Math.max(0, textareaRect.width - 320);
+
+  wrapper.removeChild(mirror);
+
+  return {
+    top: textarea.offsetTop + top + lineHeight + 6,
+    left: textarea.offsetLeft + Math.min(Math.max(0, left), maxLeft),
+  };
+}
 
 function createSuggestionPanel() {
   if (suggestionPanel) return;
@@ -28,7 +85,22 @@ function createSuggestionPanel() {
     }
   });
 
-  document.querySelector(".editor-pane.active .editor-wrapper").appendChild(suggestionPanel);
+  const wrapper = getEditorWrapper();
+  if (wrapper) {
+    wrapper.appendChild(suggestionPanel);
+  }
+
+  const textarea = document.getElementById("note-body");
+  if (textarea) {
+    activeTextarea = textarea;
+    textarea.addEventListener("scroll", () => {
+      if (isAutocompleteActive) updatePanel();
+    });
+  }
+
+  window.addEventListener("resize", () => {
+    if (isAutocompleteActive) updatePanel();
+  });
 }
 
 document.addEventListener("click", (e) => {
@@ -44,6 +116,17 @@ function updatePanel() {
   if (!isAutocompleteActive || suggestions.length === 0) {
     suggestionPanel.classList.add("hidden");
     return;
+  }
+
+  const textarea = activeTextarea || document.getElementById("note-body");
+  if (textarea) {
+    const position = Math.max(0, textarea.selectionStart);
+    const coords = getCaretPositionInWrapper(textarea, position);
+    if (coords) {
+      suggestionPanel.style.top = `${coords.top}px`;
+      suggestionPanel.style.left = `${coords.left}px`;
+      suggestionPanel.style.bottom = "auto";
+    }
   }
 
   suggestionPanel.innerHTML = suggestions
@@ -80,6 +163,7 @@ function escapeHtml(value) {
 }
 
 export function handleAutocomplete(e, textarea, getState) {
+  activeTextarea = textarea;
   createSuggestionPanel();
 
   if (e.key === "[" && !isAutocompleteActive) {

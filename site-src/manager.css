@@ -864,8 +864,8 @@
     }
     .autocomplete-panel {
       position: absolute;
-      bottom: var(--editor-pad-y);
-      left: var(--editor-pad-x);
+      top: 0;
+      left: 0;
       width: 320px;
       background: var(--surface);
       border: 1px solid var(--ink-ghost);
