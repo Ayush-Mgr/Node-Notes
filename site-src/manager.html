@@ -74,10 +74,12 @@
         </div>
  
         <div class="editor-pane active" id="write-pane" role="tabpanel" aria-labelledby="write-tab">
-          <div class="editor-canvas">
-            <input type="text" id="note-title" class="editor-title" placeholder="Note Title" autocorrect="on" spellcheck="true" />
-            <textarea id="note-body" class="editor-body" placeholder="Start writing…&#10;&#10;Markdown supported. Drag & drop or paste images." autocorrect="on"
-              spellcheck="true"></textarea>
+          <div class="editor-wrapper">
+            <div class="editor-canvas">
+              <input type="text" id="note-title" class="editor-title" placeholder="Note Title" autocorrect="on" spellcheck="true" />
+              <textarea id="note-body" class="editor-body" placeholder="Start writing…&#10;&#10;Markdown supported. Drag & drop or paste images." autocorrect="on"
+                spellcheck="true"></textarea>
+            </div>
           </div>
           <div class="attach-row">
             <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image from gallery">📎 Attach Image</button>

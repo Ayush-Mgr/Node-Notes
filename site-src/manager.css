@@ -15,6 +15,8 @@
       --radius-lg: 14px;
       --font-sans: 'Inter', sans-serif;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --editor-pad-x: 24px;
+      --editor-pad-y: 18px;
     }
 
     *,
@@ -408,13 +410,16 @@
       color: var(--ink);
     }
 
+    .editor-wrapper {
+      position: relative;
+    }
     .editor-canvas {
-      min-height: clamp(200px, 42vh, 450px);
+      min-height: clamp(450px, 70vh, 900px);
       border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.82);
       color: var(--ink-body);
-      padding: 24px 24px 18px;
+      padding: 24px var(--editor-pad-x) var(--editor-pad-y);
       display: flex;
       flex-direction: column;
       gap: 0;
@@ -455,7 +460,7 @@
       font-size: 1rem !important;
       line-height: 1.68 !important;
       resize: none !important;
-      min-height: 300px;
+      min-height: 400px;
     }
 
     .editor-body:focus {
@@ -859,16 +864,16 @@
     }
     .autocomplete-panel {
       position: absolute;
-      bottom: calc(100% + 5px);
-      left: 0;
-      right: 0;
+      bottom: var(--editor-pad-y);
+      left: var(--editor-pad-x);
+      width: 320px;
       background: var(--surface);
       border: 1px solid var(--ink-ghost);
       border-radius: var(--radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
       max-height: 200px;
       overflow-y: auto;
-      z-index: 100;
+      z-index: 1000;
     }
     .autocomplete-item {
       padding: 8px 12px;

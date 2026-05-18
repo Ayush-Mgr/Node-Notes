@@ -1,4 +1,4 @@
-import { insertTextAtCursor, replaceTextRange } from "./utils.js";
+import { replaceTextRange } from "./utils.js";
 
 let isAutocompleteActive = false;
 let autocompleteStart = -1;
@@ -10,8 +10,34 @@ function createSuggestionPanel() {
   if (suggestionPanel) return;
   suggestionPanel = document.createElement("div");
   suggestionPanel.className = "autocomplete-panel hidden";
-  document.querySelector(".editor-pane.active").appendChild(suggestionPanel);
+  
+  suggestionPanel.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+  });
+
+  suggestionPanel.addEventListener("click", (e) => {
+    const item = e.target.closest(".autocomplete-item");
+    if (!item) return;
+    const index = parseInt(item.getAttribute("data-index"), 10);
+    const s = suggestions[index];
+    if (s) {
+      const textarea = document.getElementById("note-body");
+      if (textarea) {
+        insertSuggestion(textarea, s.linkTarget);
+      }
+    }
+  });
+
+  document.querySelector(".editor-pane.active .editor-wrapper").appendChild(suggestionPanel);
 }
+
+document.addEventListener("click", (e) => {
+  if (!isAutocompleteActive) return;
+  const textarea = document.getElementById("note-body");
+  if (suggestionPanel && !suggestionPanel.contains(e.target) && e.target !== textarea) {
+    cancelAutocomplete();
+  }
+});
 
 function updatePanel() {
   if (!suggestionPanel) return;
@@ -30,8 +56,6 @@ function updatePanel() {
   `,
     )
     .join("");
-
-  suggestionPanel.classList.remove("hidden");
 
   suggestionPanel.classList.remove("hidden");
 
