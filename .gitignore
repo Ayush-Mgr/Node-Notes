@@ -13,3 +13,6 @@ docs/
 .agents
 .cursor/
 skills-lock.json
+.env
+**/.env
+*.env
