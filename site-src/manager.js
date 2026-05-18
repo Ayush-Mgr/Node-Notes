@@ -82,6 +82,7 @@ const state = {
     folderHistory: [],
     folderIndex: [],
     filteredFolders: [],
+    assetPaths: [],
   },
   assets: {
     pending: new Map(),
@@ -142,6 +143,10 @@ function setEditorMode(mode) {
   elements.previewTab.classList.toggle("active", preview);
   elements.writePane.classList.toggle("active", !preview);
   elements.previewPane.classList.toggle("active", preview);
+  elements.writeTab.setAttribute("aria-selected", String(!preview));
+  elements.previewTab.setAttribute("aria-selected", String(preview));
+  elements.writePane.setAttribute("aria-hidden", String(preview));
+  elements.previewPane.setAttribute("aria-hidden", String(!preview));
 }
 
 function typesetMath(target) {
@@ -165,6 +170,22 @@ function parsePendingReferences(markdown) {
   return matches;
 }
 
+function resolveAssetPreviewUrl(target) {
+  const normalized = target.trim().replace(/\\/g, "/").toLowerCase();
+  if (!normalized) return null;
+
+  const directMatch = state.vault.assetPaths.find((path) => path.toLowerCase() === normalized);
+  if (directMatch) return `content/${encodeURI(directMatch)}`;
+
+  const leaf = normalized.split("/").pop();
+  const matches = state.vault.assetPaths.filter((path) => path.toLowerCase().split("/").pop() === leaf);
+  if (matches.length === 1) {
+    return `content/${encodeURI(matches[0])}`;
+  }
+
+  return null;
+}
+
 function preprocessMarkdown(markdown) {
   return markdown.replace(/!\[\[([^\]]+)\]\]/g, (match, inner) => {
     if (inner.startsWith("pending:")) {
@@ -173,10 +194,20 @@ function preprocessMarkdown(markdown) {
       if (asset && asset.blobUrl) {
         return `![${asset.finalName}](${asset.blobUrl})`;
       }
+      return `![Pending asset unavailable]()`; 
     }
-    // Better fallback for standard wikilinks in preview
-    return `![${inner}](vault/Assets/${inner})`;
+
+    const target = inner.split("|", 1)[0].split("#", 1)[0].trim();
+    const resolved = resolveAssetPreviewUrl(target);
+    return resolved ? `![${target}](${resolved})` : match;
   });
+}
+
+function updateAttachCount() {
+  const badge = $("attach-count");
+  if (!badge) return;
+  const count = state.assets.pending.size;
+  badge.textContent = count > 0 ? `${count} pending image${count > 1 ? "s" : ""}` : "";
 }
 
 function renderPreview() {
@@ -364,12 +395,6 @@ export async function removePendingAsset(id) {
   renderPendingAssets();
   renderPreview();
   saveDraftSoon();
-  
-  const count = (elements.bodyInput.value.match(/!\[\[.*?\]\]/g) || []).length;
-  const badge = document.getElementById("attach-count");
-  if (badge) {
-    badge.textContent = count > 0 ? `${count} image${count > 1 ? "s" : ""}` : "";
-  }
 }
 
 function renderPendingAssets() {
@@ -379,6 +404,7 @@ function renderPendingAssets() {
   if (state.assets.pending.size === 0) {
     gallery.classList.add("hidden");
     gallery.innerHTML = "";
+    updateAttachCount();
     return;
   }
 
@@ -391,6 +417,7 @@ function renderPendingAssets() {
       ${asset.status === "failed" ? '<div class="error-icon">!</div>' : ''}
     </div>
   `).join("");
+  updateAttachCount();
 }
 
 function renderFolderMenu(query = "") {
@@ -776,6 +803,9 @@ async function fetchNotes() {
     const data = await apiRequest("/api/vault/notes");
     const tree = data.tree || [];
     updateFolderIndex(tree);
+    state.vault.assetPaths = tree
+      .filter((entry) => entry.type === "blob" && entry.path.startsWith(CONFIG.vaultPrefix) && !entry.path.endsWith(CONFIG.noteSuffix))
+      .map((entry) => entry.path.replace(/^vault\//, ""));
     state.vault.notes = tree
       .filter((entry) => entry.type === "blob" && isVaultPathSafe(entry.path))
       .sort((a, b) => b.path.localeCompare(a.path))

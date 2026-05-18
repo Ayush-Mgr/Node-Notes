@@ -1038,6 +1038,12 @@
       display: flex;
     }
 
+    @media (hover: none), (pointer: coarse) {
+      .remove-asset-btn {
+        display: flex;
+      }
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
