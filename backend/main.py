@@ -12,6 +12,10 @@ from starlette.middleware.sessions import SessionMiddleware
 import httpx
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -22,6 +26,7 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "").strip().lower()
 REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
 REPO_NAME = os.getenv("GITHUB_REPO_NAME")
 DEFAULT_BRANCH = os.getenv("GITHUB_REPO_BRANCH", "main")
+ALLOWED_USERS = {u.strip().lower() for u in os.getenv("ALLOWED_USERS", "Ayush-Mgr").split(",") if u.strip()}
 VAULT_PREFIX = "vault/"
 
 
@@ -77,6 +82,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from starlette.middleware.base import BaseHTTPMiddleware
+class MaxBodySizeMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if request.url.path == "/api/vault/save":
+            content_length = request.headers.get('content-length')
+            if content_length and int(content_length) > 15 * 1024 * 1024: # 15MB
+                return JSONResponse(status_code=413, content={"error": "Payload too large"})
+        return await call_next(request)
+
+app.add_middleware(MaxBodySizeMiddleware)
+
 CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
@@ -95,6 +111,12 @@ def is_path_safe(path: str) -> bool:
     if not path or ".." in path or "\\" in path:
         return False
     return path.startswith(VAULT_PREFIX)
+
+def cleanup_stale_sessions():
+    now = datetime.now()
+    expired_keys = [k for k, v in list(TOKEN_STORE.items()) if (now - v["created_at"]) > SESSION_TTL]
+    for k in expired_keys:
+        TOKEN_STORE.pop(k, None)
 
 def pop_session(request: Request) -> None:
     session_id = request.session.get("session_id")
@@ -130,6 +152,7 @@ async def github_proxy(request: Request, method: str, path: str, json_body: Opti
 
 @app.get("/auth/login")
 async def login(request: Request):
+    cleanup_stale_sessions()
     state = secrets.token_urlsafe(32)
     verifier, challenge = get_pkce_challenge()
 
@@ -143,6 +166,7 @@ async def login(request: Request):
 
 @app.get("/auth/callback")
 async def callback(request: Request, code: str, state: str):
+    cleanup_stale_sessions()
     if state != request.session.get("oauth_state"):
         raise HTTPException(status_code=400, detail="Invalid state")
 
@@ -163,23 +187,32 @@ async def callback(request: Request, code: str, state: str):
     if not token:
         return JSONResponse(status_code=400, content={"error": "OAuth failed", "details": data})
 
+    user_resp = await client.get(
+        "https://api.github.com/user",
+        headers={"Authorization": f"token {token}"},
+    )
+    
+    if user_resp.status_code != 200:
+        return JSONResponse(status_code=400, content={"error": "Failed to fetch user profile"})
+        
+    user_data = user_resp.json()
+    github_login = user_data.get("login", "").lower()
+    
+    if github_login not in ALLOWED_USERS:
+        logger.warning(f"SECURITY: Rejected unauthorized login attempt from GitHub user: {github_login}")
+        pop_session(request)
+        return RedirectResponse(url=f"{FRONTEND_URL}?error=unauthorized")
+
     session_id = secrets.token_urlsafe(32)
     TOKEN_STORE[session_id] = {
         "token": token,
         "created_at": datetime.now(),
     }
     request.session["session_id"] = session_id
-
-    user_resp = await client.get(
-        "https://api.github.com/user",
-        headers={"Authorization": f"token {token}"},
-    )
-    if user_resp.status_code == 200:
-        user_data = user_resp.json()
-        request.session["user"] = {
-            "login": user_data.get("login"),
-            "avatar_url": user_data.get("avatar_url"),
-        }
+    request.session["user"] = {
+        "login": user_data.get("login"),
+        "avatar_url": user_data.get("avatar_url"),
+    }
 
     return RedirectResponse(url=FRONTEND_URL)
 
@@ -190,6 +223,7 @@ async def logout(request: Request):
 
 @app.get("/auth/status")
 async def auth_status(request: Request):
+    cleanup_stale_sessions()
     session_id = request.session.get("session_id")
     token_data = TOKEN_STORE.get(session_id) if session_id else None
 
