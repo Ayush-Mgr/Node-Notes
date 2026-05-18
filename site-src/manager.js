@@ -905,6 +905,21 @@ async function commitPendingAssets(snapshot) {
       
       asset.status = "uploaded";
       asset.sha = response.content?.sha;
+      
+      try {
+        await savePendingAsset({
+          pendingId: asset.pendingId,
+          finalName: asset.finalName,
+          path: asset.path,
+          file: asset.file,
+          status: asset.status,
+          sha: asset.sha,
+          createdAt: asset.createdAt
+        });
+      } catch (idbErr) {
+        console.error("Failed to update asset status in IndexedDB:", idbErr);
+      }
+      
       renderPendingAssets();
     } catch (err) {
       asset.status = "failed";
