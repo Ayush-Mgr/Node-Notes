@@ -1,5 +1,5 @@
 import { setupEditor } from "./editor/editor.js";
-import { insertTextAtCursor, replaceTextRange } from "./editor/utils.js";
+import { insertTextAtCursor } from "./editor/utils.js";
 import { compressImage, generateAssetMeta, validateImageFile } from "./editor/assets.js";
 
 const CONFIG = {
@@ -16,10 +16,6 @@ const CONFIG = {
   folderHistoryKey: "nn_folder_history",
   lastFolderKey: "nn_last_folder",
   vaultCollapsedKey: "nn_vault_collapsed",
-};
-
-const SANITIZE_CONFIG = {
-  ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|blob|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 };
 
 const $ = (id) => document.getElementById(id);
@@ -928,6 +924,54 @@ async function commitPendingAssets(snapshot) {
   return resolvedSnapshot;
 }
 
+// New helper functions for auto-linking
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function insertLinkIntoSection(content, noteStem) {
+  const lines = content.split("\n");
+  let headingIndex = -1;
+  const headingRegex = /^##\s*New\s*\/\s*Uncategorized\s*$/i;
+  
+  for (let i = 0; i < lines.length; i++) {
+    if (headingRegex.test(lines[i].trim())) {
+      headingIndex = i;
+      break;
+    }
+  }
+  
+  const newLink = `- [[${noteStem}]]`;
+  
+  if (headingIndex !== -1) {
+    let endIndex = lines.length;
+    for (let i = headingIndex + 1; i < lines.length; i++) {
+      if (/^##\s/.test(lines[i])) {
+        endIndex = i;
+        break;
+      }
+    }
+    
+    let insertIndex = endIndex;
+    for (let i = endIndex - 1; i > headingIndex; i--) {
+      if (lines[i].trim() !== "") {
+        insertIndex = i + 1;
+        break;
+      }
+    }
+    
+    if (insertIndex === endIndex) {
+      insertIndex = headingIndex + 1;
+    }
+    
+    lines.splice(insertIndex, 0, newLink);
+    return lines.join("\n");
+  } else {
+    const appendix = `\n\n## New / Uncategorized\n\n${newLink}`;
+    return content.trimEnd() + appendix;
+  }
+}
+
 async function handleSave() {
   if (!state.auth.isAuthenticated) {
     setStatus("error", "Please sign in to save notes.");
@@ -969,16 +1013,59 @@ async function handleSave() {
       : `vault: add ${path.split("/").pop()}`;
 
     await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), state.editor.editingSha, message);
+    let indexFound = false;
+    let indexUpdated = false;
+    let indexWriteFailed = false;
+
     await fetchNotes();
+    let refreshFailed = state.ui.listStatus === "error";
+
+    if (folder && path !== `${CONFIG.vaultPrefix}index.md` && path !== `${CONFIG.vaultPrefix}${folder}/index.md` && path !== `${CONFIG.vaultPrefix}${folder}/index/index.md`) {
+      const noteStem = noteStemFromPath(path);
+      const possibleIndexPaths = [
+        `${CONFIG.vaultPrefix}${folder}/index/index.md`,
+        `${CONFIG.vaultPrefix}${folder}/index.md`
+      ];
+      
+      let targetIndexPath = null;
+      for (const p of possibleIndexPaths) {
+        if (state.vault.notes.some(n => n.path === p)) {
+          targetIndexPath = p;
+          break;
+        }
+      }
+      
+      if (targetIndexPath) {
+        indexFound = true;
+        try {
+          const indexData = await getFileContent(targetIndexPath);
+          const binary = atob((indexData.content || "").replace(/\s/g, ""));
+          const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+          const indexContent = new TextDecoder().decode(bytes);
+          
+          const linkRegex = new RegExp('\\[\\[(?:[^|\\]]*\\/)?' + escapeRegExp(noteStem) + '(?:\\|[^\\]]*)?\\]\\]', 'i');
+          
+          if (!linkRegex.test(indexContent)) {
+            const updatedContent = insertLinkIntoSection(indexContent, noteStem);
+            await putFile(targetIndexPath, updatedContent, indexData.sha, `vault: auto-link ${noteStem}`);
+            indexUpdated = true;
+            await fetchNotes();
+            refreshFailed = state.ui.listStatus === "error";
+          }
+        } catch (err) {
+          indexWriteFailed = true;
+        }
+      }
+    }
 
     if (!state.ui.privateMode) {
       saveFolderHistory(folder);
       sessionStorage.setItem(CONFIG.lastFolderKey, folder);
     }
 
-    if (state.editor.mode === "edit") {
+    const wasEditMode = state.editor.mode === "edit";
+    if (wasEditMode) {
       exitEditMode({ restoreDraft: true });
-      setStatus("success", "Note updated.");
     } else {
       clearSavedDraft();
       elements.titleInput.value = "";
@@ -986,7 +1073,22 @@ async function handleSave() {
       elements.bodyInput.value = "";
       state.editor.titleEdited = false;
       renderPreview();
-      setStatus("success", `Uploaded ${path.split("/").pop()}. Site rebuilding (~60s)`);
+    }
+
+    if (indexWriteFailed) {
+      setStatus("error", "Note saved, but index update failed.");
+    } else if (refreshFailed) {
+      if (indexUpdated) {
+        setStatus("error", "Note saved and index updated, but the vault list could not be refreshed.");
+      } else {
+        setStatus("error", "Note saved, but the vault list could not be refreshed.");
+      }
+    } else {
+      if (wasEditMode) {
+        setStatus("success", "Note updated.");
+      } else {
+        setStatus("success", `Uploaded ${path.split("/").pop()}. Site rebuilding (~60s)`);
+      }
     }
   } catch (error) {
     setStatus("error", error.message || "Save failed.");
