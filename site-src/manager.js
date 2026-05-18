@@ -1,6 +1,7 @@
 import { setupEditor } from "./editor/editor.js";
 import { insertTextAtCursor } from "./editor/utils.js";
 import { compressImage, generateAssetMeta, validateImageFile } from "./editor/assets.js";
+import { initPendingAssetDb, savePendingAsset, loadPendingAssets, deletePendingAsset } from "./editor/indexeddb.js";
 
 const CONFIG = {
   apiBase:
@@ -293,41 +294,50 @@ export async function createPendingAsset(file) {
   try {
     const error = validateImageFile(file);
     if (error) {
-      alert(error);
+      setStatus("error", error);
       return;
     }
 
     if (!state.auth.isAuthenticated) {
-      alert("Please sign in with GitHub to upload images.");
+      setStatus("error", "Please sign in with GitHub to upload images.");
       return;
     }
 
     const processed = await compressImage(file);
-    const blobUrl = URL.createObjectURL(processed);
     
     const folderInput = document.getElementById("note-folder");
     const folderVal = folderInput ? folderInput.value : "";
     const { fileName, path } = generateAssetMeta(processed, folderVal);
 
     const pendingId = `img_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
-    const placeholder = `![[pending:${pendingId}]]`;
-    insertTextAtCursor(elements.bodyInput, placeholder);
-
-    const asset = {
+    
+    const dbAsset = {
       pendingId,
       finalName: fileName,
       path,
       file: processed,
-      blobUrl,
-      status: "pending"
+      status: "pending",
+      createdAt: Date.now()
     };
 
+    try {
+      await savePendingAsset(dbAsset);
+    } catch (dbErr) {
+      setStatus("error", "Failed to save image to local draft storage.");
+      return;
+    }
+
+    const blobUrl = URL.createObjectURL(processed);
+    const placeholder = `![[pending:${pendingId}]]`;
+    insertTextAtCursor(elements.bodyInput, placeholder);
+
+    const asset = { ...dbAsset, blobUrl };
     state.assets.pending.set(pendingId, asset);
     
     elements.bodyInput.dispatchEvent(new Event("input", { bubbles: true }));
     renderPendingAssets();
   } catch (err) {
-    alert("Processing failed: " + err.message);
+    setStatus("error", "Processing failed: " + err.message);
   } finally {
     if (attachBtn) {
       attachBtn.textContent = "📎 Attach Image";
@@ -336,18 +346,21 @@ export async function createPendingAsset(file) {
   }
 }
 
-export function removePendingAsset(id) {
+export async function removePendingAsset(id) {
   const asset = state.assets.pending.get(id);
   if (!asset) return;
 
-  // Cleanup memory
   URL.revokeObjectURL(asset.blobUrl);
   state.assets.pending.delete(id);
+  
+  try {
+    await deletePendingAsset(id);
+  } catch (err) {
+    console.error("Failed to delete pending asset from IDB", err);
+  }
 
-  // Update markdown
   elements.bodyInput.value = elements.bodyInput.value.replace(new RegExp(`!\\[\\[pending:${id}\\]\\]\\n?`, 'g'), '');
   
-  // Update UI
   renderPendingAssets();
   renderPreview();
   saveDraftSoon();
@@ -769,6 +782,8 @@ async function fetchNotes() {
       .map((entry) => ({
         path: entry.path,
         displayPath: entry.path.replace(/^vault\//, ""),
+        title: noteStemFromPath(entry.path).replace(/_/g, " "),
+        linkTarget: entry.path.replace(/^vault\//, "").replace(/\.md$/i, ""),
         sha: entry.sha || null,
       }));
     state.ui.listStatus = "ready";
@@ -905,22 +920,6 @@ async function commitPendingAssets(snapshot) {
     }
   }
 
-  // Cleanup referenced successfully uploaded assets from memory
-  for (const { id } of references) {
-    const asset = state.assets.pending.get(id);
-    if (asset) {
-      URL.revokeObjectURL(asset.blobUrl);
-      state.assets.pending.delete(id);
-    }
-  }
-
-  // Cleanup unreferenced orphaned assets from memory
-  for (const [id, asset] of state.assets.pending.entries()) {
-    URL.revokeObjectURL(asset.blobUrl);
-    state.assets.pending.delete(id);
-  }
-
-  renderPendingAssets();
   return resolvedSnapshot;
 }
 
@@ -972,6 +971,21 @@ function insertLinkIntoSection(content, noteStem) {
   }
 }
 
+async function clearCommittedAssets() {
+  for (const [id, asset] of state.assets.pending.entries()) {
+    if (asset.status === "uploaded") {
+      try {
+        await deletePendingAsset(id);
+      } catch (e) {
+        console.error("Failed to delete committed asset from IDB:", e);
+      }
+      URL.revokeObjectURL(asset.blobUrl);
+      state.assets.pending.delete(id);
+    }
+  }
+  renderPendingAssets();
+}
+
 async function handleSave() {
   if (!state.auth.isAuthenticated) {
     setStatus("error", "Please sign in to save notes.");
@@ -1013,6 +1027,10 @@ async function handleSave() {
       : `vault: add ${path.split("/").pop()}`;
 
     await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), state.editor.editingSha, message);
+    
+    // Successfully saved note! Now safely clear committed assets from local IndexedDB and memory.
+    await clearCommittedAssets();
+
     let indexFound = false;
     let indexUpdated = false;
     let indexWriteFailed = false;
@@ -1355,7 +1373,7 @@ window.addEventListener("beforeunload", (e) => {
   }
 });
 
-function boot() {
+async function boot() {
   state.vault.folderHistory = storage.getJson(CONFIG.folderHistoryKey, []);
   renderFolderChips();
   restoreSavedDraft();
@@ -1363,6 +1381,42 @@ function boot() {
   setEditorMode("write");
   updateModeUi();
   updateFolderHint();
+
+  try {
+    const idbAssets = await loadPendingAssets();
+    let draftBody = elements.bodyInput.value;
+    let bodyChanged = false;
+
+    for (const asset of idbAssets) {
+      const placeholder = `![[pending:${asset.pendingId}]]`;
+      const placeholderExists = draftBody.includes(placeholder);
+
+      if (placeholderExists) {
+        asset.blobUrl = URL.createObjectURL(asset.file);
+        state.assets.pending.set(asset.pendingId, asset);
+      } else {
+        await deletePendingAsset(asset.pendingId);
+      }
+    }
+
+    const pendingMatches = draftBody.matchAll(/!\[\[pending:([^\]]+)\]\]/g);
+    for (const match of pendingMatches) {
+      const id = match[1];
+      if (!state.assets.pending.has(id)) {
+        draftBody = draftBody.replace(match[0], `[Image Restoring Failed: asset missing in local storage]`);
+        bodyChanged = true;
+      }
+    }
+
+    if (bodyChanged) {
+      elements.bodyInput.value = draftBody;
+      storage.set(CONFIG.draftBodyKey, draftBody);
+    }
+  } catch (err) {
+    console.error("Failed to load IndexedDB assets:", err);
+  }
+
+  renderPendingAssets();
   renderPreview();
   renderNoteList();
   checkAuth();

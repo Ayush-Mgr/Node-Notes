@@ -307,6 +307,9 @@
     }
 
     .editor-toggle {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       display: flex;
       align-items: stretch;
       height: 38px;
@@ -314,8 +317,9 @@
       box-sizing: border-box;
       margin-bottom: 4px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.52);
+      background: var(--surface);
       padding: 3px;
+      border-bottom: 1px solid var(--ink-ghost);
     }
 
     .editor-tab {

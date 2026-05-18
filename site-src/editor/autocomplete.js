@@ -65,7 +65,7 @@ export function handleAutocomplete(e, textarea, getState) {
       isAutocompleteActive = true;
       autocompleteStart = start + 1;
       selectedIndex = 0;
-      updateSuggestions("", getState().notes);
+      updateSuggestions("", getState().vault.notes);
       return false;
     }
   }
@@ -90,7 +90,7 @@ export function handleAutocomplete(e, textarea, getState) {
   if (e.key === "Enter") {
     e.preventDefault();
     if (suggestions[selectedIndex]) {
-      insertSuggestion(textarea, suggestions[selectedIndex].displayPath);
+      insertSuggestion(textarea, suggestions[selectedIndex].linkTarget);
     } else {
       cancelAutocomplete();
     }
@@ -116,24 +116,39 @@ export function handleAutocomplete(e, textarea, getState) {
       cancelAutocomplete();
       return;
     }
-    updateSuggestions(query, getState().notes);
+    updateSuggestions(query, getState().vault.notes);
   }, 10);
 
   return false;
 }
 
 function updateSuggestions(query, notes) {
+  if (!notes || !Array.isArray(notes)) notes = [];
+  
   if (!query.trim()) {
     suggestions = notes.slice(0, 10);
   } else {
     const qLower = query.toLowerCase();
-    suggestions = notes
-      .filter(
-        (n) =>
-          n.title.toLowerCase().includes(qLower) ||
-          n.displayPath.toLowerCase().includes(qLower),
-      )
-      .slice(0, 10);
+    
+    const startsWith = [];
+    const includesTitle = [];
+    const includesPath = [];
+
+    for (const n of notes) {
+      if (!n.title || !n.displayPath) continue;
+      const tLower = n.title.toLowerCase();
+      const pLower = n.displayPath.toLowerCase();
+      
+      if (tLower.startsWith(qLower)) {
+        startsWith.push(n);
+      } else if (tLower.includes(qLower)) {
+        includesTitle.push(n);
+      } else if (pLower.includes(qLower)) {
+        includesPath.push(n);
+      }
+    }
+    
+    suggestions = [...startsWith, ...includesTitle, ...includesPath].slice(0, 10);
   }
   selectedIndex = 0;
   updatePanel();
