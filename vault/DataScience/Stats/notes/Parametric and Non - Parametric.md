@@ -1,8 +1,9 @@
 ---
 title: "Parametric and Non - Parametric"
-date: 2026-05-18T11:33:49.240Z
+date: 2026-05-18T11:36:41.397Z
 tags: [vault, web]
 ---
+
 
 # We find Trend using
 ## Parametric 
@@ -15,7 +16,7 @@ $$y = mx+b $$
 
 guessing the average  flow of data points using [[Linear regression]] method.
 
-![[pending:img_mpb2wh5j_1c45]]
+![[Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg]]
 
 
 
@@ -23,7 +24,7 @@ guessing the average  flow of data points using [[Linear regression]] method.
 $$T_t = a +bt+ct^2$$
 getting the flow  of trend using Quadratic regression
 
-![[pending:img_mpb36c6p_2m4v]]
+![[Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png]]
 
 3. Exponential Trend :
 $$T_t ​   =e^{α+βt}$$
@@ -39,4 +40,4 @@ $$\hat{T} = \frac{1}{k} \sum_{i=d-1}^{d} y_t+i$$
 $k$: The size of your window (how many total points you are averaging).  
 
 $d$: How many points you look at backwards and forwards from your current day. (The rule is $k=2d+1$) .
-
+![[Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png]]
