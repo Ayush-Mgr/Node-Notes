@@ -116,3 +116,4 @@
 - [[continuous series]]
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
+- [[Parametric and Non - Parametric]]
