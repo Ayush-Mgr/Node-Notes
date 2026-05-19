@@ -1,8 +1,9 @@
 ---
-title: "intro - Time Series Analysis"
-date: 2026-05-19T13:10:20.590Z
+title: "1. intro - Time Series Analysis"
+date: 2026-05-19T13:14:27.379Z
 tags: [vault, web]
 ---
+
 
 
 
