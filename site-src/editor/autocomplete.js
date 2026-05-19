@@ -162,21 +162,33 @@ function escapeHtml(value) {
   );
 }
 
-export function handleAutocomplete(e, textarea, getState) {
+export function handleAutocompleteInput(textarea, getState) {
   activeTextarea = textarea;
   createSuggestionPanel();
 
-  if (e.key === "[" && !isAutocompleteActive) {
+  if (!isAutocompleteActive) {
     const val = textarea.value;
     const start = textarea.selectionStart;
-    if (start > 0 && val[start - 1] === "[") {
+    if (start >= 2 && val[start - 1] === "[" && val[start - 2] === "[") {
       isAutocompleteActive = true;
-      autocompleteStart = start + 1;
+      autocompleteStart = start;
       selectedIndex = 0;
       updateSuggestions("", getState().vault.notes);
-      return false;
+    }
+  } else {
+    const val = textarea.value;
+    const query = val.substring(autocompleteStart, textarea.selectionStart);
+    if (query.includes("]")) {
+      cancelAutocomplete();
+    } else {
+      updateSuggestions(query, getState().vault.notes);
     }
   }
+}
+
+export function handleAutocomplete(e, textarea, getState) {
+  activeTextarea = textarea;
+  createSuggestionPanel();
 
   if (!isAutocompleteActive) return false;
 
@@ -215,17 +227,6 @@ export function handleAutocomplete(e, textarea, getState) {
     cancelAutocomplete();
     return false;
   }
-
-  setTimeout(() => {
-    if (!isAutocompleteActive) return;
-    const val = textarea.value;
-    const query = val.substring(autocompleteStart, textarea.selectionStart);
-    if (query.includes("]")) {
-      cancelAutocomplete();
-      return;
-    }
-    updateSuggestions(query, getState().vault.notes);
-  }, 10);
 
   return false;
 }
@@ -280,4 +281,22 @@ function cancelAutocomplete() {
   isAutocompleteActive = false;
   suggestions = [];
   updatePanel();
+}
+
+export function handleSelectionChange(textarea) {
+  if (!isAutocompleteActive) return;
+  if (textarea.selectionStart !== textarea.selectionEnd) {
+    cancelAutocomplete();
+    return;
+  }
+  const start = textarea.selectionStart;
+  const val = textarea.value;
+  if (start < autocompleteStart) {
+    cancelAutocomplete();
+    return;
+  }
+  const queryText = val.substring(autocompleteStart, start);
+  if (queryText.includes("\n") || queryText.includes("]") || queryText.includes("[")) {
+    cancelAutocomplete();
+  }
 }
