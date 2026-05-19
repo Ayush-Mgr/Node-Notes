@@ -1,3 +1,9 @@
+---
+title: "intro - Time Series Analysis"
+date: 2026-05-19T11:13:30.598Z
+tags: [vault, web]
+---
+
 
 time seres is a *series* of datas collected on certain time over a period , so the data contains the value and time
 
@@ -46,3 +52,8 @@ types of trends:
     
 - **Exponential Trend:** The data multiplies over time, curving upward aggressively.
 <img src=trend-in-time-series.png style="filter: invert(1);">
+
+## ways to find trend 
+- [[DataScience/Stats/notes/Parametric and Non - Parametric]]
+
+
