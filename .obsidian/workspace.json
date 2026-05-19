@@ -11,12 +11,14 @@
             "id": "73f135a2b9b14618",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png"
+                "file": "vault/Assets/script.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1"
+              "icon": "lucide-file",
+              "title": "script"
             }
           }
         ]
@@ -194,14 +196,14 @@
   },
   "active": "73f135a2b9b14618",
   "lastOpenFiles": [
+    "vault/Assets/index/index.md",
+    "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
-    "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-54-062Z_g175_image.png",
     "vault/Assets/AIMLSyllabus.pdf",
-    "vault/Assets/index/index.md",
     "vault/Business/basics accounting/Assets.md",
     "vault/Business/basics accounting/index/index.md",
     "vault/Private/Random/Project.md",
