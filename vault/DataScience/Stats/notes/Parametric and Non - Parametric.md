@@ -1,8 +1,9 @@
 ---
 title: "Parametric and Non - Parametric"
-date: 2026-05-19T11:16:59.217Z
+date: 2026-05-19T11:17:42.876Z
 tags: [vault, web]
 ---
+
 
 
 
@@ -31,7 +32,7 @@ getting the flow  of trend using Quadratic regression
 $$T_t ​   =e^{α+βt}$$
 getting the flow  of trend using Exponential regression
 
-![[Pasted_image_2026-05-19T11-16-54-062Z_g175_image.png]]
+![[Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg]]
 
 # NON-Parametric
 
