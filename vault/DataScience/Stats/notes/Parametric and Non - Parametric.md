@@ -1,8 +1,9 @@
 ---
-title: "Parametric and Non - Parametric"
-date: 2026-05-19T11:17:42.876Z
+title: "2. Parametric and Non - Parametric"
+date: 2026-05-19T13:14:08.062Z
 tags: [vault, web]
 ---
+
 
 
 
