@@ -1,8 +1,9 @@
 ---
 title: "intro - Time Series Analysis"
-date: 2026-05-19T11:13:30.598Z
+date: 2026-05-19T13:10:20.590Z
 tags: [vault, web]
 ---
+
 
 
 time seres is a *series* of datas collected on certain time over a period , so the data contains the value and time
@@ -40,7 +41,7 @@ Here:
 - **$I_t$​ (Irregular/Noise):** The random, unpredictable blips and bumps that you just can't explain.
 
 
-Trend:
+1. Trend:
 types of trends:
 - **Upward / Downward Trend:** A steady climb or fall over time.
     
@@ -53,7 +54,14 @@ types of trends:
 - **Exponential Trend:** The data multiplies over time, curving upward aggressively.
 <img src=trend-in-time-series.png style="filter: invert(1);">
 
-## ways to find trend 
-- [[DataScience/Stats/notes/Parametric and Non - Parametric]]
+-  **ways to find trend** : [[DataScience/Stats/notes/Parametric and Non - Parametric]]
 
 
+2. seasonality $S_t$ :
+
+occurs few times on a year  
+3. cyclical $C_t$ :
+
+occurs  few times in a decade  
+4. Irragular $T_t$ :
+ Noise any thing thats not  $T_t$ ,$S_t$ ,$C_t$.
