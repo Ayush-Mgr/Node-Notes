@@ -88,9 +88,7 @@ export function generateAssetMeta(file, folderPath = "") {
   const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
   const fileName = `Pasted_image_${timestamp}_${shortHash}_${safeName}`;
 
-  const noteFolder = folderPath.trim().replace(/^\/+|\/+$/g, "");
-  const assetFolder = noteFolder ? `Assets/${noteFolder}` : "Assets";
-  const path = `vault/${assetFolder}/${fileName}`;
+  const path = `vault/Assets/${fileName}`;
 
   return { fileName, path };
 }

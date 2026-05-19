@@ -1083,13 +1083,26 @@ async function handleSave() {
     await fetchNotes();
     let refreshFailed = state.ui.listStatus === "error";
 
-    if (folder && path !== `${CONFIG.vaultPrefix}index.md` && path !== `${CONFIG.vaultPrefix}${folder}/index.md` && path !== `${CONFIG.vaultPrefix}${folder}/index/index.md`) {
+    if (folder && !path.endsWith("index.md")) {
       const noteStem = noteStemFromPath(path);
-      const possibleIndexPaths = [
-        `${CONFIG.vaultPrefix}${folder}/index/index.md`,
-        `${CONFIG.vaultPrefix}${folder}/index.md`
-      ];
-      
+      const possibleIndexPaths = [];
+      let currentFolder = folder;
+
+      while (true) {
+        possibleIndexPaths.push(`${CONFIG.vaultPrefix}${currentFolder}/index/index.md`);
+        possibleIndexPaths.push(`${CONFIG.vaultPrefix}${currentFolder}/index.md`);
+
+        if (currentFolder.endsWith('/notes') || currentFolder === 'notes') {
+          const parentFolder = currentFolder === 'notes' ? '' : currentFolder.substring(0, currentFolder.lastIndexOf('/notes'));
+          const prefix = parentFolder ? `${parentFolder}/` : '';
+          possibleIndexPaths.push(`${CONFIG.vaultPrefix}${prefix}index/index.md`);
+          possibleIndexPaths.push(`${CONFIG.vaultPrefix}${prefix}index.md`);
+        }
+
+        if (!currentFolder.includes('/')) break;
+        currentFolder = currentFolder.substring(0, currentFolder.lastIndexOf('/'));
+      }
+
       let targetIndexPath = null;
       for (const p of possibleIndexPaths) {
         if (state.vault.notes.some(n => n.path === p)) {
