@@ -117,3 +117,4 @@
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
 - [[Parametric and Non - Parametric]]
+- [[1. intro - Time Series Analysis]]
