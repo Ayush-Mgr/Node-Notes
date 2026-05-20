@@ -1,8 +1,9 @@
 ---
 title: "1. intro - Time Series Analysis"
-date: 2026-05-20T06:12:22.834Z
+date: 2026-05-20T06:25:18.046Z
 tags: [vault, web]
 ---
+
 
 
 
@@ -62,5 +63,21 @@ types of trends:
 
 ## stationary data (Stable Data)
 
+stationary data's' entire joint probability distribution is constant over time.
+
+how ever the such data is very hard to form so we use second order stationary data :
+
 it is a time series dataset where the  variance, mean, Covariance are Constant.
 
+- eg,
+it would look more like random static hovering around a flat baseline.
+For example, if your baseline mean is 2, a stationary 3-year record might look like this:
+Year 1: (2, 1, 3, 2)
+Year 2: (1, 3, 2, 2)
+Year 3: (3, 2, 1, 3)
+
+Notice the difference?
+- The Mean is Constant: Every year still averages out to around 2.
+- The Variance is Constant: The numbers never swing wilder than 1 to 3.
+- No Seasonality (The Key): There is no predictable repeating loop. The 4th number of the year isn't always the highest number.
+Basically, stationary data looks like a flat, consistent, unpredictable heartbeat. 
