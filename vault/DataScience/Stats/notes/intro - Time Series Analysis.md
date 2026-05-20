@@ -1,10 +1,8 @@
 ---
 title: "1. intro - Time Series Analysis"
-date: 2026-05-20T07:41:00.569Z
+date: 2026-05-20T07:44:24.203Z
 tags: [vault, web]
 ---
-
-
 
 time seres is a *series* of datas collected on certain time over a period , so the data contains the value and time
 
@@ -97,21 +95,6 @@ Here is the golden rule of basic probability:
 - "OR" means Add: (I want a 1 OR a 2) →+
 ```
 
-### joint distribution Table
-Here is our setup:
-
-Variable $X$ (The Die): There are 6 possible outcomes $(1 \text{ through } 6)$.  
-The marginal probability for any single roll is:
-
-$\frac{1}{6}$
-
-Variable $Y$ (The Weather): You set the probability of a Sunny day at:
-
-$\frac{3}{7}$
-
-To complete the sample space, that means the probability of a "Not Sunny" day must be:
-
-$\frac{4}{7}$
 
 | X   | Y = Sunny | Y = Not Sunny | Total (Marginal X) |
 |-----|------------|----------------|--------------------|
@@ -145,8 +128,6 @@ which simplifies back to:
 
 $\frac{3}{7}$
 
-in nut-shell edges shows the probalit distribution of each axis
-
 The Golden Rule: The absolute bottom-right corner equals exactly:
 
 $1.0$
@@ -172,3 +153,6 @@ $\sum_x \sum_y P(X=x,Y=y) =1 $
 ---
 
 Marginal Distribution:
+
+Marginal Distribution = Probability distribution ,
+the edges of join probability distribution table 
