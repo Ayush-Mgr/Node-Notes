@@ -167,6 +167,10 @@ async function openNote(noteId, pushHash = true) {
   const node = state.nodeById.get(noteId);
   if (!node) return;
 
+  hoveredNode = null;
+  hideTooltip();
+  if (canvas) canvas.style.cursor = "default";
+
   setStatus(`Opening ${node.title}`);
   const response = await fetch(`content/${encodeURI(node.path)}`);
   if (!response.ok) {
