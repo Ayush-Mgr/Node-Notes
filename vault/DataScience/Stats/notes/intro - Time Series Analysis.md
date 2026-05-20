@@ -1,8 +1,9 @@
 ---
 title: "1. intro - Time Series Analysis"
-date: 2026-05-19T13:14:27.379Z
+date: 2026-05-20T06:12:22.834Z
 tags: [vault, web]
 ---
+
 
 
 
@@ -57,12 +58,9 @@ types of trends:
 
 -  **ways to find trend** : [[DataScience/Stats/notes/Parametric and Non - Parametric]]
 
+---
 
-2. seasonality $S_t$ :
+## stationary data (Stable Data)
 
-occurs few times on a year  
-3. cyclical $C_t$ :
+it is a time series dataset where the  variance, mean, Covariance are Constant.
 
-occurs  few times in a decade  
-4. Irragular $T_t$ :
- Noise any thing thats not  $T_t$ ,$S_t$ ,$C_t$.
