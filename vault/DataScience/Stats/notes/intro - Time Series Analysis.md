@@ -1,8 +1,9 @@
 ---
 title: "1. intro - Time Series Analysis"
-date: 2026-05-20T07:44:24.203Z
+date: 2026-05-20T07:44:57.981Z
 tags: [vault, web]
 ---
+
 
 time seres is a *series* of datas collected on certain time over a period , so the data contains the value and time
 
