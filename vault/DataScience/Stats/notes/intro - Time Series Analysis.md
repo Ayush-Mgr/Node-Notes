@@ -1,8 +1,9 @@
 ---
 title: "1. intro - Time Series Analysis"
-date: 2026-05-20T07:36:38.501Z
+date: 2026-05-20T07:41:00.569Z
 tags: [vault, web]
 ---
+
 
 
 time seres is a *series* of datas collected on certain time over a period , so the data contains the value and time
@@ -143,6 +144,8 @@ $\frac{18}{42}$
 which simplifies back to:
 
 $\frac{3}{7}$
+
+in nut-shell edges shows the probalit distribution of each axis
 
 The Golden Rule: The absolute bottom-right corner equals exactly:
 
