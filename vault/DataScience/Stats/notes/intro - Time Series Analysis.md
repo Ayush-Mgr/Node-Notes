@@ -1,13 +1,8 @@
 ---
 title: "1. intro - Time Series Analysis"
-date: 2026-05-20T06:25:18.046Z
+date: 2026-05-20T07:34:00.795Z
 tags: [vault, web]
 ---
-
-
-
-
-
 
 time seres is a *series* of datas collected on certain time over a period , so the data contains the value and time
 
@@ -81,3 +76,80 @@ Notice the difference?
 - The Variance is Constant: The numbers never swing wilder than 1 to 3.
 - No Seasonality (The Key): There is no predictable repeating loop. The 4th number of the year isn't always the highest number.
 Basically, stationary data looks like a flat, consistent, unpredictable heartbeat. 
+
+---
+## joint distribution 
+
+probability distribution [[DataScience/Stats/notes/Probability distribution]] gives you the complete "cheat sheet" for a single random event. A joint distribution takes it a step further: it describes the probability distribution of two or more random variables simultaneously.
+
+in simple terms:
+
+join distribution means the the over all combined predictive cheat sheet like , rooling 1 on die is 1/6 and having sunny day is  3/7 so the join distribution of this 2 is 1/6*3/7 = 1/14 
+
+```note
+When you want to find the joint probability of two completely 
+independent events happening at the exact same time (like rolling a die
+ AND having a sunny day), you don't add them. You multiply them.
+Here is the golden rule of basic probability:
+- "AND" means Multiply: (I want a 1 AND a sunny day) →×
+- "OR" means Add: (I want a 1 OR a 2) →+
+```
+
+
+| X   | Y = Sunny | Y = Not Sunny | Total (Marginal X) |
+|-----|------------|----------------|--------------------|
+| X=1 | 4/23       | 4/24           | 4/27 (or 6/1)      |
+| X=2 | 4/23       | 4/24           | 4/27 (or 6/1)      |
+| X=3 | 4/23       | 4/24           | 4/27 (or 6/1)      |
+| X=4 | 4/23       | 4/24           | 4/27 (or 6/1)      |
+| X=5 | 4/23       | 4/24           | 4/27 (or 6/1)      |
+| X=6 | 4/23       | 4/24           | 4/27 (or 6/1)      |
+| **Total (Marginal Y)** | **42/18 (or 7/3)** | **42/24 (or 7/4)** | **Sum = 42/42 (or 1.0)** |
+
+
+How to read your custom table:
+
+The Joints (Inner Cells): Pick any specific combination.  
+What is the chance of rolling a $X=5$ AND it being $Y=\text{Not Sunny}$?
+
+Go to the $X=5$ row and the $Y=\text{Not Sunny}$ column:
+
+$\frac{4}{42}$
+
+The Margins (Outer Edges): If you add up the Sunny column:
+
+$\frac{3}{42} + \frac{3}{42} + \frac{3}{42} + \frac{3}{42} + \frac{3}{42} + \frac{3}{42}$
+
+you get:
+
+$\frac{18}{42}$
+
+which simplifies back to:
+
+$\frac{3}{7}$
+
+The Golden Rule: The absolute bottom-right corner equals exactly:
+
+$1.0$
+
+because:
+
+$\frac{42}{42} = 1$
+
+This proves your matrix is perfectly normalized.
+
+
+a valid Joint Probability Distribution must always follow two absolute rules:  
+
+- Non-negativity: $P(X=x,Y=y)≥0$ for all $x,y$. You can't have a negative probability of something happening.  
+
+- Normalization: The sum (for discrete variables) or integral (for continuous variables) of the probabilities over all possible values of $X$ and $Y$ must equal $1$.  
+ Discrete Math: 
+$\sum_x \sum_y P(X=x,Y=y) =1 $
+
+
+
+
+---
+
+Marginal Distribution:
