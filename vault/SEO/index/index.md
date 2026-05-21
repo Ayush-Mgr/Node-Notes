@@ -5,3 +5,7 @@
 - [[brand overview]]
 - [[seo KEys]]
 - [[seo webs]]
+
+## New / Uncategorized
+
+- [[Web edit console]]
