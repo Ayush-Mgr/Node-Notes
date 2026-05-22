@@ -521,6 +521,23 @@
       text-decoration: underline;
     }
 
+    .preview-body .internal-link {
+      color: #0f5a46;
+      font-weight: 600;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .preview-body .internal-link:hover {
+      color: #083b2e;
+    }
+
+    .preview-body .internal-link--ghost {
+      color: #8b5e00;
+      text-decoration-style: dashed;
+    }
+
     .preview-body blockquote {
       border-left: 2px solid var(--ink-ghost);
       padding-left: 1rem;

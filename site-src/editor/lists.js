@@ -10,17 +10,65 @@ export function handleLists(e, textarea) {
   const lastNewline = textBeforeCursor.lastIndexOf("\n");
   const currentLine = textBeforeCursor.substring(lastNewline + 1);
 
-  const blockMap = {
-    "```": true,
-    $$: true,
-  };
-
   const trimmedLine = currentLine.trim();
-  if (blockMap[trimmedLine]) {
-    e.preventDefault();
-    const textToInsert = "\n\n" + trimmedLine;
-    insertTextAtCursor(textarea, textToInsert, -(trimmedLine.length + 1));
-    return true;
+  let isBlock = false;
+  let delimiter = "";
+  let closeDelimiter = "";
+
+  if (trimmedLine.startsWith("```")) {
+    isBlock = true;
+    delimiter = "```";
+    closeDelimiter = "```";
+  } else if (trimmedLine.startsWith("~~~")) {
+    isBlock = true;
+    delimiter = "~~~";
+    closeDelimiter = "~~~";
+  } else if (trimmedLine === "$$") {
+    isBlock = true;
+    delimiter = "$$";
+    closeDelimiter = "$$";
+  }
+
+  if (isBlock) {
+    const linesBefore = textBeforeCursor.split("\n");
+    let fenceChar = null;
+    let fenceLength = 0;
+    let inMath = false;
+
+    for (let i = 0; i < linesBefore.length; i++) {
+      const l = linesBefore[i].trim();
+
+      if (fenceChar !== null) {
+        const closeRegex = new RegExp(`^\\s*${fenceChar}{${fenceLength},}\\s*$`);
+        if (l.match(closeRegex)) {
+          fenceChar = null;
+          fenceLength = 0;
+        }
+      } else if (inMath) {
+        if (l.match(/^\s*\$\$\s*$/)) {
+          inMath = false;
+        }
+      } else {
+        const fenceMatch = l.match(/^\s*(\`{3,}|~{3,})/);
+        if (fenceMatch) {
+          fenceChar = fenceMatch[1][0];
+          fenceLength = fenceMatch[1].length;
+        } else if (l.match(/^\s*\$\$\s*$/)) {
+          inMath = true;
+        }
+      }
+    }
+
+    const insideBlock = (delimiter === "$$") ? inMath : (fenceChar !== null);
+
+    if (insideBlock) {
+      e.preventDefault();
+      const textToInsert = "\n\n" + closeDelimiter;
+      insertTextAtCursor(textarea, textToInsert, -(closeDelimiter.length + 1));
+      return true;
+    } else {
+      return false;
+    }
   }
 
   const listRegex = /^(\s*)([-*+]|\d+\.|>)( \[([ x])\])?\s+(.*)$/i;

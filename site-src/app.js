@@ -20,6 +20,9 @@ let currentZoomTransform = d3.zoomIdentity;
 let canvas, context, simulation;
 let hoveredNode = null;
 let redrawGraph = () => {};
+let localGraphSimulation = null;
+let localGraphSvg = null;
+let localGraphZoom = null;
 
 const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 
@@ -117,6 +120,7 @@ function buildInternalLinkResolver() {
   const byLeaf = new Map();
 
   for (const node of state.data.nodes) {
+    if (node.ghost) continue;
     exact.set(node.id.toLowerCase(), node.id);
     const leaf = node.id.split("/").pop().toLowerCase();
     if (!byLeaf.has(leaf)) byLeaf.set(leaf, []);
@@ -148,24 +152,180 @@ function rewriteWikilinks(markdown) {
     }
 
     const resolved = state.resolveNoteTarget(target);
-    if (!resolved) return label;
-    return `<a href="#note=${encodeURIComponent(resolved)}" class="internal-note-link" data-note-id="${resolved}">${label}</a>`;
+    if (!resolved) {
+      return `<span class="internal-note-link internal-note-link--ghost" title="Missing note: ${escapeHtml(target)}">${escapeHtml(label)}</span>`;
+    }
+    return `<a href="#note=${encodeURIComponent(resolved)}" class="internal-note-link" data-note-id="${resolved}">${escapeHtml(label)}</a>`;
   });
 }
 
+function getCalloutIcon(type) {
+  const icons = {
+    note: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
+    abstract: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M9 10h6"/></svg>`,
+    summary: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M9 10h6"/></svg>`,
+    tldr: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M9 10h6"/></svg>`,
+    info: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+    todo: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+    tip: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A7 7 0 0 0 4 8c0 1.3.5 2.6 1.5 3.5.7.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`,
+    hint: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A7 7 0 0 0 4 8c0 1.3.5 2.6 1.5 3.5.7.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`,
+    success: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+    check: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+    done: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+    question: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`,
+    help: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`,
+    faq: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`,
+    warning: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+    caution: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+    failure: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`,
+    danger: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    bug: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>`,
+    error: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></svg>`,
+    quote: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1Z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1Z"/></svg>`
+  };
+  const norm = type.toLowerCase();
+  return icons[norm] || icons.note;
+}
+
+function getCalloutTitle(type, userTitle) {
+  if (userTitle && userTitle.trim()) {
+    return userTitle.trim();
+  }
+  return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+}
+
+function renderCallout(type, collapseSign, title, innerContentMarkdown) {
+  const normType = type.toLowerCase();
+  const icon = getCalloutIcon(normType);
+  const displayTitle = getCalloutTitle(type, title);
+  const parsedContent = marked.parse(innerContentMarkdown, { breaks: true, gfm: true });
+  const isCollapsible = collapseSign === "-" || collapseSign === "+";
+  const isOpen = collapseSign === "+";
+
+  if (isCollapsible) {
+    return `
+<details class="callout callout--${normType}" data-callout="${normType}" ${isOpen ? "open" : ""}>
+  <summary class="callout-header">
+    <span class="callout-icon">${icon}</span>
+    <span class="callout-title">${escapeHtml(displayTitle)}</span>
+    <span class="callout-fold-icon"></span>
+  </summary>
+  <div class="callout-content">
+    ${parsedContent}
+  </div>
+</details>
+`;
+  } else {
+    return `
+<div class="callout callout--${normType}" data-callout="${normType}">
+  <div class="callout-header">
+    <span class="callout-icon">${icon}</span>
+    <span class="callout-title">${escapeHtml(displayTitle)}</span>
+  </div>
+  <div class="callout-content">
+    ${parsedContent}
+  </div>
+</div>
+`;
+  }
+}
+
+function parseCallouts(markdown) {
+  const lines = markdown.split(/\r?\n/);
+  const result = [];
+  let i = 0;
+
+  let fenceChar = null;
+  let fenceLength = 0;
+  let inMathBlock = false;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    let cleanLine = line;
+    const bqMatch = line.match(/^(?:\s*>\s*)+/);
+    if (bqMatch) {
+      cleanLine = line.slice(bqMatch[0].length);
+    }
+
+    if (fenceChar !== null) {
+      const closeRegex = new RegExp(`^\\s*${fenceChar}{${fenceLength},}\\s*$`);
+      if (cleanLine.match(closeRegex)) {
+        fenceChar = null;
+        fenceLength = 0;
+      }
+    } else if (inMathBlock) {
+      if (cleanLine.match(/^\s*\$\$\s*$/)) {
+        inMathBlock = false;
+      }
+    } else {
+      const fenceMatch = cleanLine.match(/^\s*(\`{3,}|~{3,})/);
+      if (fenceMatch) {
+        fenceChar = fenceMatch[1][0];
+        fenceLength = fenceMatch[1].length;
+      } else if (cleanLine.match(/^\s*\$\$\s*$/)) {
+        inMathBlock = true;
+      }
+    }
+
+    const inFencedRegion = (fenceChar !== null || inMathBlock);
+
+    if (!inFencedRegion) {
+      const match = line.match(/^\s*>\s?(.*)$/);
+
+      if (match) {
+        const contentLine = match[1];
+        const headerMatch = contentLine.match(/^\[!([a-zA-Z0-9_-]+)\]([-+])?\s*(.*)$/);
+
+        if (headerMatch) {
+          const type = headerMatch[1];
+          const collapseSign = headerMatch[2];
+          const title = headerMatch[3];
+
+          const blockquoteLines = [];
+          while (i < lines.length) {
+            const innerMatch = lines[i].match(/^\s*>\s?(.*)$/);
+            if (!innerMatch) {
+              break;
+            }
+            blockquoteLines.push(innerMatch[1]);
+            i++;
+          }
+
+          const innerContentMarkdown = blockquoteLines.slice(1).join("\n");
+          const calloutHtml = renderCallout(type, collapseSign, title, innerContentMarkdown);
+          result.push(calloutHtml);
+          continue;
+        }
+      }
+    }
+
+    result.push(line);
+    i++;
+  }
+
+  return result.join("\n");
+}
+
 function preprocessObsidianMarkdown(markdown) {
-  return rewriteHtmlImageSources(
-    rewriteMarkdownImageSources(
-      rewriteWikilinks(
-        stripFrontmatter(markdown),
+  return parseCallouts(
+    rewriteHtmlImageSources(
+      rewriteMarkdownImageSources(
+        rewriteWikilinks(
+          stripFrontmatter(markdown),
+        ),
       ),
-    ),
+    )
   );
 }
 
 async function openNote(noteId, pushHash = true) {
   const node = state.nodeById.get(noteId);
   if (!node) return;
+  if (node.ghost || !node.path) {
+    setStatus(`Missing note: ${node.missingTarget || node.title}`);
+    return;
+  }
 
   hoveredNode = null;
   hideTooltip();
@@ -200,6 +360,42 @@ async function openNote(noteId, pushHash = true) {
     window.location.hash = `note=${encodeURIComponent(noteId)}`;
   }
 
+  cleanupLocalGraph();
+
+  const neighborIds = currentNeighborMap.get(noteId) || new Set();
+  const view = document.getElementById("local-graph-view");
+  if (neighborIds.size === 0) {
+    if (view) {
+      view.innerHTML = `<div class="local-graph-empty">No direct note connections yet.</div>`;
+    }
+  } else {
+    const localNodes = [];
+    const activeNodeSrc = state.nodeById.get(noteId);
+    if (activeNodeSrc) {
+      localNodes.push({ ...activeNodeSrc });
+    }
+    neighborIds.forEach(id => {
+      const nNode = state.nodeById.get(id);
+      if (nNode) localNodes.push({ ...nNode });
+    });
+    const localNodeIds = new Set(localNodes.map(d => d.id));
+
+    const localLinks = state.data.links
+      .filter(link => {
+        const s = typeof link.source === "object" ? link.source.id : link.source;
+        const t = typeof link.target === "object" ? link.target.id : link.target;
+        return localNodeIds.has(s) && localNodeIds.has(t);
+      })
+      .map(link => ({
+        source: typeof link.source === "object" ? link.source.id : link.source,
+        target: typeof link.target === "object" ? link.target.id : link.target
+      }));
+
+    requestAnimationFrame(() => {
+      renderLocalGraph(noteId, localNodes, localLinks);
+    });
+  }
+
   noteContent.querySelectorAll("[data-note-id]").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
@@ -216,11 +412,147 @@ function closeNote(clearHash = true) {
   document.body.classList.remove("note-open");
   noteContent.innerHTML = "";
   state.activeNoteId = null;
+  cleanupLocalGraph();
   redrawGraph();
   setStatus(`${state.data?.nodes.length ?? 0} notes`);
   if (clearHash) {
     history.replaceState(null, "", window.location.pathname);
   }
+}
+
+function cleanupLocalGraph() {
+  if (localGraphSimulation) {
+    localGraphSimulation.stop();
+    localGraphSimulation = null;
+  }
+  localGraphSvg = null;
+  localGraphZoom = null;
+  const view = document.getElementById("local-graph-view");
+  if (view) {
+    view.innerHTML = "";
+  }
+}
+
+function renderLocalGraph(activeNoteId, localNodes, localLinks) {
+  const view = document.getElementById("local-graph-view");
+  if (!view) return;
+
+  const width = view.clientWidth || 300;
+  const height = view.clientHeight || 280;
+
+  // Pin active note in the exact center
+  const activeNode = localNodes.find(d => d.id === activeNoteId);
+  if (activeNode) {
+    activeNode.fx = width / 2;
+    activeNode.fy = height / 2;
+  }
+
+  const svg = d3.select(view)
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("width", "100%")
+    .attr("height", "100%");
+
+  localGraphSvg = svg;
+
+  const g = svg.append("g");
+
+  // D3 zoom filter
+  localGraphZoom = d3.zoom()
+    .scaleExtent([0.6, 2.5])
+    .filter((event) => {
+      // Allow non-wheel interactions; restrict wheel zoom to Ctrl/Cmd modifier
+      if (event.type === "wheel") {
+        return event.ctrlKey || event.metaKey;
+      }
+      return !event.button; // Default filter for non-wheel events
+    })
+    .on("zoom", (event) => {
+      g.attr("transform", event.transform);
+    });
+
+  svg.call(localGraphZoom);
+
+  const linkSelection = g.append("g")
+    .attr("class", "links")
+    .selectAll("line")
+    .data(localLinks)
+    .join("line")
+    .attr("class", d => {
+      const isActiveLink = (d.source === activeNoteId || d.target === activeNoteId);
+      const ghostClass = d.ghost ? " ghost-link" : "";
+      return isActiveLink ? `local-graph-link active-link${ghostClass}` : `local-graph-link${ghostClass}`;
+    });
+
+  const nodeSelection = g.append("g")
+    .attr("class", "nodes")
+    .selectAll("g")
+    .data(localNodes)
+    .join("g")
+    .attr("class", d => {
+      const classes = ["local-graph-node"];
+      if (d.id === activeNoteId) classes.push("active-node");
+      if (d.ghost) classes.push("ghost-node");
+      return classes.join(" ");
+    })
+    .on("click", (event, d) => {
+      if (d.ghost) {
+        setStatus(`Missing note: ${d.missingTarget || d.title}`);
+        return;
+      }
+      if (d.id !== activeNoteId) {
+        openNote(d.id);
+      }
+    });
+
+  nodeSelection.append("title")
+    .text(d => d.title);
+
+  nodeSelection.append("circle")
+    .attr("r", d => d.id === activeNoteId ? d.radius + 3 : d.radius);
+
+  nodeSelection.append("text")
+    .attr("class", "local-graph-label")
+    .attr("dx", d => d.radius + 6)
+    .attr("dy", 4)
+    .text(d => d.title.length > 24 ? d.title.slice(0, 24) + "..." : d.title);
+
+  nodeSelection
+    .on("mouseenter", (event, d) => {
+      linkSelection.style("stroke-opacity", l => (l.source.id === d.id || l.target.id === d.id) ? 1.0 : 0.1);
+      linkSelection.style("stroke", l => (l.source.id === d.id || l.target.id === d.id) ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.08)");
+      
+      const connectedIds = new Set();
+      connectedIds.add(d.id);
+      localLinks.forEach(l => {
+        if (l.source.id === d.id) connectedIds.add(l.target.id);
+        if (l.target.id === d.id) connectedIds.add(l.source.id);
+      });
+
+      nodeSelection.style("opacity", n => connectedIds.has(n.id) ? 1.0 : 0.2);
+    })
+    .on("mouseleave", () => {
+      linkSelection.style("stroke-opacity", null);
+      linkSelection.style("stroke", null);
+      nodeSelection.style("opacity", null);
+    });
+
+  localGraphSimulation = d3.forceSimulation(localNodes)
+    .force("link", d3.forceLink(localLinks).id(d => d.id).distance(60).strength(0.8))
+    .force("charge", d3.forceManyBody().strength(-120))
+    .force("collide", d3.forceCollide().radius(d => d.radius + 18))
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+  localGraphSimulation.on("tick", () => {
+    linkSelection
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
+
+    nodeSelection
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+  });
 }
 
 function showTooltip(text, x, y) {
@@ -364,15 +696,17 @@ function renderGraph() {
     const normalLinks = [];
     const fadedLinks = [];
     const highlightedLinks = [];
+    const ghostNormalLinks = [];
+    const ghostFadedLinks = [];
+    const ghostHighlightedLinks = [];
     
     links.forEach(d => {
-       if (!focusId) {
-           normalLinks.push(d);
-       } else if (d.source.id === focusId || d.target.id === focusId) {
-           highlightedLinks.push(d);
-       } else {
-           fadedLinks.push(d);
-       }
+       const targetBucket = !focusId
+         ? (d.ghost ? ghostNormalLinks : normalLinks)
+         : (d.source.id === focusId || d.target.id === focusId)
+           ? (d.ghost ? ghostHighlightedLinks : highlightedLinks)
+           : (d.ghost ? ghostFadedLinks : fadedLinks);
+       targetBucket.push(d);
     });
     
     if (normalLinks.length > 0) {
@@ -408,15 +742,63 @@ function renderGraph() {
         context.stroke();
     }
 
+    if (ghostNormalLinks.length > 0) {
+        context.beginPath();
+        ghostNormalLinks.forEach(d => {
+           context.moveTo(d.source.x, d.source.y);
+           context.lineTo(d.target.x, d.target.y);
+        });
+        context.setLineDash([4, 4]);
+        context.strokeStyle = "rgba(107, 114, 128, 0.28)";
+        context.lineWidth = 0.9;
+        context.stroke();
+        context.setLineDash([]);
+    }
+
+    if (ghostFadedLinks.length > 0) {
+        context.beginPath();
+        ghostFadedLinks.forEach(d => {
+           context.moveTo(d.source.x, d.source.y);
+           context.lineTo(d.target.x, d.target.y);
+        });
+        context.setLineDash([4, 4]);
+        context.strokeStyle = "rgba(107, 114, 128, 0.12)";
+        context.lineWidth = 0.75;
+        context.stroke();
+        context.setLineDash([]);
+    }
+
+    if (ghostHighlightedLinks.length > 0) {
+        context.beginPath();
+        ghostHighlightedLinks.forEach(d => {
+           context.moveTo(d.source.x, d.source.y);
+           context.lineTo(d.target.x, d.target.y);
+        });
+        context.setLineDash([5, 4]);
+        context.strokeStyle = "rgba(120, 53, 15, 0.45)";
+        context.lineWidth = 1.15;
+        context.stroke();
+        context.setLineDash([]);
+    }
+
     const normalNodes = [];
     const fadedNodes = [];
     const highlightedNodes = [];
+    const ghostNodes = [];
+    const ghostFadedNodes = [];
+    const ghostHighlightedNodes = [];
     
     nodes.forEach(d => {
         const isActive = d.id === focusId;
         const isNeighbor = neighbors.has(d.id);
         
-        if (!focusId) {
+        if (d.ghost && !focusId) {
+            ghostNodes.push(d);
+        } else if (d.ghost && (isActive || isNeighbor)) {
+            ghostHighlightedNodes.push(d);
+        } else if (d.ghost) {
+            ghostFadedNodes.push(d);
+        } else if (!focusId) {
             normalNodes.push(d);
         } else if (isActive || isNeighbor) {
             highlightedNodes.push(d);
@@ -460,6 +842,48 @@ function renderGraph() {
         });
     }
 
+    if (ghostNodes.length > 0) {
+        ghostNodes.forEach(d => {
+            context.beginPath();
+            context.arc(d.x, d.y, d.radius + 0.5, 0, 2 * Math.PI);
+            context.fillStyle = "rgba(255, 251, 235, 0.95)";
+            context.fill();
+            context.setLineDash([3, 3]);
+            context.lineWidth = 1;
+            context.strokeStyle = "rgba(146, 64, 14, 0.5)";
+            context.stroke();
+            context.setLineDash([]);
+        });
+    }
+
+    if (ghostFadedNodes.length > 0) {
+        ghostFadedNodes.forEach(d => {
+            context.beginPath();
+            context.arc(d.x, d.y, d.radius + 0.5, 0, 2 * Math.PI);
+            context.fillStyle = "rgba(255, 251, 235, 0.45)";
+            context.fill();
+            context.setLineDash([3, 3]);
+            context.lineWidth = 1;
+            context.strokeStyle = "rgba(146, 64, 14, 0.18)";
+            context.stroke();
+            context.setLineDash([]);
+        });
+    }
+
+    if (ghostHighlightedNodes.length > 0) {
+        ghostHighlightedNodes.forEach(d => {
+            context.beginPath();
+            context.arc(d.x, d.y, d.radius + 1, 0, 2 * Math.PI);
+            context.fillStyle = "rgba(255, 251, 235, 1)";
+            context.fill();
+            context.setLineDash([3, 3]);
+            context.lineWidth = 1.25;
+            context.strokeStyle = "rgba(146, 64, 14, 0.68)";
+            context.stroke();
+            context.setLineDash([]);
+        });
+    }
+
     context.restore();
   }
 
@@ -486,6 +910,30 @@ function handleResize() {
         simulation.force("x", d3.forceX(width / 2).strength(0.8));
         simulation.force("y", d3.forceY(height / 2).strength(0.8));
         simulation.alpha(0.3).restart();
+    }
+  }
+
+  if (localGraphSimulation && localGraphSvg && localGraphZoom) {
+    const view = document.getElementById("local-graph-view");
+    if (view) {
+      const width = view.clientWidth || 300;
+      const height = view.clientHeight || 280;
+
+      localGraphSvg.attr("viewBox", `0 0 ${width} ${height}`);
+
+      // Reset zoom transform to ensure visual centering
+      localGraphSvg.call(localGraphZoom.transform, d3.zoomIdentity);
+
+      localGraphSimulation.force("center", d3.forceCenter(width / 2, height / 2));
+
+      const nodes = localGraphSimulation.nodes();
+      const activeNode = nodes.find(d => d.id === state.activeNoteId);
+      if (activeNode) {
+        activeNode.fx = width / 2;
+        activeNode.fy = height / 2;
+      }
+
+      localGraphSimulation.alpha(0.3).restart();
     }
   }
 }
@@ -561,6 +1009,7 @@ function searchNodes(query) {
   const q = query.toLowerCase().trim();
   if (!q || !state.data) return [];
   return state.data.nodes
+    .filter((node) => !node.ghost)
     .map((node) => {
       const titleIdx = node.title.toLowerCase().indexOf(q);
       const idIdx = node.id.toLowerCase().indexOf(q);

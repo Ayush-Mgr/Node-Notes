@@ -46,8 +46,21 @@
       <div class="note-panel__eyebrow">Note</div>
       <button id="close-note" class="icon-button" aria-label="Close note">Close</button>
     </div>
-    <h1 id="note-title">Note</h1>
-    <article id="note-content" class="note-content"></article>
+    <div class="note-panel__body">
+      <div class="note-panel__content-col">
+        <h1 id="note-title">Note</h1>
+        <article id="note-content" class="note-content"></article>
+      </div>
+      <div class="note-panel__sidebar-col">
+        <section id="local-graph-container" class="local-graph-container">
+          <div class="local-graph-header">
+            <span class="local-graph-title">Local Connections</span>
+            <span class="local-graph-subtitle">Notes linked to this note</span>
+          </div>
+          <div id="local-graph-view" class="local-graph-view"></div>
+        </section>
+      </div>
+    </div>
   </aside>
 
   <div id="tooltip" class="tooltip hidden"></div>

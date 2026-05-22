@@ -141,6 +141,7 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
     outgoing_counts: Counter[str] = Counter()
     incoming_counts: Counter[str] = Counter()
     seen_links: set[tuple[str, str]] = set()
+    ghost_nodes: dict[str, dict] = {}
 
     for note in notes.values():
         for embed_flag, raw_target in WIKILINK_RE.findall(note["markdown"]):
@@ -153,17 +154,33 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
 
             resolved = resolve_note_target(target, notes, basename_map)
 
-            if not resolved or resolved == note["id"]:
+            if resolved == note["id"]:
                 continue
 
-            key = (note["id"], resolved)
+            ghost = resolved is None
+            target_id = resolved
+            if ghost:
+                ghost_key = normalize_target(target)
+                target_id = f"ghost:{ghost_key}"
+                if target_id not in ghost_nodes:
+                    ghost_nodes[target_id] = {
+                        "id": target_id,
+                        "title": Path(target.split("/")[-1]).stem or target,
+                        "path": None,
+                        "folder": "Missing",
+                        "degree": 0,
+                        "ghost": True,
+                        "missingTarget": target.strip(),
+                    }
+
+            key = (note["id"], target_id)
             if key in seen_links:
                 continue
 
             seen_links.add(key)
-            links.append({"source": note["id"], "target": resolved})
+            links.append({"source": note["id"], "target": target_id, "ghost": ghost})
             outgoing_counts[note["id"]] += 1
-            incoming_counts[resolved] += 1
+            incoming_counts[target_id] += 1
 
     nodes = [
         {
@@ -172,9 +189,17 @@ def build_graph_data(exclude_patterns: set[str]) -> dict:
             "path":   note["path"],
             "folder": note["folder"],
             "degree": outgoing_counts[note_id] + incoming_counts[note_id],
+            "ghost": False,
         }
         for note_id, note in notes.items()
     ]
+    nodes.extend(
+        {
+            **node,
+            "degree": outgoing_counts[node_id] + incoming_counts[node_id],
+        }
+        for node_id, node in ghost_nodes.items()
+    )
 
     return {
         "nodes": nodes,

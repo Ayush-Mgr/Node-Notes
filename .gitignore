@@ -8,7 +8,8 @@ tsconfig.tsbuildinfo
 # private/
 .replit
 replit.nix
-scripts/__pycache__/
+__pycache__/
+*.pyc
 docs/
 .agents
 .cursor/
@@ -16,3 +17,4 @@ skills-lock.json
 .env
 **/.env
 *.env
+backend/sessions.db*

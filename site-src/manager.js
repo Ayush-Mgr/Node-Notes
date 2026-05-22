@@ -127,6 +127,7 @@ const storage = {
 };
 
 const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+const WIKILINK_RE = /(!)?\[\[([^\]]+)\]\]/g;
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => HTML_ESCAPES[char]);
@@ -187,7 +188,7 @@ function resolveAssetPreviewUrl(target) {
 }
 
 function preprocessMarkdown(markdown) {
-  return markdown.replace(/!\[\[([^\]]+)\]\]/g, (match, inner) => {
+  const withEmbeds = markdown.replace(/!\[\[([^\]]+)\]\]/g, (match, inner) => {
     if (inner.startsWith("pending:")) {
       const id = inner.replace("pending:", "");
       const asset = state.assets.pending.get(id);
@@ -200,6 +201,26 @@ function preprocessMarkdown(markdown) {
     const target = inner.split("|", 1)[0].split("#", 1)[0].trim();
     const resolved = resolveAssetPreviewUrl(target);
     return resolved ? `![${target}](${resolved})` : match;
+  });
+
+  return withEmbeds.replace(WIKILINK_RE, (match, bang, inner) => {
+    if (bang) return match;
+
+    const [targetPart, aliasPart] = inner.split("|");
+    const target = (targetPart || "").split("#", 1)[0].trim();
+    const label = (aliasPart || target || "Untitled").trim();
+
+    if (!target) return "";
+
+    const resolvedNote = resolveVaultNoteTarget(target);
+    const escapedTarget = escapeHtml(target);
+    const escapedLabel = escapeHtml(label);
+
+    if (!resolvedNote) {
+      return `<a href="#" class="internal-link internal-link--ghost" data-note-target="${escapedTarget}" aria-label="Create missing note ${escapedLabel}">${escapedLabel}</a>`;
+    }
+
+    return `<a href="#" class="internal-link" data-note-path="${escapeHtml(resolvedNote.path)}" data-note-target="${escapedTarget}">${escapedLabel}</a>`;
   });
 }
 
@@ -241,6 +262,38 @@ function normalizeFolderPath(value) {
 
 function noteStemFromPath(path) {
   return path.split("/").pop().replace(/\.md$/i, "");
+}
+
+function normalizeLinkTarget(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/^vault\//i, "")
+    .replace(/\.md$/i, "")
+    .toLowerCase();
+}
+
+function resolveVaultNoteTarget(target) {
+  const normalized = normalizeLinkTarget(target);
+  if (!normalized) return null;
+
+  const exact = new Map();
+  const byLeaf = new Map();
+
+  for (const note of state.vault.notes) {
+    const linkTarget = normalizeLinkTarget(note.linkTarget);
+    exact.set(linkTarget, note);
+
+    const leaf = linkTarget.split("/").pop();
+    if (!byLeaf.has(leaf)) byLeaf.set(leaf, []);
+    byLeaf.get(leaf).push(note);
+  }
+
+  if (exact.has(normalized)) return exact.get(normalized);
+
+  const leaf = normalized.split("/").pop();
+  const matches = byLeaf.get(leaf) || [];
+  return matches.length === 1 ? matches[0] : null;
 }
 
 function isVaultPathSafe(path) {
@@ -303,6 +356,59 @@ function parseEditableNote(path, markdown) {
     title: title || fallback,
     body: markdown.slice(frontmatter[0].length),
   };
+}
+
+function beginLinkedNoteDraft(rawTarget) {
+  const cleanedTarget = String(rawTarget || "").split("#", 1)[0].trim().replace(/\\/g, "/").replace(/\.md$/i, "");
+  if (!cleanedTarget) return;
+
+  if (state.editor.mode === "edit" && !state.editor.draftSnapshot) {
+    state.editor.draftSnapshot = {
+      title: elements.titleInput.value,
+      body: elements.bodyInput.value,
+      folder: elements.folderInput.value,
+    };
+  }
+
+  enterCreateMode();
+
+  const parts = cleanedTarget.split("/").filter(Boolean);
+  const leaf = parts.pop() || cleanedTarget;
+  const folder = parts.join("/") || elements.folderInput.value || defaultFolder();
+
+  elements.titleInput.value = leaf;
+  elements.bodyInput.value = `# ${leaf}\n\nStart writing...`;
+  elements.folderInput.value = folder;
+  state.editor.titleEdited = true;
+
+  updateModeUi();
+  updateFolderHint();
+  renderPreview();
+  saveDraftSoon();
+  setEditorMode("preview");
+  setStatus("success", `Draft created for "${leaf}". Save to create the linked note.`);
+}
+
+async function navigateToLinkedNote(rawTarget) {
+  if (!state.auth.isAuthenticated) {
+    setStatus("error", "Please sign in to follow or create internal links.");
+    return;
+  }
+
+  const target = String(rawTarget || "").split("#", 1)[0].trim();
+  if (!target) return;
+
+  const note = resolveVaultNoteTarget(target);
+  if (note) {
+    await startEditing(note.path);
+    setEditorMode("preview");
+    return;
+  }
+
+  const shouldCreate = window.confirm(`Note "${target}" does not exist yet. Create a draft for it now?`);
+  if (!shouldCreate) return;
+
+  beginLinkedNoteDraft(target);
 }
 
 function extractAutoTitle(body) {
@@ -752,6 +858,20 @@ async function checkAuth() {
   } catch {
     clearTimeout(coldStartTimer);
     elements.authStatusLoading.textContent = "Backend offline.";
+  }
+}
+
+async function keepAlive() {
+  if (!state.auth.isAuthenticated) return;
+  try {
+    const data = await apiRequest("/auth/status");
+    if (!data.authenticated) {
+      state.auth.isAuthenticated = false;
+      state.auth.user = null;
+      renderAuth();
+    }
+  } catch (err) {
+    console.warn("Silent keep-alive check failed:", err);
   }
 }
 
@@ -1311,6 +1431,16 @@ function bindEvents() {
     }
   });
 
+  elements.previewBody.addEventListener("click", async (event) => {
+    const link = event.target.closest(".internal-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (state.ui.isMutating) return;
+
+    await navigateToLinkedNote(link.dataset.noteTarget || "");
+  });
+
   elements.cancelEditBtn.addEventListener("click", () => {
     if (state.ui.isMutating) return;
     exitEditMode({ restoreDraft: true });
@@ -1478,6 +1608,36 @@ async function boot() {
   renderPreview();
   renderNoteList();
   checkAuth();
+
+  // Best-effort keep-warm silent ping for Render Free tier
+  let keepAliveInterval = null;
+
+  function startKeepAlive() {
+    if (keepAliveInterval) return;
+    keepAliveInterval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        keepAlive();
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+  }
+
+  function stopKeepAlive() {
+    if (keepAliveInterval) {
+      clearInterval(keepAliveInterval);
+      keepAliveInterval = null;
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      keepAlive(); // Ping immediately on returning to visible
+      startKeepAlive();
+    } else {
+      stopKeepAlive();
+    }
+  });
+
+  startKeepAlive();
 }
 
 boot();
