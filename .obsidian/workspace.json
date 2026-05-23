@@ -196,6 +196,11 @@
   },
   "active": "73f135a2b9b14618",
   "lastOpenFiles": [
+    "vault/Assets/DataScience/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
+    "vault/Assets/DataScience/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
+    "vault/Assets/DataScience/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
+    "vault/Assets/DataScience/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
+    "vault/Assets/DataScience/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
     "vault/Assets/index/index.md",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
     "vault/Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
@@ -216,7 +221,6 @@
     "site-src/manager.css",
     "site-src/editor/indexeddb.js",
     "scripts/preview-site.sh",
-    "img/favicon.webp",
     "backend/__pycache__/main.cpython-313.pyc",
     "vault/Business/basics accounting/📘 C Corporation.md",
     "vault/DataScience/Machine_Learning/index/index.md",
@@ -237,9 +241,6 @@
     "vault/Business/basics accounting/BONDS.md",
     "vault/Business/basics acc/Account profits 1.md",
     "vault/Business/basics acc./retained earnings.md",
-    "vault/Business/basics acc./investing funds.md",
-    "vault/Assets/licensed-image 2.jpg",
-    "vault/Assets/licensed-image copy.jpg",
-    "vault/Assets/licensed-image copy 2.jpg"
+    "vault/Business/basics acc./investing funds.md"
   ]
 }

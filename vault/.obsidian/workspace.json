@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Private/Random/index/index.md",
+                "file": "DataScience/Programming/notes/9. LOOPS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "9. LOOPS"
             }
           }
         ]
@@ -94,17 +94,17 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Assets/Assets.md",
+                "file": "DataScience/Programming/notes/9. LOOPS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
                 "searchQuery": "",
-                "backlinkCollapsed": false,
+                "backlinkCollapsed": true,
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Assets"
+              "title": "Backlinks for 9. LOOPS"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Assets/Assets.md",
+                "file": "DataScience/Programming/notes/9. LOOPS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Assets"
+              "title": "Outgoing links from 9. LOOPS"
             }
           },
           {
@@ -156,16 +156,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Assets/Assets.md",
+                "file": "DataScience/Programming/notes/9. LOOPS.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Assets"
+              "title": "Outline of 9. LOOPS"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -186,6 +187,13 @@
   },
   "active": "d0804cc7dcc40643",
   "lastOpenFiles": [
+    "DataScience/Programming/index/index.md",
+    "Assets/DataScience/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
+    "Assets/DataScience/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
+    "Assets/DataScience/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
+    "Assets/DataScience/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
+    "Assets/DataScience/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
+    "Private/Random/index/index.md",
     "Private/Random/Project.md",
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
@@ -193,7 +201,6 @@
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
-    "Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
     "Assets/DataScience/Stats/notes",
     "Assets/DataScience/Stats",
     "Assets/DataScience",
@@ -219,8 +226,6 @@
     "Random Shits and Notes/Untriaged/pixel arts.md",
     "Random Shits and Notes/Untriaged/mediatation.md",
     "Random Shits and Notes/Untriaged/management.md",
-    "Random Shits and Notes/Untriaged/listen.md",
-    "Random Shits and Notes/Untriaged/interquartile range & quartile deviation   & Coefficient.md",
     "Random Shits and Notes/Untriaged",
     "Random Shits and Notes",
     "Untitled.base",
