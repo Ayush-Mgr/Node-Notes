@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "Creating a DATABASE process",
+                "query": "\t```",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,8 +74,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -195,7 +194,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "7f676e76dbaccd32",
+  "active": "d0804cc7dcc40643",
   "lastOpenFiles": [
     "DataScience/Programming/notes/9. LOOPS.md",
     "SEO/Web edit console.md",
