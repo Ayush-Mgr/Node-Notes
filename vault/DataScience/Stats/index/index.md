@@ -118,3 +118,4 @@
 - [[interquartile range & quartile deviation   & Coefficient]]
 - [[Parametric and Non - Parametric]]
 - [[1. intro - Time Series Analysis]]
+- [[3. Descriptive Analysis of Time Series]]
