@@ -133,6 +133,21 @@ canvas {
   letter-spacing: 0.05em;
 }
 
+.note-panel__nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.note-nav-btn {
+  padding: 0 0.5rem;
+}
+
+.note-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .icon-button {
   height: 32px;
   padding: 0 1rem;

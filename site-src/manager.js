@@ -375,16 +375,16 @@ function resolveVaultNoteTarget(target) {
 }
 
 function isVaultPathSafe(path) {
-  return typeof path === "string"
-    && path.startsWith(CONFIG.vaultPrefix)
-    && !path.includes("..")
-    && !path.includes("\\")
-    && path.endsWith(CONFIG.noteSuffix);
+  if (typeof path !== "string" || !path.startsWith(CONFIG.vaultPrefix) || path.includes("\\") || !path.endsWith(CONFIG.noteSuffix)) {
+    return false;
+  }
+  const parts = path.split("/");
+  return !parts.includes("..") && !parts.includes(".");
 }
 
 function buildFilename(title) {
   if (title.trim()) {
-    return `${title.trim().replace(/\.md$/i, "")}.md`;
+    return `${title.trim().replace(/[\\/:*?"<>|]/g, "_").replace(/\.md$/i, "")}.md`;
   }
 
   const now = new Date();
@@ -997,9 +997,9 @@ function noteCardHtml(note, depth = 0) {
                   aria-label="${confirming ? "Confirm delete" : "Delete note"}"
                   ${disabled}>
             ${confirming
-              ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
-              : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`
-            }
+      ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+      : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`
+    }
           </button>
         </div>
       </div>
@@ -1349,10 +1349,10 @@ function parseFrontmatter(rawContent) {
 function extractOutgoingLinks(markdown) {
   if (!markdown) return [];
   const links = new Set();
-  
+
   // WIKILINK_RE is global, so reset lastIndex to prevent stateful issues
   WIKILINK_RE.lastIndex = 0;
-  
+
   let match;
   while ((match = WIKILINK_RE.exec(markdown)) !== null) {
     const [full, bang, inner] = match;
@@ -1360,7 +1360,7 @@ function extractOutgoingLinks(markdown) {
     const targetPart = inner.split("|")[0];
     const target = (targetPart || "").split("#")[0].trim();
     if (!target) continue;
-    
+
     // Resolve target link using existing logic to get canonical target form if it exists
     const resolvedNote = resolveVaultNoteTarget(target);
     if (resolvedNote) {
@@ -1450,7 +1450,7 @@ function renderBacklinks(path) {
         `;
       })
       .join("");
-      
+
     // Add click listeners to navigate
     list.querySelectorAll(".backlink-item").forEach(item => {
       item.addEventListener("click", () => {
@@ -1493,7 +1493,7 @@ async function startMetadataSync() {
   const controller = new AbortController();
   _syncAbortController = controller;
   const signal = controller.signal;
-  
+
   state.vault.metaSyncState = "running";
 
   try {
@@ -1553,10 +1553,10 @@ async function startMetadataSync() {
           const outgoing = extractOutgoingLinks(raw);
           const record = { path: note.path, sha: note.sha, ...meta, outgoing_links: outgoing };
           const oldRecord = state.vault.metaCache[note.path];
-          
+
           await saveNoteMetadata(record);
           state.vault.metaCache[note.path] = record;
-          
+
           updateBacklinkIndexForRecord(note.path, oldRecord, record);
           hydrateCardMeta(note.path, record);
 
@@ -1657,11 +1657,11 @@ async function handleDelete(path, shaHint) {
   try {
     const sha = shaHint || state.vault.notes.find((note) => note.path === path)?.sha;
     if (!sha) throw new Error("Missing file SHA for delete.");
-    
+
     const deletedStem = noteStemFromPath(path);
     const deletedStemUnique = resolveVaultNoteTarget(deletedStem)?.path === path;
     const parents = state.vault.backlinkIndex[normalizeLinkTarget(path)] || new Set();
-    
+
     await deleteFile(path, sha, `vault: delete ${path.split("/").pop()}`);
     await pruneDeletedNoteLinks(path, parents, deletedStemUnique);
     if (state.editor.editingPath === path) {
@@ -1669,7 +1669,7 @@ async function handleDelete(path, shaHint) {
     }
     // Clean up metadata cache and pins for deleted note
     delete state.vault.metaCache[path];
-    deleteNoteMetadata(path).catch(() => {});
+    deleteNoteMetadata(path).catch(() => { });
     const pinIdx = state.vault.pinnedNotes.indexOf(path);
     if (pinIdx !== -1) {
       state.vault.pinnedNotes.splice(pinIdx, 1);
@@ -1821,7 +1821,7 @@ async function rewriteIncomingLinks(oldPath, newPath, parents, oldStemUnique) {
   const newRelative = normalizeLinkTarget(newPath);
   const oldStem = noteStemFromPath(oldPath);
   const newStem = noteStemFromPath(newPath);
-  
+
   let success = true;
 
   for (const parentPath of parents) {
@@ -1835,21 +1835,21 @@ async function rewriteIncomingLinks(oldPath, newPath, parents, oldStemUnique) {
 
       const exactRegex = new RegExp('\\[\\[(' + escapeRegExp(oldRelative) + ')(?:\\|([^\\]]*))?\\]\\]', 'gi');
       content = content.replace(exactRegex, (match, target, alias) => {
-         changed = true;
-         return alias ? `[[${newRelative}|${alias}]]` : `[[${newRelative}]]`;
+        changed = true;
+        return alias ? `[[${newRelative}|${alias}]]` : `[[${newRelative}]]`;
       });
 
       const stemRegex = new RegExp('\\[\\[(' + escapeRegExp(oldStem) + ')(?:\\|([^\\]]*))?\\]\\]', 'gi');
       content = content.replace(stemRegex, (match, target, alias) => {
-         if (oldStemUnique) {
-            changed = true;
-            return alias ? `[[${newStem}|${alias}]]` : `[[${newStem}]]`;
-         }
-         return match;
+        if (oldStemUnique) {
+          changed = true;
+          return alias ? `[[${newStem}|${alias}]]` : `[[${newStem}]]`;
+        }
+        return match;
       });
 
       if (changed) {
-         await putFile(parentPath, content, indexData.sha, `vault: auto-update link to ${newStem}`);
+        await putFile(parentPath, content, indexData.sha, `vault: auto-update link to ${newStem}`);
       }
     } catch (err) {
       console.error("Failed to rewrite links in", parentPath, err);
@@ -1875,16 +1875,16 @@ async function pruneDeletedNoteLinks(deletedPath, parents, deletedStemUnique) {
 
       const stemRegex = new RegExp('^\\s*-\\s*\\[\\[(' + escapeRegExp(deletedStem) + ')(?:\\|[^\\]]*)?\\]\\]\\s*$', 'gim');
       newContent = newContent.replace(stemRegex, (match, target) => {
-         if (deletedStemUnique) {
-            return '';
-         }
-         return match;
+        if (deletedStemUnique) {
+          return '';
+        }
+        return match;
       });
 
       newContent = newContent.replace(/\n{3,}/g, '\n\n');
 
       if (newContent !== content) {
-         await putFile(parentPath, newContent, indexData.sha, `vault: auto-prune deleted link ${deletedStem}`);
+        await putFile(parentPath, newContent, indexData.sha, `vault: auto-prune deleted link ${deletedStem}`);
       }
     } catch (err) {
       console.error("Failed to prune link from", parentPath, err);
@@ -1945,7 +1945,7 @@ async function handleSave() {
       : `vault: add ${path.split("/").pop()}`;
 
     const shaToUse = isRename ? null : state.editor.editingSha;
-    
+
     let oldStemUnique = false;
     let parentsToRewrite = new Set();
     if (isRename) {
@@ -1958,13 +1958,13 @@ async function handleSave() {
 
     if (isRename) {
       const rewriteSuccess = await rewriteIncomingLinks(oldPath, newPath, parentsToRewrite, oldStemUnique);
-      
+
       if (rewriteSuccess) {
-         await deleteFile(oldPath, state.editor.editingSha, `vault: delete old note after rename`);
+        await deleteFile(oldPath, state.editor.editingSha, `vault: delete old note after rename`);
       } else {
-         setStatus("error", "Rename incomplete. New copy created but backlink rewrite failed. Old note kept.");
-         setMutationState(false);
-         return; // keep editor state on old note and stop
+        setStatus("error", "Rename incomplete. New copy created but backlink rewrite failed. Old note kept.");
+        setMutationState(false);
+        return; // keep editor state on old note and stop
       }
     }
 
@@ -2208,6 +2208,13 @@ function bindEvents() {
 
   elements.titleInput.addEventListener("input", () => {
     state.editor.titleEdited = true;
+    const dangerousChars = /[\\/:*?"<>|]/;
+    if (dangerousChars.test(elements.titleInput.value)) {
+      setStatus("error", "Warning: Title contains characters (\\, /, :, *, ?, \", <, >, |) that might break file systems or links.");
+    } else if (elements.statusBar.classList.contains("error") && elements.statusText.textContent.includes("Warning: Title")) {
+      elements.statusBar.className = "status";
+      elements.statusText.textContent = "";
+    }
     saveDraftSoon();
     renderPreview();
   });

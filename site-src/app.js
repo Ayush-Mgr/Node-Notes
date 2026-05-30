@@ -4,6 +4,8 @@ const state = {
   activeNoteId: null,
   resolveAssetTarget: () => null,
   resolveNoteTarget: () => null,
+  history: [null],
+  historyIndex: 0,
 };
 
 const graphView = document.getElementById("graph-view");
@@ -13,13 +15,35 @@ const notePanel = document.getElementById("note-panel");
 const noteTitle = document.getElementById("note-title");
 const noteContent = document.getElementById("note-content");
 const closeNoteButton = document.getElementById("close-note");
+const navBackBtn = document.getElementById("note-nav-back");
+const navForwardBtn = document.getElementById("note-nav-forward");
 const tooltip = document.getElementById("tooltip");
+
+function updateNavButtons() {
+  if (navBackBtn) navBackBtn.disabled = state.historyIndex <= 0;
+  if (navForwardBtn) navForwardBtn.disabled = state.historyIndex >= state.history.length - 1;
+}
+
+if (navBackBtn) navBackBtn.addEventListener("click", () => goBack());
+if (navForwardBtn) navForwardBtn.addEventListener("click", () => goForward());
+
+function goBack() {
+  if (state.historyIndex > 0) {
+    window.history.back();
+  }
+}
+
+function goForward() {
+  if (state.historyIndex < state.history.length - 1) {
+    window.history.forward();
+  }
+}
 
 let currentNeighborMap = new Map();
 let currentZoomTransform = d3.zoomIdentity;
 let canvas, context, simulation;
 let hoveredNode = null;
-let redrawGraph = () => {};
+let redrawGraph = () => { };
 let localGraphSimulation = null;
 let localGraphSvg = null;
 let localGraphZoom = null;
@@ -342,9 +366,9 @@ async function openNote(noteId, pushHash = true) {
 
   noteTitle.textContent = node.title;
   noteContent.innerHTML = DOMPurify.sanitize(marked.parse(processed, { breaks: true, gfm: true }));
-  
+
   if (window.MathJax) {
-    MathJax.typesetPromise([noteContent]).catch(() => {});
+    MathJax.typesetPromise([noteContent]).catch(() => { });
   }
 
   notePanel.classList.remove("hidden");
@@ -416,7 +440,15 @@ function closeNote(clearHash = true) {
   redrawGraph();
   setStatus(`${state.data?.nodes.length ?? 0} notes`);
   if (clearHash) {
-    history.replaceState(null, "", window.location.pathname);
+    history.pushState(null, "", window.location.pathname);
+    if (state.history[state.historyIndex] !== null) {
+      if (state.historyIndex < state.history.length - 1) {
+        state.history = state.history.slice(0, state.historyIndex + 1);
+      }
+      state.history.push(null);
+      state.historyIndex++;
+      updateNavButtons();
+    }
   }
 }
 
@@ -521,7 +553,7 @@ function renderLocalGraph(activeNoteId, localNodes, localLinks) {
     .on("mouseenter", (event, d) => {
       linkSelection.style("stroke-opacity", l => (l.source.id === d.id || l.target.id === d.id) ? 1.0 : 0.1);
       linkSelection.style("stroke", l => (l.source.id === d.id || l.target.id === d.id) ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.08)");
-      
+
       const connectedIds = new Set();
       connectedIds.add(d.id);
       localLinks.forEach(l => {
@@ -687,10 +719,10 @@ function renderGraph() {
     const activeId = state.activeNoteId;
     const hoverId = hoveredNode ? hoveredNode.id : null;
     const focusId = hoverId || activeId;
-    
+
     let neighbors = new Set();
     if (focusId) {
-        neighbors = currentNeighborMap.get(focusId) || new Set();
+      neighbors = currentNeighborMap.get(focusId) || new Set();
     }
 
     const normalLinks = [];
@@ -699,86 +731,86 @@ function renderGraph() {
     const ghostNormalLinks = [];
     const ghostFadedLinks = [];
     const ghostHighlightedLinks = [];
-    
+
     links.forEach(d => {
-       const targetBucket = !focusId
-         ? (d.ghost ? ghostNormalLinks : normalLinks)
-         : (d.source.id === focusId || d.target.id === focusId)
-           ? (d.ghost ? ghostHighlightedLinks : highlightedLinks)
-           : (d.ghost ? ghostFadedLinks : fadedLinks);
-       targetBucket.push(d);
+      const targetBucket = !focusId
+        ? (d.ghost ? ghostNormalLinks : normalLinks)
+        : (d.source.id === focusId || d.target.id === focusId)
+          ? (d.ghost ? ghostHighlightedLinks : highlightedLinks)
+          : (d.ghost ? ghostFadedLinks : fadedLinks);
+      targetBucket.push(d);
     });
-    
+
     if (normalLinks.length > 0) {
-        context.beginPath();
-        normalLinks.forEach(d => {
-           context.moveTo(d.source.x, d.source.y);
-           context.lineTo(d.target.x, d.target.y);
-        });
-        context.strokeStyle = "rgba(0, 0, 0, 0.08)";
-        context.lineWidth = 0.8;
-        context.stroke();
+      context.beginPath();
+      normalLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.strokeStyle = "rgba(0, 0, 0, 0.08)";
+      context.lineWidth = 0.8;
+      context.stroke();
     }
-    
+
     if (fadedLinks.length > 0) {
-        context.beginPath();
-        fadedLinks.forEach(d => {
-           context.moveTo(d.source.x, d.source.y);
-           context.lineTo(d.target.x, d.target.y);
-        });
-        context.strokeStyle = "rgba(0, 0, 0, 0.02)";
-        context.lineWidth = 0.55;
-        context.stroke();
+      context.beginPath();
+      fadedLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.strokeStyle = "rgba(0, 0, 0, 0.02)";
+      context.lineWidth = 0.55;
+      context.stroke();
     }
-    
+
     if (highlightedLinks.length > 0) {
-        context.beginPath();
-        highlightedLinks.forEach(d => {
-           context.moveTo(d.source.x, d.source.y);
-           context.lineTo(d.target.x, d.target.y);
-        });
-        context.strokeStyle = "rgba(0,0,0,0.4)";
-        context.lineWidth = 1.25;
-        context.stroke();
+      context.beginPath();
+      highlightedLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.strokeStyle = "rgba(0,0,0,0.4)";
+      context.lineWidth = 1.25;
+      context.stroke();
     }
 
     if (ghostNormalLinks.length > 0) {
-        context.beginPath();
-        ghostNormalLinks.forEach(d => {
-           context.moveTo(d.source.x, d.source.y);
-           context.lineTo(d.target.x, d.target.y);
-        });
-        context.setLineDash([4, 4]);
-        context.strokeStyle = "rgba(107, 114, 128, 0.28)";
-        context.lineWidth = 0.9;
-        context.stroke();
-        context.setLineDash([]);
+      context.beginPath();
+      ghostNormalLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.setLineDash([4, 4]);
+      context.strokeStyle = "rgba(107, 114, 128, 0.28)";
+      context.lineWidth = 0.9;
+      context.stroke();
+      context.setLineDash([]);
     }
 
     if (ghostFadedLinks.length > 0) {
-        context.beginPath();
-        ghostFadedLinks.forEach(d => {
-           context.moveTo(d.source.x, d.source.y);
-           context.lineTo(d.target.x, d.target.y);
-        });
-        context.setLineDash([4, 4]);
-        context.strokeStyle = "rgba(107, 114, 128, 0.12)";
-        context.lineWidth = 0.75;
-        context.stroke();
-        context.setLineDash([]);
+      context.beginPath();
+      ghostFadedLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.setLineDash([4, 4]);
+      context.strokeStyle = "rgba(107, 114, 128, 0.12)";
+      context.lineWidth = 0.75;
+      context.stroke();
+      context.setLineDash([]);
     }
 
     if (ghostHighlightedLinks.length > 0) {
-        context.beginPath();
-        ghostHighlightedLinks.forEach(d => {
-           context.moveTo(d.source.x, d.source.y);
-           context.lineTo(d.target.x, d.target.y);
-        });
-        context.setLineDash([5, 4]);
-        context.strokeStyle = "rgba(120, 53, 15, 0.45)";
-        context.lineWidth = 1.15;
-        context.stroke();
-        context.setLineDash([]);
+      context.beginPath();
+      ghostHighlightedLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.setLineDash([5, 4]);
+      context.strokeStyle = "rgba(120, 53, 15, 0.45)";
+      context.lineWidth = 1.15;
+      context.stroke();
+      context.setLineDash([]);
     }
 
     const normalNodes = [];
@@ -787,101 +819,101 @@ function renderGraph() {
     const ghostNodes = [];
     const ghostFadedNodes = [];
     const ghostHighlightedNodes = [];
-    
+
     nodes.forEach(d => {
-        const isActive = d.id === focusId;
-        const isNeighbor = neighbors.has(d.id);
-        
-        if (d.ghost && !focusId) {
-            ghostNodes.push(d);
-        } else if (d.ghost && (isActive || isNeighbor)) {
-            ghostHighlightedNodes.push(d);
-        } else if (d.ghost) {
-            ghostFadedNodes.push(d);
-        } else if (!focusId) {
-            normalNodes.push(d);
-        } else if (isActive || isNeighbor) {
-            highlightedNodes.push(d);
-        } else {
-            fadedNodes.push(d);
-        }
+      const isActive = d.id === focusId;
+      const isNeighbor = neighbors.has(d.id);
+
+      if (d.ghost && !focusId) {
+        ghostNodes.push(d);
+      } else if (d.ghost && (isActive || isNeighbor)) {
+        ghostHighlightedNodes.push(d);
+      } else if (d.ghost) {
+        ghostFadedNodes.push(d);
+      } else if (!focusId) {
+        normalNodes.push(d);
+      } else if (isActive || isNeighbor) {
+        highlightedNodes.push(d);
+      } else {
+        fadedNodes.push(d);
+      }
     });
-    
+
     if (normalNodes.length > 0) {
-        context.beginPath();
-        normalNodes.forEach(d => {
-            context.moveTo(d.x + d.radius, d.y);
-            context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
-        });
-        context.fillStyle = "rgba(51, 51, 51, 0.95)";
-        context.fill();
+      context.beginPath();
+      normalNodes.forEach(d => {
+        context.moveTo(d.x + d.radius, d.y);
+        context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
+      });
+      context.fillStyle = "rgba(51, 51, 51, 0.95)";
+      context.fill();
     }
-    
+
     if (fadedNodes.length > 0) {
-        context.beginPath();
-        fadedNodes.forEach(d => {
-            context.moveTo(d.x + d.radius, d.y);
-            context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
-        });
-        context.fillStyle = "rgba(51, 51, 51, 0.18)";
-        context.fill();
+      context.beginPath();
+      fadedNodes.forEach(d => {
+        context.moveTo(d.x + d.radius, d.y);
+        context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
+      });
+      context.fillStyle = "rgba(51, 51, 51, 0.18)";
+      context.fill();
     }
-    
+
     if (highlightedNodes.length > 0) {
-        highlightedNodes.forEach(d => {
-            context.beginPath();
-            const r = (d.id === focusId) ? d.radius + 2 : d.radius;
-            context.arc(d.x, d.y, r, 0, 2 * Math.PI);
-            context.fillStyle = "rgba(51, 51, 51, 1)";
-            context.fill();
-            if (d.id === focusId) {
-                context.lineWidth = 1.5;
-                context.strokeStyle = "#000000";
-                context.stroke();
-            }
-        });
+      highlightedNodes.forEach(d => {
+        context.beginPath();
+        const r = (d.id === focusId) ? d.radius + 2 : d.radius;
+        context.arc(d.x, d.y, r, 0, 2 * Math.PI);
+        context.fillStyle = "rgba(51, 51, 51, 1)";
+        context.fill();
+        if (d.id === focusId) {
+          context.lineWidth = 1.5;
+          context.strokeStyle = "#000000";
+          context.stroke();
+        }
+      });
     }
 
     if (ghostNodes.length > 0) {
-        ghostNodes.forEach(d => {
-            context.beginPath();
-            context.arc(d.x, d.y, d.radius + 0.5, 0, 2 * Math.PI);
-            context.fillStyle = "rgba(255, 251, 235, 0.95)";
-            context.fill();
-            context.setLineDash([3, 3]);
-            context.lineWidth = 1;
-            context.strokeStyle = "rgba(146, 64, 14, 0.5)";
-            context.stroke();
-            context.setLineDash([]);
-        });
+      ghostNodes.forEach(d => {
+        context.beginPath();
+        context.arc(d.x, d.y, d.radius + 0.5, 0, 2 * Math.PI);
+        context.fillStyle = "rgba(255, 251, 235, 0.95)";
+        context.fill();
+        context.setLineDash([3, 3]);
+        context.lineWidth = 1;
+        context.strokeStyle = "rgba(146, 64, 14, 0.5)";
+        context.stroke();
+        context.setLineDash([]);
+      });
     }
 
     if (ghostFadedNodes.length > 0) {
-        ghostFadedNodes.forEach(d => {
-            context.beginPath();
-            context.arc(d.x, d.y, d.radius + 0.5, 0, 2 * Math.PI);
-            context.fillStyle = "rgba(255, 251, 235, 0.45)";
-            context.fill();
-            context.setLineDash([3, 3]);
-            context.lineWidth = 1;
-            context.strokeStyle = "rgba(146, 64, 14, 0.18)";
-            context.stroke();
-            context.setLineDash([]);
-        });
+      ghostFadedNodes.forEach(d => {
+        context.beginPath();
+        context.arc(d.x, d.y, d.radius + 0.5, 0, 2 * Math.PI);
+        context.fillStyle = "rgba(255, 251, 235, 0.45)";
+        context.fill();
+        context.setLineDash([3, 3]);
+        context.lineWidth = 1;
+        context.strokeStyle = "rgba(146, 64, 14, 0.18)";
+        context.stroke();
+        context.setLineDash([]);
+      });
     }
 
     if (ghostHighlightedNodes.length > 0) {
-        ghostHighlightedNodes.forEach(d => {
-            context.beginPath();
-            context.arc(d.x, d.y, d.radius + 1, 0, 2 * Math.PI);
-            context.fillStyle = "rgba(255, 251, 235, 1)";
-            context.fill();
-            context.setLineDash([3, 3]);
-            context.lineWidth = 1.25;
-            context.strokeStyle = "rgba(146, 64, 14, 0.68)";
-            context.stroke();
-            context.setLineDash([]);
-        });
+      ghostHighlightedNodes.forEach(d => {
+        context.beginPath();
+        context.arc(d.x, d.y, d.radius + 1, 0, 2 * Math.PI);
+        context.fillStyle = "rgba(255, 251, 235, 1)";
+        context.fill();
+        context.setLineDash([3, 3]);
+        context.lineWidth = 1.25;
+        context.strokeStyle = "rgba(146, 64, 14, 0.68)";
+        context.stroke();
+        context.setLineDash([]);
+      });
     }
 
     context.restore();
@@ -896,20 +928,20 @@ function handleResize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
     const dpr = window.devicePixelRatio || 1;
-    
+
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
-    
-    context.setTransform(1, 0, 0, 1, 0, 0); 
+
+    context.setTransform(1, 0, 0, 1, 0, 0);
     context.scale(dpr, dpr);
-    
+
     if (simulation) {
-        simulation.force("center", d3.forceCenter(width / 2, height / 2));
-        simulation.force("x", d3.forceX(width / 2).strength(0.8));
-        simulation.force("y", d3.forceY(height / 2).strength(0.8));
-        simulation.alpha(0.3).restart();
+      simulation.force("center", d3.forceCenter(width / 2, height / 2));
+      simulation.force("x", d3.forceX(width / 2).strength(0.8));
+      simulation.force("y", d3.forceY(height / 2).strength(0.8));
+      simulation.alpha(0.3).restart();
     }
   }
 
@@ -938,14 +970,33 @@ function handleResize() {
   }
 }
 
+let lastSyncedNoteId = undefined;
+
 function syncHashToNote() {
   const hash = window.location.hash.replace(/^#/, "");
-  if (!hash.startsWith("note=")) {
-    closeNote(false);
-    return;
+  const noteId = hash.startsWith("note=") ? decodeURIComponent(hash.slice("note=".length)) : null;
+  
+  if (noteId === lastSyncedNoteId) return;
+  lastSyncedNoteId = noteId;
+  
+  if (state.historyIndex > 0 && state.history[state.historyIndex - 1] === noteId) {
+    state.historyIndex--;
+  } else if (state.historyIndex < state.history.length - 1 && state.history[state.historyIndex + 1] === noteId) {
+    state.historyIndex++;
+  } else if (state.history[state.historyIndex] !== noteId) {
+    if (state.historyIndex < state.history.length - 1) {
+      state.history = state.history.slice(0, state.historyIndex + 1);
+    }
+    state.history.push(noteId);
+    state.historyIndex++;
   }
-  const noteId = decodeURIComponent(hash.slice("note=".length));
-  openNote(noteId, false);
+  updateNavButtons();
+  
+  if (noteId === null) {
+    closeNote(false);
+  } else {
+    openNote(noteId, false);
+  }
 }
 
 async function init() {
@@ -1242,6 +1293,7 @@ searchTrigger.addEventListener("click", openSearch);
 closeNoteButton.addEventListener("click", () => closeNote());
 noteBackdrop.addEventListener("click", () => closeNote());
 window.addEventListener("hashchange", syncHashToNote);
+window.addEventListener("popstate", syncHashToNote);
 window.addEventListener("resize", handleResize);
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {

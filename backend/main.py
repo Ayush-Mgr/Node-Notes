@@ -182,7 +182,10 @@ def get_pkce_challenge():
     return verifier, challenge
 
 def is_path_safe(path: str) -> bool:
-    if not path or ".." in path or "\\" in path:
+    if not path or "\\" in path:
+        return False
+    parts = path.split("/")
+    if ".." in parts or "." in parts:
         return False
     return path.startswith(VAULT_PREFIX)
 
