@@ -1,3 +1,9 @@
+---
+title: "index"
+date: 2026-05-30T07:38:51.027Z
+tags: [vault, web]
+---
+
 # Statistics & Probability
 
 ## Probability Theory
@@ -117,5 +123,6 @@
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
 - [[Parametric and Non - Parametric]]
-- [[1. intro - Time Series Analysis]]
+- 1.[[DataScience/Stats/notes/intro - Time Series Analysis]]
+- 2.[[DataScience/Stats/notes/Parametric and Non - Parametric]]
 - [[3. Descriptive Analysis of Time Series]]
