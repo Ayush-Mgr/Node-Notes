@@ -51,15 +51,28 @@
 
       <section class="field section-surface" id="folder-section">
         <div class="label-row">
-          <label for="note-folder">Folder Path</label>
-          <button type="button" id="private-mode-toggle" class="token-toggle private-toggle" aria-label="Toggle Private Capture Mode">Private: OFF</button>
+          <div class="label-with-summary">
+            <label class="folder-section-label">Folder Path</label>
+            <span id="folder-header-summary" class="folder-header-summary hidden"></span>
+          </div>
+          <div class="label-actions">
+            <button type="button" id="private-mode-toggle" class="token-toggle private-toggle"
+              aria-label="Toggle Private Capture Mode">Private: OFF</button>
+            <button type="button" id="folder-toggle" class="section-toggle" aria-expanded="true"
+              aria-controls="folder-section-body" aria-label="Toggle Folder Section">
+              <span class="chevron"></span>
+            </button>
+          </div>
         </div>
-        <div class="input-wrapper">
-          <input type="text" id="note-folder" aria-controls="folder-menu" aria-expanded="false" placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
-          <div id="folder-menu" class="folder-menu hidden" role="listbox"></div>
+        <div id="folder-section-body" class="folder-section-body">
+          <div class="input-wrapper">
+            <input type="text" id="note-folder" aria-controls="folder-menu" aria-expanded="false"
+              placeholder="e.g. DataScience/Maths (optional)" autocorrect="off" spellcheck="false" />
+            <div id="folder-menu" class="folder-menu hidden" role="listbox"></div>
+          </div>
+          <div id="folder-chips" class="chip-row"></div>
+          <p id="folder-hint" class="field-hint hidden"></p>
         </div>
-        <div id="folder-chips" class="chip-row"></div>
-        <p id="folder-hint" class="field-hint hidden"></p>
       </section>
 
       <section class="field section-surface" id="editor-section">
@@ -67,30 +80,34 @@
           <label>Editor</label>
           <span class="draft-tag" id="draft-tag">Draft saved</span>
         </div>
- 
+
         <div class="editor-toggle" role="tablist" aria-label="Editor mode">
           <button class="editor-tab active" id="write-tab" type="button" role="tab" aria-selected="true"
             aria-controls="write-pane">Write</button>
           <button class="editor-tab" id="preview-tab" type="button" role="tab" aria-selected="false"
             aria-controls="preview-pane">Preview</button>
         </div>
- 
+
         <div class="editor-pane active" id="write-pane" role="tabpanel" aria-labelledby="write-tab">
           <div class="editor-wrapper">
             <div class="editor-canvas">
-              <input type="text" id="note-title" class="editor-title" placeholder="Note Title" autocorrect="on" spellcheck="true" />
-              <textarea id="note-body" class="editor-body" placeholder="Start writing…&#10;&#10;Markdown supported. Drag & drop or paste images." autocorrect="on"
+              <input type="text" id="note-title" class="editor-title" placeholder="Note Title" autocorrect="on"
+                spellcheck="true" />
+              <textarea id="note-body" class="editor-body"
+                placeholder="Start writing…&#10;&#10;Markdown supported. Drag & drop or paste images." autocorrect="on"
                 spellcheck="true"></textarea>
             </div>
           </div>
           <div class="attach-row">
-            <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image from gallery">📎 Attach Image</button>
-            <button type="button" id="camera-btn" class="attach-btn attach-btn-camera" aria-label="Capture photo">📷 Camera</button>
+            <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image from gallery">📎 Attach
+              Image</button>
+            <button type="button" id="camera-btn" class="attach-btn attach-btn-camera" aria-label="Capture photo">📷
+              Camera</button>
             <span id="attach-count" class="attach-count"></span>
           </div>
           <div id="pending-gallery" class="pending-gallery hidden"></div>
         </div>
- 
+
         <div class="editor-pane" id="preview-pane" role="tabpanel" aria-labelledby="preview-tab" aria-hidden="true">
           <div class="editor-canvas preview-canvas">
             <h2 class="preview-title hidden" id="preview-title"></h2>
@@ -98,6 +115,21 @@
               <p class="preview-empty">Nothing to preview yet</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="field section-surface backlinks-section hidden" id="backlinks-section" aria-labelledby="backlinks-title">
+        <div class="label-row">
+          <div class="backlinks-header-left">
+            <span class="section-title" id="backlinks-title">Backlinks</span>
+            <span class="backlink-count-badge" id="backlink-count">0</span>
+          </div>
+          <button type="button" id="backlinks-toggle" class="section-toggle" aria-expanded="true" aria-controls="backlinks-body" aria-label="Toggle Backlinks">
+            <span class="chevron"></span>
+          </button>
+        </div>
+        <div id="backlinks-body" class="backlinks-body">
+          <div id="backlinks-list" class="backlinks-list"></div>
         </div>
       </section>
 
@@ -112,14 +144,17 @@
             <h2 class="section-title" id="vault-notes-title">Vault Notes</h2>
             <span class="section-meta" id="note-count">Syncing</span>
           </div>
-          <button type="button" id="vault-toggle" class="vault-toggle" aria-expanded="true" aria-controls="vault-body" aria-label="Toggle Vault Notes">
+          <button type="button" id="vault-toggle" class="section-toggle" aria-expanded="true" aria-controls="vault-body"
+            aria-label="Toggle Vault Notes">
             <span class="chevron"></span>
           </button>
         </div>
         <div id="vault-body" class="vault-body">
-          <div class="field vault-search-field">
-            <input class="vault-search" type="text" id="note-search" placeholder="Search by path or filename…" />
+          <div class="vault-toolbar">
+            <input class="vault-search" type="text" id="note-search" placeholder="Search path, filename or #tag…" />
+            <button type="button" id="vault-sort-btn" class="token-toggle sort-btn" aria-label="Cycle note sort order">⇅ Newest first</button>
           </div>
+
           <div class="vault-list" id="note-list">
             <p class="list-state">Loading vault notes…</p>
           </div>

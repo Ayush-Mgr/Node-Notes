@@ -194,6 +194,7 @@ export function handleAutocomplete(e, textarea, getState) {
 
   if (e.key === "ArrowDown") {
     e.preventDefault();
+    if (suggestions.length === 0) return true;
     selectedIndex = (selectedIndex + 1) % suggestions.length;
     updatePanel();
     return true;
@@ -201,6 +202,7 @@ export function handleAutocomplete(e, textarea, getState) {
 
   if (e.key === "ArrowUp") {
     e.preventDefault();
+    if (suggestions.length === 0) return true;
     selectedIndex =
       (selectedIndex - 1 + suggestions.length) % suggestions.length;
     updatePanel();
@@ -234,10 +236,14 @@ export function handleAutocomplete(e, textarea, getState) {
 function updateSuggestions(query, notes) {
   if (!notes || !Array.isArray(notes)) notes = [];
   
-  if (!query.trim()) {
+  // Extract active query segment after the last pipe character
+  const pipeIndex = query.lastIndexOf("|");
+  const activeQuery = pipeIndex >= 0 ? query.substring(pipeIndex + 1) : query;
+  
+  if (!activeQuery.trim()) {
     suggestions = notes.slice(0, 10);
   } else {
-    const qLower = query.toLowerCase();
+    const qLower = activeQuery.toLowerCase();
     
     const startsWith = [];
     const includesTitle = [];
@@ -268,12 +274,35 @@ function insertSuggestion(textarea, path) {
   const val = textarea.value;
 
   textarea.focus();
-  const replacement = path + "]]";
+  
+  const query = val.substring(autocompleteStart, end);
+  const pipeIndex = query.lastIndexOf("|");
+  
+  // Check if double closing brackets already exist right after the cursor/selection
+  const hasClosingBrackets = val.substring(end, end + 2) === "]]";
 
-  replaceTextRange(textarea, autocompleteStart, end, replacement);
-  textarea.selectionStart = autocompleteStart + replacement.length;
+  if (pipeIndex >= 0) {
+    const insertStart = autocompleteStart + pipeIndex + 1;
+    if (hasClosingBrackets) {
+      replaceTextRange(textarea, insertStart, end, path);
+      textarea.selectionStart = insertStart + path.length + 2;
+    } else {
+      const replacement = path + "]]";
+      replaceTextRange(textarea, insertStart, end, replacement);
+      textarea.selectionStart = insertStart + replacement.length;
+    }
+  } else {
+    if (hasClosingBrackets) {
+      replaceTextRange(textarea, autocompleteStart, end, path);
+      textarea.selectionStart = autocompleteStart + path.length + 2;
+    } else {
+      const replacement = path + "]]";
+      replaceTextRange(textarea, autocompleteStart, end, replacement);
+      textarea.selectionStart = autocompleteStart + replacement.length;
+    }
+  }
+  
   textarea.selectionEnd = textarea.selectionStart;
-
   cancelAutocomplete();
 }
 

@@ -1,7 +1,8 @@
 import { setupEditor } from "./editor/editor.js";
 import { insertTextAtCursor } from "./editor/utils.js";
 import { compressImage, generateAssetMeta, validateImageFile } from "./editor/assets.js";
-import { initPendingAssetDb, savePendingAsset, loadPendingAssets, deletePendingAsset } from "./editor/indexeddb.js";
+import { initPendingAssetDb, savePendingAsset, loadPendingAssets, deletePendingAsset, saveNoteMetadata, loadAllNoteMetadata, deleteNoteMetadata } from "./editor/indexeddb.js";
+
 
 const CONFIG = {
   apiBase:
@@ -17,6 +18,10 @@ const CONFIG = {
   folderHistoryKey: "nn_folder_history",
   lastFolderKey: "nn_last_folder",
   vaultCollapsedKey: "nn_vault_collapsed",
+  folderCollapsedKey: "nn_folder_collapsed",
+  pinnedNotesKey: "nn_pinned_notes",
+  vaultSortKey: "nn_vault_sort",
+  backlinksCollapsedKey: "nn_backlinks_collapsed",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -30,6 +35,9 @@ const elements = {
   loginBtn: $("login-btn"),
   logoutBtn: $("logout-btn"),
   folderInput: $("note-folder"),
+  folderToggle: $("folder-toggle"),
+  folderHeaderSummary: $("folder-header-summary"),
+  folderSectionBody: $("folder-section-body"),
   privateModeToggle: $("private-mode-toggle"),
   folderMenu: $("folder-menu"),
   folderHint: $("folder-hint"),
@@ -55,6 +63,11 @@ const elements = {
   vaultSection: $("vault-section"),
   vaultToggle: $("vault-toggle"),
   vaultBody: $("vault-body"),
+  backlinksSection: $("backlinks-section"),
+  backlinksToggle: $("backlinks-toggle"),
+  backlinksBody: $("backlinks-body"),
+  backlinksList: $("backlinks-list"),
+  backlinkCount: $("backlink-count"),
 };
 
 const state = {
@@ -76,6 +89,8 @@ const state = {
     activeFolderIndex: -1,
     vaultCollapsed: false,
     privateMode: false,
+    folderCollapsed: false,
+    backlinksCollapsed: false,
   },
   vault: {
     notes: [],
@@ -83,6 +98,11 @@ const state = {
     folderIndex: [],
     filteredFolders: [],
     assetPaths: [],
+    pinnedNotes: [],
+    sortPreference: "newest",
+    metaCache: {},
+    backlinkIndex: {},
+    metaSyncState: "idle",
   },
   assets: {
     pending: new Map(),
@@ -105,12 +125,12 @@ const storage = {
   set(key, value) {
     try {
       localStorage.setItem(key, value);
-    } catch {}
+    } catch { }
   },
   remove(key) {
     try {
       localStorage.removeItem(key);
-    } catch {}
+    } catch { }
   },
   getJson(key, fallback) {
     const raw = this.get(key);
@@ -140,6 +160,35 @@ function setStatus(type, message) {
 
 function setEditorMode(mode) {
   const preview = mode === "preview";
+  const previewCanvas = elements.previewPane.querySelector(".editor-canvas");
+  const writeCanvas = elements.writePane.querySelector(".editor-canvas");
+
+  // 1. Determine active source scroller and capture percentage
+  let sourceScroller = null;
+  if (preview) {
+    if (elements.bodyInput && elements.bodyInput.scrollTop > 0) {
+      sourceScroller = elements.bodyInput;
+    } else if (writeCanvas && writeCanvas.scrollTop > 0) {
+      sourceScroller = writeCanvas;
+    } else {
+      sourceScroller = (writeCanvas && writeCanvas.scrollHeight > writeCanvas.clientHeight) ? writeCanvas : elements.bodyInput;
+    }
+  } else {
+    sourceScroller = previewCanvas;
+  }
+
+  let pct = 0;
+  if (sourceScroller) {
+    const max = Math.max(1, sourceScroller.scrollHeight - sourceScroller.clientHeight);
+    pct = sourceScroller.scrollTop / max;
+  }
+
+  let renderPromise = Promise.resolve();
+  if (preview) {
+    renderPromise = renderPreview() || Promise.resolve();
+  }
+
+  // 2. Toggle active tab visual styles and ARIA states
   elements.writeTab.classList.toggle("active", !preview);
   elements.previewTab.classList.toggle("active", preview);
   elements.writePane.classList.toggle("active", !preview);
@@ -148,12 +197,41 @@ function setEditorMode(mode) {
   elements.previewTab.setAttribute("aria-selected", String(preview));
   elements.writePane.setAttribute("aria-hidden", String(preview));
   elements.previewPane.setAttribute("aria-hidden", String(!preview));
+
+  // 3. Apply scroll to targets
+  const applyScroll = () => {
+    if (preview) {
+      if (previewCanvas) {
+        const max = Math.max(1, previewCanvas.scrollHeight - previewCanvas.clientHeight);
+        previewCanvas.scrollTop = pct * max;
+      }
+    } else {
+      // Write mode: apply scroll to BOTH elements.bodyInput AND writeCanvas
+      if (elements.bodyInput) {
+        const max = Math.max(1, elements.bodyInput.scrollHeight - elements.bodyInput.clientHeight);
+        elements.bodyInput.scrollTop = pct * max;
+      }
+      if (writeCanvas) {
+        const max = Math.max(1, writeCanvas.scrollHeight - writeCanvas.clientHeight);
+        writeCanvas.scrollTop = pct * max;
+      }
+    }
+  };
+
+  // Stage 1: Responsive scroll in next animation frame
+  requestAnimationFrame(applyScroll);
+
+  // Stage 2: Corrective scroll after math typesets
+  renderPromise.then(() => {
+    requestAnimationFrame(applyScroll);
+  });
 }
 
 function typesetMath(target) {
   if (window.MathJax) {
-    MathJax.typesetPromise([target]).catch(() => {});
+    return MathJax.typesetPromise([target]).catch(() => { });
   }
+  return Promise.resolve();
 }
 
 function parsePendingReferences(markdown) {
@@ -195,7 +273,7 @@ function preprocessMarkdown(markdown) {
       if (asset && asset.blobUrl) {
         return `![${asset.finalName}](${asset.blobUrl})`;
       }
-      return `![Pending asset unavailable]()`; 
+      return `![Pending asset unavailable]()`;
     }
 
     const target = inner.split("|", 1)[0].split("#", 1)[0].trim();
@@ -240,7 +318,7 @@ function renderPreview() {
 
   if (!body.trim()) {
     elements.previewBody.innerHTML = '<p class="preview-empty">Nothing to preview yet</p>';
-    return;
+    return Promise.resolve();
   }
 
   const processedBody = preprocessMarkdown(body);
@@ -248,7 +326,7 @@ function renderPreview() {
     ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|blob|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
   };
   elements.previewBody.innerHTML = DOMPurify.sanitize(marked.parse(processedBody, { breaks: true, gfm: true }), purifyConfig);
-  typesetMath(elements.previewBody);
+  return typesetMath(elements.previewBody);
 }
 
 function normalizeFolderPath(value) {
@@ -383,6 +461,7 @@ function beginLinkedNoteDraft(rawTarget) {
 
   updateModeUi();
   updateFolderHint();
+  updateFolderSectionCollapse();
   renderPreview();
   saveDraftSoon();
   setEditorMode("preview");
@@ -441,13 +520,13 @@ export async function createPendingAsset(file) {
     }
 
     const processed = await compressImage(file);
-    
+
     const folderInput = document.getElementById("note-folder");
     const folderVal = folderInput ? folderInput.value : "";
     const { fileName, path } = generateAssetMeta(processed, folderVal);
 
     const pendingId = `img_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
-    
+
     const dbAsset = {
       pendingId,
       finalName: fileName,
@@ -470,7 +549,7 @@ export async function createPendingAsset(file) {
 
     const asset = { ...dbAsset, blobUrl };
     state.assets.pending.set(pendingId, asset);
-    
+
     elements.bodyInput.dispatchEvent(new Event("input", { bubbles: true }));
     renderPendingAssets();
   } catch (err) {
@@ -489,7 +568,7 @@ export async function removePendingAsset(id) {
 
   URL.revokeObjectURL(asset.blobUrl);
   state.assets.pending.delete(id);
-  
+
   try {
     await deletePendingAsset(id);
   } catch (err) {
@@ -497,7 +576,7 @@ export async function removePendingAsset(id) {
   }
 
   elements.bodyInput.value = elements.bodyInput.value.replace(new RegExp(`!\\[\\[pending:${id}\\]\\]\\n?`, 'g'), '');
-  
+
   renderPendingAssets();
   renderPreview();
   saveDraftSoon();
@@ -597,11 +676,17 @@ function selectFolderSuggestion(index) {
 
   elements.folderInput.value = folder;
   closeFolderMenu();
-  
+
   // Follow same path as manual typing
   saveDraftSoon();
   updateFolderHint();
-  elements.folderInput.focus();
+  updateFolderSectionCollapse();
+
+  // Only focus input if it remains visible (not collapsed)
+  const isCollapsed = elements.folderSectionBody.classList.contains("hidden");
+  if (!isCollapsed) {
+    elements.folderInput.focus();
+  }
 }
 
 function updateFolderIndex(tree) {
@@ -639,6 +724,68 @@ function updateFolderHint() {
 
   elements.folderHint.textContent = `New folder: ${folder}`;
   elements.folderHint.classList.remove("hidden");
+}
+
+function updateFolderSectionCollapse() {
+  const folderValue = elements.folderInput.value.trim();
+  const isEditing = state.editor.mode === "edit";
+  const isDisabled = elements.folderInput.disabled;
+  const isFocused = elements.folderSectionBody.contains(document.activeElement);
+
+  // Override rules: force expanded in Edit Mode, when input is disabled, or when focus is inside section body
+  let activeCollapsed = false;
+  if (isEditing || isDisabled || isFocused) {
+    activeCollapsed = false;
+  } else {
+    activeCollapsed = state.ui.folderCollapsed;
+  }
+
+  // Update semantic button ARIA attributes and body visibility
+  elements.folderToggle.setAttribute("aria-expanded", !activeCollapsed);
+  elements.folderSectionBody.classList.toggle("hidden", activeCollapsed);
+
+  // Sync toggle button disabled and aria states
+  const cannotCollapse = isEditing || isDisabled;
+  elements.folderToggle.disabled = cannotCollapse;
+  if (cannotCollapse) {
+    elements.folderToggle.setAttribute("aria-disabled", "true");
+  } else {
+    elements.folderToggle.removeAttribute("aria-disabled");
+  }
+
+  // Manage focus transition when collapsing
+  if (activeCollapsed) {
+    const isFocusInside = elements.folderSectionBody.contains(document.activeElement);
+    if (isFocusInside) {
+      elements.folderToggle.focus();
+    }
+  }
+
+  // Sync autocomplete: close dropdown when collapsing
+  if (activeCollapsed) {
+    closeFolderMenu();
+  }
+
+  // Update header summary formatting
+  if (activeCollapsed) {
+    const normalized = normalizeFolderPath(folderValue);
+    elements.folderHeaderSummary.textContent = normalized ? `(${normalized})` : "(Root)";
+    elements.folderHeaderSummary.classList.remove("hidden");
+  } else {
+    elements.folderHeaderSummary.classList.add("hidden");
+  }
+}
+
+function toggleFolderSection() {
+  const isEditing = state.editor.mode === "edit";
+  const isDisabled = elements.folderInput.disabled;
+
+  // Prevent collapsing if in Edit Mode or input is disabled
+  if (isEditing || isDisabled) return;
+
+  state.ui.folderCollapsed = !state.ui.folderCollapsed;
+  storage.setJson(CONFIG.folderCollapsedKey, state.ui.folderCollapsed);
+  updateFolderSectionCollapse();
 }
 
 function saveFolderHistory(folder) {
@@ -713,10 +860,189 @@ function setMutationState(isMutating) {
 }
 
 function filteredNotes() {
-  const query = state.editor.searchQuery.trim().toLowerCase();
-  return query
-    ? state.vault.notes.filter((note) => note.displayPath.toLowerCase().includes(query))
-    : state.vault.notes;
+  const raw = state.editor.searchQuery.trim();
+  const query = raw.toLowerCase();
+
+  let notes;
+  if (!query) {
+    notes = state.vault.notes;
+  } else {
+    // Split into tag tokens (#foo) and plain text tokens
+    const tokens = query.split(/\s+/);
+    const tagTokens = tokens.filter(t => t.startsWith("#")).map(t => t.slice(1)).filter(Boolean);
+    const textTokens = tokens.filter(t => !t.startsWith("#")).filter(Boolean);
+
+    notes = state.vault.notes.filter(note => {
+      // Plain text: must match all text tokens against displayPath
+      const pathLower = note.displayPath.toLowerCase();
+      const textMatch = textTokens.every(t => pathLower.includes(t));
+
+      // Tag match: must match all tag tokens against cached tags
+      let tagMatch = true;
+      if (tagTokens.length > 0) {
+        const cached = state.vault.metaCache?.[note.path];
+        const noteTags = (cached?.tags || []).map(t => t.toLowerCase());
+        tagMatch = tagTokens.every(tag => noteTags.some(nt => nt.includes(tag)));
+      }
+
+      return textMatch && tagMatch;
+    });
+
+    // Flat search view: sort globally
+    notes = [...notes];
+    const pref = state.vault.sortPreference;
+    if (pref === "newest" || pref === "oldest") {
+      notes.sort((a, b) => {
+        const ad = state.vault.metaCache?.[a.path]?.frontmatterDate ?? null;
+        const bd = state.vault.metaCache?.[b.path]?.frontmatterDate ?? null;
+        if (!ad && !bd) return 0;
+        if (!ad) return 1;
+        if (!bd) return -1;
+        return pref === "newest" ? bd.localeCompare(ad) : ad.localeCompare(bd);
+      });
+    } else {
+      notes.sort((a, b) => a.displayPath.localeCompare(b.displayPath));
+    }
+  }
+  return notes;
+}
+
+
+function buildFolderTree(notes) {
+  const root = { name: "Root", path: "", isFolder: true, children: {}, files: [] };
+
+  for (const note of notes) {
+    const parts = note.displayPath.split("/");
+    let current = root;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+      if (!current.children[part]) {
+        const subPath = parts.slice(0, i + 1).join("/");
+        current.children[part] = {
+          name: part,
+          path: subPath,
+          isFolder: true,
+          children: {},
+          files: []
+        };
+      }
+      current = current.children[part];
+    }
+    current.files.push(note);
+  }
+  return root;
+}
+
+function sortNotesLocal(files) {
+  const pref = state.vault.sortPreference;
+  const sorted = [...files];
+  if (pref === "newest" || pref === "oldest") {
+    sorted.sort((a, b) => {
+      const ad = state.vault.metaCache?.[a.path]?.frontmatterDate ?? null;
+      const bd = state.vault.metaCache?.[b.path]?.frontmatterDate ?? null;
+      if (!ad && !bd) return a.displayPath.localeCompare(b.displayPath);
+      if (!ad) return 1;
+      if (!bd) return -1;
+      return pref === "newest" ? bd.localeCompare(ad) : ad.localeCompare(bd);
+    });
+  } else {
+    sorted.sort((a, b) => {
+      const aName = a.displayPath.split("/").pop();
+      const bName = b.displayPath.split("/").pop();
+      return aName.localeCompare(bName);
+    });
+  }
+  return sorted;
+}
+
+function noteCardHtml(note, depth = 0) {
+  const filename = note.displayPath.split("/").pop();
+  const confirming = state.ui.confirmDeletePath === note.path;
+  const isPinned = state.vault.pinnedNotes.includes(note.path);
+  const disabled = state.ui.isMutating || !state.auth.isAuthenticated ? "disabled" : "";
+  return `
+    <article class="vault-card depth-${depth}" data-path="${escapeHtml(note.path)}">
+      <div class="vault-card__top">
+        <div class="vault-card__content">
+          <button class="vault-card__title-btn"
+                  type="button"
+                  data-action="edit"
+                  data-path="${escapeHtml(note.path)}">
+            ${escapeHtml(filename)}
+          </button>
+          <div class="vault-card__meta" data-metadata-path="${escapeHtml(note.path)}"></div>
+        </div>
+        <div class="vault-card__actions">
+          <button type="button"
+                  class="vault-card__action-btn pin-btn${isPinned ? " active-pin" : ""}"
+                  data-action="pin"
+                  data-path="${escapeHtml(note.path)}"
+                  aria-label="${isPinned ? "Unpin note" : "Pin note"}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="${isPinned ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+          </button>
+          <button type="button"
+                  class="vault-card__action-btn edit-btn"
+                  data-action="edit"
+                  data-path="${escapeHtml(note.path)}"
+                  aria-label="Edit note"
+                  ${disabled}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button type="button"
+                  class="vault-card__action-btn delete-btn${confirming ? " active-danger" : ""}"
+                  data-action="delete"
+                  data-path="${escapeHtml(note.path)}"
+                  data-sha="${escapeHtml(note.sha || "")}"
+                  aria-label="${confirming ? "Confirm delete" : "Delete note"}"
+                  ${disabled}>
+            ${confirming
+              ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+              : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`
+            }
+          </button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderTreeNode(node, depth = 0) {
+  let html = "";
+
+  // Sort subfolders alphabetically
+  const sortedSubFolders = Object.values(node.children).sort((a, b) => a.name.localeCompare(b.name));
+
+  // Sort files by active preference within this folder
+  const sortedFiles = sortNotesLocal(node.files);
+
+  // Render subfolders first
+  for (const subFolder of sortedSubFolders) {
+    const isCollapsed = state.ui.collapsedFolders.has(subFolder.path);
+    html += `
+      <div class="vault-folder-group depth-${depth}">
+        <button class="vault-folder-header ${isCollapsed ? "collapsed" : ""}"
+                type="button"
+                data-folder="${escapeHtml(subFolder.path)}"
+                aria-expanded="${!isCollapsed}">
+          <div class="vault-folder-title">
+            <span class="folder-icon">📂</span>
+            <span class="vault-folder-name">${escapeHtml(subFolder.name)}</span>
+          </div>
+          <span class="folder-arrow">${isCollapsed ? "▶" : "▼"}</span>
+        </button>
+        <div class="vault-folder-contents ${isCollapsed ? "hidden" : ""}">
+          ${renderTreeNode(subFolder, depth + 1)}
+        </div>
+      </div>
+    `;
+  }
+
+  for (const note of sortedFiles) {
+    html += noteCardHtml(note, depth);
+  }
+
+  return html;
 }
 
 function renderNoteList() {
@@ -745,22 +1071,52 @@ function renderNoteList() {
   }
 
   elements.noteCount.textContent = `${notes.length} files`;
-  elements.noteList.innerHTML = notes.map((note) => {
-    const confirming = state.ui.confirmDeletePath === note.path;
-    return `
-      <article class="vault-card">
-        <div class="vault-card__top">
-          <div class="vault-card__content">
-            <h3 class="vault-card__title">${escapeHtml(note.displayPath)}</h3>
+
+  if (!state.ui.collapsedFolders) {
+    state.ui.collapsedFolders = new Set();
+  }
+
+  const query = state.editor.searchQuery.trim();
+  if (query) {
+    // Search View: Flat card list, globally sorted, full displayPath as title
+    elements.noteList.innerHTML = notes.map((note) => {
+      // Override filename display to show full path in search view
+      const origDisplayPath = note.displayPath;
+      const cardNote = { ...note, displayPath: origDisplayPath };
+      // Patch the title to show full path instead of filename only
+      return noteCardHtml(cardNote, 0).replace(
+        escapeHtml(origDisplayPath.split("/").pop()),
+        escapeHtml(origDisplayPath)
+      );
+    }).join("");
+  } else {
+    // Default View: Hierarchical folder explorer tree with optional Pinned block at top
+    let html = "";
+
+    // Pinned section
+    if (state.vault.pinnedNotes.length > 0) {
+      const pinnedNoteObjects = state.vault.pinnedNotes
+        .map(p => notes.find(n => n.path === p))
+        .filter(Boolean);
+      if (pinnedNoteObjects.length > 0) {
+        html += `<div class="vault-pinned-group">
+          <div class="vault-folder-header vault-pinned-header" aria-readonly="true">
+            <div class="vault-folder-title">
+              <span class="folder-icon">📌</span>
+              <span class="vault-folder-name">Pinned</span>
+            </div>
           </div>
-        </div>
-        <div class="vault-actions">
-          <button class="action-btn" type="button" data-action="edit" data-path="${escapeHtml(note.path)}" ${state.ui.isMutating || !state.auth.isAuthenticated ? "disabled" : ""}>Edit</button>
-          <button class="action-btn danger ${confirming ? "active-danger" : ""}" type="button" data-action="delete" data-path="${escapeHtml(note.path)}" data-sha="${escapeHtml(note.sha || "")}" ${state.ui.isMutating || !state.auth.isAuthenticated ? "disabled" : ""}>${confirming ? "Confirm Delete" : "Delete"}</button>
-        </div>
-      </article>
-    `;
-  }).join("");
+          <div class="vault-folder-contents">
+            ${pinnedNoteObjects.map(n => noteCardHtml(n, 0)).join("")}
+          </div>
+        </div>`;
+      }
+    }
+
+    const tree = buildFolderTree(notes);
+    html += renderTreeNode(tree, 0);
+    elements.noteList.innerHTML = html;
+  }
 }
 
 function updateModeUi() {
@@ -768,6 +1124,9 @@ function updateModeUi() {
   elements.uploadBtn.textContent = editing ? "Update Note" : "Save to Vault";
   elements.cancelEditBtn.classList.toggle("hidden", !editing);
   elements.folderInput.disabled = editing;
+  if (elements.backlinksSection) {
+    elements.backlinksSection.classList.toggle("hidden", !editing);
+  }
 }
 
 function restoreDraftSnapshot() {
@@ -779,6 +1138,7 @@ function restoreDraftSnapshot() {
   state.editor.draftSnapshot = null;
   saveDraftSoon();
   renderPreview();
+  updateFolderSectionCollapse();
 }
 
 function enterCreateMode() {
@@ -793,6 +1153,7 @@ function enterCreateMode() {
 
   updateModeUi();
   updateFolderHint();
+  updateFolderSectionCollapse();
 }
 
 function exitEditMode({ restoreDraft = true } = {}) {
@@ -943,7 +1304,286 @@ async function fetchNotes() {
   }
 
   renderNoteList();
+  // Start metadata cache sync in background, no await
+  startMetadataSync();
 }
+
+// ---------------------------------------------------------------------------
+// Metadata Sync Engine
+// ---------------------------------------------------------------------------
+
+function parseFrontmatter(rawContent) {
+  // rawContent is the full decoded markdown string
+  const fm = { frontmatterDate: null, tags: [] };
+  if (!rawContent.startsWith("---")) return fm;
+  const end = rawContent.indexOf("\n---", 3);
+  if (end === -1) return fm;
+  const block = rawContent.slice(3, end);
+
+  // date
+  const dateMatch = block.match(/^date:\s*(.+)$/im);
+  if (dateMatch) {
+    const raw = dateMatch[1].trim().replace(/['"`]/g, "");
+    // Accepts YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss variants
+    if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+      fm.frontmatterDate = raw.slice(0, 10); // Normalize to YYYY-MM-DD
+    }
+  }
+
+  // tags — supports two forms:
+  //   tags: [a, b, c]
+  //   tags:\n  - a\n  - b
+  const tagsInline = block.match(/^tags:\s*\[([^\]]+)\]/im);
+  if (tagsInline) {
+    fm.tags = tagsInline[1].split(",").map(t => t.trim().replace(/['"`]/g, "")).filter(Boolean);
+  } else {
+    const tagsBlock = block.match(/^tags:\s*\n((?:\s*-\s*.+\n?)+)/im);
+    if (tagsBlock) {
+      fm.tags = tagsBlock[1].split("\n").map(l => l.replace(/^\s*-\s*/, "").trim()).filter(Boolean);
+    }
+  }
+
+  return fm;
+}
+
+function extractOutgoingLinks(markdown) {
+  if (!markdown) return [];
+  const links = new Set();
+  
+  // WIKILINK_RE is global, so reset lastIndex to prevent stateful issues
+  WIKILINK_RE.lastIndex = 0;
+  
+  let match;
+  while ((match = WIKILINK_RE.exec(markdown)) !== null) {
+    const [full, bang, inner] = match;
+    if (bang) continue; // Skip image/asset embeds ![[...]]
+    const targetPart = inner.split("|")[0];
+    const target = (targetPart || "").split("#")[0].trim();
+    if (!target) continue;
+    
+    // Resolve target link using existing logic to get canonical target form if it exists
+    const resolvedNote = resolveVaultNoteTarget(target);
+    if (resolvedNote) {
+      links.add(normalizeLinkTarget(resolvedNote.linkTarget));
+    } else {
+      links.add(normalizeLinkTarget(target));
+    }
+  }
+  return Array.from(links);
+}
+
+function rebuildBacklinkIndex() {
+  const index = {};
+  for (const [path, record] of Object.entries(state.vault.metaCache)) {
+    if (!record.outgoing_links) continue;
+    for (const target of record.outgoing_links) {
+      if (!index[target]) {
+        index[target] = new Set();
+      }
+      index[target].add(path);
+    }
+  }
+  state.vault.backlinkIndex = index;
+}
+
+function updateBacklinkIndexForRecord(path, oldRecord, newRecord) {
+  if (!state.vault.backlinkIndex) {
+    state.vault.backlinkIndex = {};
+  }
+  // Remove path from old links
+  if (oldRecord && oldRecord.outgoing_links) {
+    for (const target of oldRecord.outgoing_links) {
+      const set = state.vault.backlinkIndex[target];
+      if (set) {
+        set.delete(path);
+        if (set.size === 0) {
+          delete state.vault.backlinkIndex[target];
+        }
+      }
+    }
+  }
+  // Add path to new links
+  if (newRecord && newRecord.outgoing_links) {
+    for (const target of newRecord.outgoing_links) {
+      if (!state.vault.backlinkIndex[target]) {
+        state.vault.backlinkIndex[target] = new Set();
+      }
+      state.vault.backlinkIndex[target].add(path);
+    }
+  }
+}
+
+function renderBacklinks(path) {
+  if (!path) return;
+  const list = elements.backlinksList;
+  const countBadge = elements.backlinkCount;
+  if (!list || !countBadge) return;
+
+  // 1. Loading/Scanning State
+  if (!state.vault.metaCache[path]) {
+    countBadge.textContent = "...";
+    list.innerHTML = `<div class="backlink-loading">Scanning note metadata…</div>`;
+    return;
+  }
+
+  // 2. Resolve Backlinks using canonical linkTarget
+  const currentLinkTarget = normalizeLinkTarget(path);
+  const backlinks = state.vault.backlinkIndex[currentLinkTarget];
+  const backlinkArray = backlinks ? Array.from(backlinks) : [];
+
+  countBadge.textContent = backlinkArray.length;
+
+  if (backlinkArray.length === 0) {
+    list.innerHTML = `<div class="backlink-empty">No backlinks yet</div>`;
+  } else {
+    // 3. Render List of backlinks
+    list.innerHTML = backlinkArray
+      .map(srcPath => {
+        const note = state.vault.notes.find(n => n.path === srcPath);
+        const displayName = note ? note.title : srcPath.split("/").pop().replace(/\.md$/i, "");
+        const displayPath = srcPath.replace(/^vault\//, "");
+        return `
+          <div class="backlink-item" data-backlink-path="${escapeHtml(srcPath)}">
+            <span class="backlink-title">${escapeHtml(displayName)}</span>
+            <span class="backlink-path">${escapeHtml(displayPath)}</span>
+          </div>
+        `;
+      })
+      .join("");
+      
+    // Add click listeners to navigate
+    list.querySelectorAll(".backlink-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const targetPath = item.getAttribute("data-backlink-path");
+        if (targetPath) {
+          startEditing(targetPath);
+        }
+      });
+    });
+  }
+}
+
+function hydrateCardMeta(path, meta) {
+  const slot = document.querySelector(`[data-metadata-path="${CSS.escape(path)}"]`);
+  if (!slot) return;
+  const parts = [];
+  if (meta.frontmatterDate) {
+    parts.push(`<span class="date-pill">${escapeHtml(meta.frontmatterDate)}</span>`);
+  }
+  for (const tag of meta.tags) {
+    parts.push(`<span class="tag-pill">#${escapeHtml(tag)}</span>`);
+  }
+  slot.innerHTML = parts.join("");
+}
+
+async function fetchAndDecodeNote(path) {
+  const data = await apiRequest(`/api/vault/content/${path}`);
+  const binary = atob((data.content || "").replace(/\s/g, ""));
+  return new TextDecoder().decode(Uint8Array.from(binary, c => c.charCodeAt(0)));
+}
+
+let _syncAbortController = null;
+
+async function startMetadataSync() {
+  // Only run when authenticated
+  if (!state.auth.isAuthenticated) return;
+
+  // Abort any previous sync run
+  if (_syncAbortController) _syncAbortController.abort();
+  const controller = new AbortController();
+  _syncAbortController = controller;
+  const signal = controller.signal;
+  
+  state.vault.metaSyncState = "running";
+
+  try {
+    // 1. Load existing cache from IndexedDB
+    const cached = await loadAllNoteMetadata();
+    state.vault.metaCache = {};
+    for (const record of cached) {
+      state.vault.metaCache[record.path] = record;
+    }
+
+    // Rebuild backlink index on initial load
+    rebuildBacklinkIndex();
+
+    // Rerender backlinks for currently edited note if loaded from cache
+    if (state.editor.mode === "edit" && state.editor.editingPath) {
+      renderBacklinks(state.editor.editingPath);
+    }
+
+    // 2. Hydrate DOM cards that already have cache data
+    for (const record of cached) {
+      hydrateCardMeta(record.path, record);
+    }
+
+    // Re-render now so sort order reflects cached dates (not just pills)
+    if (cached.length > 0 && !signal.aborted) {
+      renderNoteList();
+      // Re-hydrate after re-render since innerHTML was replaced
+      for (const record of cached) {
+        hydrateCardMeta(record.path, record);
+      }
+    }
+
+    if (signal.aborted) return;
+
+    // 3. Find dirty notes: sha mismatch, not in cache, or missing outgoing_links
+    const dirty = state.vault.notes.filter(note => {
+      const cached = state.vault.metaCache[note.path];
+      return !cached || cached.sha !== note.sha || !cached.outgoing_links;
+    });
+
+    if (!dirty.length) {
+      state.vault.metaSyncState = "complete";
+      return;
+    }
+
+    // 4. Bounded concurrency: 2
+    let i = 0;
+    let hasErrors = false;
+    async function worker() {
+      while (i < dirty.length) {
+        if (signal.aborted) return;
+        const note = dirty[i++];
+        try {
+          const raw = await fetchAndDecodeNote(note.path);
+          if (signal.aborted) return;
+          const meta = parseFrontmatter(raw);
+          const outgoing = extractOutgoingLinks(raw);
+          const record = { path: note.path, sha: note.sha, ...meta, outgoing_links: outgoing };
+          const oldRecord = state.vault.metaCache[note.path];
+          
+          await saveNoteMetadata(record);
+          state.vault.metaCache[note.path] = record;
+          
+          updateBacklinkIndexForRecord(note.path, oldRecord, record);
+          hydrateCardMeta(note.path, record);
+
+          // Rerender backlinks for currently edited note if affected/updated
+          if (state.editor.mode === "edit" && state.editor.editingPath) {
+            renderBacklinks(state.editor.editingPath);
+          }
+        } catch {
+          hasErrors = true;
+          // Individual note failures are silent; move to next
+        }
+      }
+    }
+
+    await Promise.all([worker(), worker()]);
+    if (!signal.aborted) {
+      state.vault.metaSyncState = hasErrors ? "partial" : "complete";
+    }
+  } catch (err) {
+    if (err.name !== "AbortError") {
+      console.warn("Metadata sync error:", err);
+      state.vault.metaSyncState = "error";
+    }
+  }
+}
+
+
 
 async function startEditing(path) {
   if (state.ui.isMutating || !state.auth.isAuthenticated) {
@@ -979,7 +1619,9 @@ async function startEditing(path) {
     state.editor.editingSha = data.sha || null;
     state.editor.titleEdited = true;
     updateModeUi();
+    updateFolderSectionCollapse();
     renderPreview();
+    renderBacklinks(path);
     setStatus("success", "Editing vault note.");
   } catch (error) {
     setStatus("error", error.message || "Unable to load note.");
@@ -1002,6 +1644,12 @@ async function handleDelete(path, shaHint) {
     return;
   }
 
+  if (state.vault.metaSyncState !== 'complete') {
+    if (!window.confirm("Warning: Metadata sync is not complete. Backlinks might be missed or incorrect. Delete anyway?")) {
+      return;
+    }
+  }
+
   clearDeleteConfirmation();
   setMutationState(true);
   setStatus("uploading", "Deleting note…");
@@ -1009,9 +1657,23 @@ async function handleDelete(path, shaHint) {
   try {
     const sha = shaHint || state.vault.notes.find((note) => note.path === path)?.sha;
     if (!sha) throw new Error("Missing file SHA for delete.");
+    
+    const deletedStem = noteStemFromPath(path);
+    const deletedStemUnique = resolveVaultNoteTarget(deletedStem)?.path === path;
+    const parents = state.vault.backlinkIndex[normalizeLinkTarget(path)] || new Set();
+    
     await deleteFile(path, sha, `vault: delete ${path.split("/").pop()}`);
+    await pruneDeletedNoteLinks(path, parents, deletedStemUnique);
     if (state.editor.editingPath === path) {
       exitEditMode({ restoreDraft: true });
+    }
+    // Clean up metadata cache and pins for deleted note
+    delete state.vault.metaCache[path];
+    deleteNoteMetadata(path).catch(() => {});
+    const pinIdx = state.vault.pinnedNotes.indexOf(path);
+    if (pinIdx !== -1) {
+      state.vault.pinnedNotes.splice(pinIdx, 1);
+      storage.setJson(CONFIG.pinnedNotesKey, state.vault.pinnedNotes);
     }
     await fetchNotes();
     setStatus("success", "Note deleted.");
@@ -1021,6 +1683,7 @@ async function handleDelete(path, shaHint) {
     setMutationState(false);
   }
 }
+
 
 function defaultFolder() {
   const remembered = sessionStorage.getItem(CONFIG.lastFolderKey);
@@ -1052,10 +1715,10 @@ async function commitPendingAssets(snapshot) {
     try {
       const content = new Uint8Array(await asset.file.arrayBuffer());
       const response = await putFile(asset.path, content, null, `Upload asset: ${asset.finalName}`);
-      
+
       asset.status = "uploaded";
       asset.sha = response.content?.sha;
-      
+
       try {
         await savePendingAsset({
           pendingId: asset.pendingId,
@@ -1069,7 +1732,7 @@ async function commitPendingAssets(snapshot) {
       } catch (idbErr) {
         console.error("Failed to update asset status in IndexedDB:", idbErr);
       }
-      
+
       renderPendingAssets();
     } catch (err) {
       asset.status = "failed";
@@ -1093,20 +1756,22 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function insertLinkIntoSection(content, noteStem) {
+function insertLinkIntoSection(content, noteStem, relativeTarget) {
   const lines = content.split("\n");
   let headingIndex = -1;
   const headingRegex = /^##\s*New\s*\/\s*Uncategorized\s*$/i;
-  
+
   for (let i = 0; i < lines.length; i++) {
     if (headingRegex.test(lines[i].trim())) {
       headingIndex = i;
       break;
     }
   }
-  
-  const newLink = `- [[${noteStem}]]`;
-  
+
+  const displayTitle = noteStem.replace(/_/g, " ");
+  const targetPath = relativeTarget || noteStem;
+  const newLink = `- [[${targetPath}|${displayTitle}]]`;
+
   if (headingIndex !== -1) {
     let endIndex = lines.length;
     for (let i = headingIndex + 1; i < lines.length; i++) {
@@ -1115,7 +1780,7 @@ function insertLinkIntoSection(content, noteStem) {
         break;
       }
     }
-    
+
     let insertIndex = endIndex;
     for (let i = endIndex - 1; i > headingIndex; i--) {
       if (lines[i].trim() !== "") {
@@ -1123,11 +1788,11 @@ function insertLinkIntoSection(content, noteStem) {
         break;
       }
     }
-    
+
     if (insertIndex === endIndex) {
       insertIndex = headingIndex + 1;
     }
-    
+
     lines.splice(insertIndex, 0, newLink);
     return lines.join("\n");
   } else {
@@ -1150,6 +1815,83 @@ async function clearCommittedAssets() {
   }
   renderPendingAssets();
 }
+
+async function rewriteIncomingLinks(oldPath, newPath, parents, oldStemUnique) {
+  const oldRelative = normalizeLinkTarget(oldPath);
+  const newRelative = normalizeLinkTarget(newPath);
+  const oldStem = noteStemFromPath(oldPath);
+  const newStem = noteStemFromPath(newPath);
+  
+  let success = true;
+
+  for (const parentPath of parents) {
+    try {
+      const indexData = await getFileContent(parentPath);
+      const binary = atob((indexData.content || "").replace(/\s/g, ""));
+      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+      let content = new TextDecoder().decode(bytes);
+
+      let changed = false;
+
+      const exactRegex = new RegExp('\\[\\[(' + escapeRegExp(oldRelative) + ')(?:\\|([^\\]]*))?\\]\\]', 'gi');
+      content = content.replace(exactRegex, (match, target, alias) => {
+         changed = true;
+         return alias ? `[[${newRelative}|${alias}]]` : `[[${newRelative}]]`;
+      });
+
+      const stemRegex = new RegExp('\\[\\[(' + escapeRegExp(oldStem) + ')(?:\\|([^\\]]*))?\\]\\]', 'gi');
+      content = content.replace(stemRegex, (match, target, alias) => {
+         if (oldStemUnique) {
+            changed = true;
+            return alias ? `[[${newStem}|${alias}]]` : `[[${newStem}]]`;
+         }
+         return match;
+      });
+
+      if (changed) {
+         await putFile(parentPath, content, indexData.sha, `vault: auto-update link to ${newStem}`);
+      }
+    } catch (err) {
+      console.error("Failed to rewrite links in", parentPath, err);
+      success = false;
+    }
+  }
+  return success;
+}
+
+async function pruneDeletedNoteLinks(deletedPath, parents, deletedStemUnique) {
+  const deletedRelative = normalizeLinkTarget(deletedPath);
+  const deletedStem = noteStemFromPath(deletedPath);
+
+  for (const parentPath of parents) {
+    try {
+      const indexData = await getFileContent(parentPath);
+      const binary = atob((indexData.content || "").replace(/\s/g, ""));
+      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+      let content = new TextDecoder().decode(bytes);
+
+      const exactRegex = new RegExp('^\\s*-\\s*\\[\\[(' + escapeRegExp(deletedRelative) + ')(?:\\|[^\\]]*)?\\]\\]\\s*$', 'gim');
+      let newContent = content.replace(exactRegex, '');
+
+      const stemRegex = new RegExp('^\\s*-\\s*\\[\\[(' + escapeRegExp(deletedStem) + ')(?:\\|[^\\]]*)?\\]\\]\\s*$', 'gim');
+      newContent = newContent.replace(stemRegex, (match, target) => {
+         if (deletedStemUnique) {
+            return '';
+         }
+         return match;
+      });
+
+      newContent = newContent.replace(/\n{3,}/g, '\n\n');
+
+      if (newContent !== content) {
+         await putFile(parentPath, newContent, indexData.sha, `vault: auto-prune deleted link ${deletedStem}`);
+      }
+    } catch (err) {
+      console.error("Failed to prune link from", parentPath, err);
+    }
+  }
+}
+
 
 async function handleSave() {
   if (!state.auth.isAuthenticated) {
@@ -1185,14 +1927,47 @@ async function handleSave() {
   try {
     const filename = buildFilename(title);
     const fullPath = folder ? `${folder}/${filename}` : filename;
-    const path = state.editor.mode === "edit" ? state.editor.editingPath : `${CONFIG.vaultPrefix}${fullPath}`;
+    const newPath = `${CONFIG.vaultPrefix}${fullPath}`;
+    const oldPath = state.editor.editingPath;
+    const isRename = state.editor.mode === "edit" && oldPath && oldPath !== newPath;
+
+    if (isRename && state.vault.metaSyncState !== 'complete') {
+      if (!window.confirm("Warning: Metadata sync is not complete. Backlinks might be missed or incorrect. Rename anyway?")) {
+        setMutationState(false);
+        return;
+      }
+    }
+
+    const path = isRename ? newPath : (state.editor.mode === "edit" ? oldPath : newPath);
     const fallbackTitle = noteStemFromPath(path);
     const message = state.editor.mode === "edit"
-      ? `vault: update ${path.split("/").pop()}`
+      ? (isRename ? `vault: rename ${oldPath.split("/").pop()} to ${path.split("/").pop()}` : `vault: update ${path.split("/").pop()}`)
       : `vault: add ${path.split("/").pop()}`;
 
-    await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), state.editor.editingSha, message);
+    const shaToUse = isRename ? null : state.editor.editingSha;
     
+    let oldStemUnique = false;
+    let parentsToRewrite = new Set();
+    if (isRename) {
+      const oldStem = noteStemFromPath(oldPath);
+      oldStemUnique = resolveVaultNoteTarget(oldStem)?.path === oldPath;
+      parentsToRewrite = state.vault.backlinkIndex[normalizeLinkTarget(oldPath)] || new Set();
+    }
+
+    await putFile(path, buildMarkdown(title, bodySnapshot, fallbackTitle), shaToUse, message);
+
+    if (isRename) {
+      const rewriteSuccess = await rewriteIncomingLinks(oldPath, newPath, parentsToRewrite, oldStemUnique);
+      
+      if (rewriteSuccess) {
+         await deleteFile(oldPath, state.editor.editingSha, `vault: delete old note after rename`);
+      } else {
+         setStatus("error", "Rename incomplete. New copy created but backlink rewrite failed. Old note kept.");
+         setMutationState(false);
+         return; // keep editor state on old note and stop
+      }
+    }
+
     // Successfully saved note! Now safely clear committed assets from local IndexedDB and memory.
     await clearCommittedAssets();
 
@@ -1230,7 +2005,7 @@ async function handleSave() {
           break;
         }
       }
-      
+
       if (targetIndexPath) {
         indexFound = true;
         try {
@@ -1238,11 +2013,12 @@ async function handleSave() {
           const binary = atob((indexData.content || "").replace(/\s/g, ""));
           const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
           const indexContent = new TextDecoder().decode(bytes);
-          
-          const linkRegex = new RegExp('\\[\\[(?:[^|\\]]*\\/)?' + escapeRegExp(noteStem) + '(?:\\|[^\\]]*)?\\]\\]', 'i');
-          
+
+          const relativeTarget = path.replace(/^vault\//, "").replace(/\.md$/i, "");
+          const linkRegex = new RegExp('\\[\\[(?:[^|\\]]*\\/)?' + escapeRegExp(relativeTarget) + '(?:\\|[^\\]]*)?\\]\\]', 'i');
+
           if (!linkRegex.test(indexContent)) {
-            const updatedContent = insertLinkIntoSection(indexContent, noteStem);
+            const updatedContent = insertLinkIntoSection(indexContent, noteStem, relativeTarget);
             await putFile(targetIndexPath, updatedContent, indexData.sha, `vault: auto-link ${noteStem}`);
             indexUpdated = true;
             await fetchNotes();
@@ -1269,6 +2045,8 @@ async function handleSave() {
       elements.bodyInput.value = "";
       state.editor.titleEdited = false;
       renderPreview();
+      updateFolderHint();
+      updateFolderSectionCollapse();
     }
 
     if (indexWriteFailed) {
@@ -1321,9 +2099,37 @@ function applyVaultCollapse() {
   elements.vaultToggle.setAttribute("aria-expanded", !collapsed);
 }
 
+function toggleBacklinksCollapse() {
+  state.ui.backlinksCollapsed = !state.ui.backlinksCollapsed;
+  applyBacklinksCollapse();
+  storage.setJson(CONFIG.backlinksCollapsedKey, state.ui.backlinksCollapsed);
+}
+
+function applyBacklinksCollapse() {
+  if (!elements.backlinksSection || !elements.backlinksToggle) return;
+  const collapsed = state.ui.backlinksCollapsed;
+  elements.backlinksSection.classList.toggle("is-collapsed", collapsed);
+  elements.backlinksToggle.setAttribute("aria-expanded", !collapsed);
+}
+
+function restoreFolderState() {
+  state.ui.folderCollapsed = storage.getJson(CONFIG.folderCollapsedKey, false);
+  if (!elements.folderInput.value.trim()) {
+    state.ui.folderCollapsed = false;
+  }
+  updateFolderSectionCollapse();
+}
+
+function restoreBacklinksState() {
+  state.ui.backlinksCollapsed = storage.getJson(CONFIG.backlinksCollapsedKey, false);
+  applyBacklinksCollapse();
+}
+
 function restoreVaultState() {
   state.ui.vaultCollapsed = storage.getJson(CONFIG.vaultCollapsedKey, false);
   applyVaultCollapse();
+  restoreFolderState();
+  restoreBacklinksState();
 }
 
 restoreVaultState();
@@ -1333,10 +2139,16 @@ function bindEvents() {
   elements.loginBtn.addEventListener("click", loginWithGitHub);
   elements.logoutBtn.addEventListener("click", logout);
   elements.privateModeToggle.addEventListener("click", togglePrivateMode);
+  elements.folderToggle.addEventListener("click", toggleFolderSection);
 
   elements.folderInput.addEventListener("input", () => {
     saveDraftSoon();
     updateFolderHint();
+    if (!elements.folderInput.value.trim()) {
+      state.ui.folderCollapsed = false;
+      storage.setJson(CONFIG.folderCollapsedKey, false);
+    }
+    updateFolderSectionCollapse();
     renderFolderMenu(elements.folderInput.value);
   });
 
@@ -1344,12 +2156,14 @@ function bindEvents() {
     if (state.vault.folderIndex.length > 0) {
       renderFolderMenu(elements.folderInput.value);
     }
+    updateFolderSectionCollapse();
   });
 
   elements.folderInput.addEventListener("blur", () => {
     // Small timeout to allow mousedown to trigger first
     setTimeout(() => {
       closeFolderMenu();
+      updateFolderSectionCollapse();
     }, 200);
   });
 
@@ -1389,6 +2203,7 @@ function bindEvents() {
     elements.folderInput.value = chip.dataset.folder;
     saveDraftSoon();
     updateFolderHint();
+    updateFolderSectionCollapse();
   });
 
   elements.titleInput.addEventListener("input", () => {
@@ -1415,18 +2230,54 @@ function bindEvents() {
   });
 
   elements.noteList.addEventListener("click", async (event) => {
-    const button = event.target.closest("[data-action]");
-    if (!button || state.ui.isMutating) return;
+    // Check if clicked a folder header to toggle collapse/expand
+    const folderHeader = event.target.closest(".vault-folder-header");
+    if (folderHeader) {
+      const folder = folderHeader.dataset.folder;
+      // Pinned header has no data-folder — skip it
+      if (!folder) return;
+      if (!state.ui.collapsedFolders) {
+        state.ui.collapsedFolders = new Set();
+      }
+      if (state.ui.collapsedFolders.has(folder)) {
+        state.ui.collapsedFolders.delete(folder);
+      } else {
+        state.ui.collapsedFolders.add(folder);
+      }
+      renderNoteList();
+      return;
+    }
 
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
+
+    const action = button.dataset.action;
     const path = button.dataset.path;
+
+    // Pin is always available (no auth/mutation guard)
+    if (action === "pin") {
+      if (!path) return;
+      const idx = state.vault.pinnedNotes.indexOf(path);
+      if (idx === -1) {
+        state.vault.pinnedNotes.push(path);
+      } else {
+        state.vault.pinnedNotes.splice(idx, 1);
+      }
+      storage.setJson(CONFIG.pinnedNotesKey, state.vault.pinnedNotes);
+      renderNoteList();
+      return;
+    }
+
+    if (state.ui.isMutating) return;
+
     if (!isVaultPathSafe(path)) {
       setStatus("error", "Unsafe vault path rejected.");
       return;
     }
 
-    if (button.dataset.action === "edit") {
+    if (action === "edit") {
       await startEditing(path);
-    } else if (button.dataset.action === "delete") {
+    } else if (action === "delete") {
       await handleDelete(path, button.dataset.sha || null);
     }
   });
@@ -1449,6 +2300,22 @@ function bindEvents() {
 
   elements.uploadBtn.addEventListener("click", handleSave);
   elements.vaultToggle.addEventListener("click", toggleVaultCollapse);
+  if (elements.backlinksToggle) {
+    elements.backlinksToggle.addEventListener("click", toggleBacklinksCollapse);
+  }
+
+  // Sort button: cycle Newest → Oldest → Alphabetical
+  const sortBtn = document.getElementById("vault-sort-btn");
+  if (sortBtn) {
+    sortBtn.addEventListener("click", () => {
+      const cycle = { newest: "oldest", oldest: "alpha", alpha: "newest" };
+      const labels = { newest: "⇅ Newest first", oldest: "⇅ Oldest first", alpha: "⇅ A → Z" };
+      state.vault.sortPreference = cycle[state.vault.sortPreference] || "newest";
+      storage.set(CONFIG.vaultSortKey, state.vault.sortPreference);
+      sortBtn.textContent = labels[state.vault.sortPreference];
+      renderNoteList();
+    });
+  }
 
   // Gallery Delegation
   const gallery = document.getElementById("pending-gallery");
@@ -1562,6 +2429,17 @@ window.addEventListener("beforeunload", (e) => {
 });
 
 async function boot() {
+  // Load pin and sort preferences
+  state.vault.pinnedNotes = storage.getJson(CONFIG.pinnedNotesKey, []);
+  state.vault.sortPreference = storage.get(CONFIG.vaultSortKey, "newest");
+
+  // Sync sort button label to saved preference
+  const sortBtn = document.getElementById("vault-sort-btn");
+  if (sortBtn) {
+    const labels = { newest: "⇅ Newest first", oldest: "⇅ Oldest first", alpha: "⇅ A → Z" };
+    sortBtn.textContent = labels[state.vault.sortPreference] || "⇅ Newest first";
+  }
+
   state.vault.folderHistory = storage.getJson(CONFIG.folderHistoryKey, []);
   renderFolderChips();
   restoreSavedDraft();
@@ -1569,6 +2447,7 @@ async function boot() {
   setEditorMode("write");
   updateModeUi();
   updateFolderHint();
+  updateFolderSectionCollapse();
 
   try {
     const idbAssets = await loadPendingAssets();

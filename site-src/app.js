@@ -976,9 +976,51 @@ const searchContainer = document.getElementById("search-container");
 const searchInput = document.getElementById("search-input");
 const searchResults = document.getElementById("search-results");
 const searchTrigger = document.getElementById("search-trigger");
+const searchDeeperToggle = document.getElementById("search-deeper-toggle");
+const searchLoadingIndicator = document.getElementById("search-loading-indicator");
 
 let searchSelectedIndex = -1;
 let searchActive = false;
+
+const noteContentCache = new Map();
+let noteContentsLoading = false;
+let noteContentsLoaded = false;
+
+async function loadAllNoteContents() {
+  if (noteContentsLoaded || noteContentsLoading || !state.data) return;
+  noteContentsLoading = true;
+  searchLoadingIndicator.classList.remove("hidden");
+
+  const nonGhostNodes = state.data.nodes.filter(node => !node.ghost && node.path);
+
+  // Load in parallel batches to be fast but respect resources
+  const batchSize = 15;
+  for (let i = 0; i < nonGhostNodes.length; i += batchSize) {
+    const batch = nonGhostNodes.slice(i, i + batchSize);
+    await Promise.all(batch.map(async (node) => {
+      try {
+        const response = await fetch(`content/${encodeURI(node.path)}`);
+        if (response.ok) {
+          const text = await response.text();
+          noteContentCache.set(node.id, text);
+        }
+      } catch (e) {
+        console.error(`Failed to load content for ${node.id}:`, e);
+      }
+    }));
+  }
+
+  noteContentsLoading = false;
+  noteContentsLoaded = true;
+  searchLoadingIndicator.classList.add("hidden");
+
+  // Re-run search if query exists
+  const query = searchInput.value.trim();
+  if (query) {
+    const results = searchNodes(query);
+    renderSearchResults(results, query);
+  }
+}
 
 function openSearch() {
   if (searchActive) return;
@@ -991,6 +1033,11 @@ function openSearch() {
   searchBackdrop.setAttribute("aria-hidden", "false");
   searchContainer.setAttribute("aria-hidden", "false");
   searchInput.focus();
+
+  // Prefetch if deeper search checked
+  if (searchDeeperToggle && searchDeeperToggle.checked) {
+    loadAllNoteContents();
+  }
 }
 
 function closeSearch() {
@@ -1005,21 +1052,86 @@ function closeSearch() {
   searchSelectedIndex = -1;
 }
 
+function cleanMarkdown(text) {
+  if (!text) return "";
+  return text
+    .replace(/^---\r?\n[\s\S]*?\r?\n---/, "")
+    .replace(/!\[\[.*?\]\]/g, "")
+    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, "$2")
+    .replace(/\[\[([^\]]+)\]\]/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^\s*#+\s+/gm, "")
+    .replace(/^\s*>\s+/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/[*_`~]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getSnippet(cleanedText, index, query) {
+  if (index < 0 || index >= cleanedText.length) return "";
+
+  const start = Math.max(0, index - 35);
+  const end = Math.min(cleanedText.length, index + query.length + 35);
+
+  let snippet = cleanedText.slice(start, end);
+  if (start > 0) snippet = "..." + snippet;
+  if (end < cleanedText.length) snippet = snippet + "...";
+
+  return snippet;
+}
+
 function searchNodes(query) {
   const q = query.toLowerCase().trim();
   if (!q || !state.data) return [];
+
+  const isDeeper = searchDeeperToggle && searchDeeperToggle.checked;
+
   return state.data.nodes
     .filter((node) => !node.ghost)
     .map((node) => {
       const titleIdx = node.title.toLowerCase().indexOf(q);
       const idIdx = node.id.toLowerCase().indexOf(q);
-      const score = titleIdx === 0 ? 3 : titleIdx > 0 ? 2 : idIdx >= 0 ? 1 : 0;
-      return { node, score };
+
+      let score = 0;
+      let matchSnippet = "";
+
+      if (titleIdx === 0) {
+        score = 10;
+      } else if (titleIdx > 0) {
+        score = 8;
+      } else if (idIdx >= 0) {
+        score = 5;
+      }
+
+      if (isDeeper) {
+        const bodyText = noteContentCache.get(node.id);
+        if (bodyText) {
+          const cleaned = cleanMarkdown(bodyText);
+          const bodyIdx = cleaned.toLowerCase().indexOf(q);
+          if (bodyIdx >= 0) {
+            if (score === 0) {
+              score = 3;
+            } else {
+              score += 2; // match both
+            }
+            matchSnippet = getSnippet(cleaned, bodyIdx, query);
+          }
+        }
+      }
+
+      return { node, score, matchSnippet };
     })
     .filter((r) => r.score > 0)
     .sort((a, b) => b.score - a.score || b.node.degree - a.node.degree)
     .slice(0, 8)
-    .map((r) => r.node);
+    .map((r) => {
+      return {
+        ...r.node,
+        _searchSnippet: r.matchSnippet
+      };
+    });
 }
 
 function highlightMatch(text, query) {
@@ -1031,6 +1143,15 @@ function highlightMatch(text, query) {
   return `${escapeHtml(before)}<mark>${escapeHtml(match)}</mark>${escapeHtml(after)}`;
 }
 
+function highlightSnippet(snippet, query) {
+  const idx = snippet.toLowerCase().indexOf(query.toLowerCase());
+  if (idx < 0) return escapeHtml(snippet);
+  const before = snippet.slice(0, idx);
+  const match = snippet.slice(idx, idx + query.length);
+  const after = snippet.slice(idx + query.length);
+  return `${escapeHtml(before)}<mark>${escapeHtml(match)}</mark>${escapeHtml(after)}`;
+}
+
 function renderSearchResults(nodes, query) {
   searchResults.innerHTML = "";
   searchSelectedIndex = -1;
@@ -1038,8 +1159,15 @@ function renderSearchResults(nodes, query) {
     const li = document.createElement("li");
     li.className = "search-result-item";
     li.setAttribute("role", "option");
+
+    let snippetHtml = "";
+    if (node._searchSnippet) {
+      snippetHtml = `<span class="search-result-snippet">${highlightSnippet(node._searchSnippet, query)}</span>`;
+    }
+
     li.innerHTML = `
       <span class="search-result-title">${highlightMatch(node.title, query)}</span>
+      ${snippetHtml}
       <span class="search-result-path">${node.folder}/${node.id.split("/").pop()}</span>
     `;
     li.addEventListener("click", () => {
@@ -1061,6 +1189,19 @@ function updateSearchSelection(index) {
     items[index].classList.add("selected");
     items[index].scrollIntoView({ block: "nearest" });
   }
+}
+
+if (searchDeeperToggle) {
+  searchDeeperToggle.addEventListener("change", () => {
+    if (searchDeeperToggle.checked) {
+      loadAllNoteContents();
+    }
+    const query = searchInput.value.trim();
+    if (query) {
+      const results = searchNodes(query);
+      renderSearchResults(results, query);
+    }
+  });
 }
 
 searchInput.addEventListener("input", () => {

@@ -1,6 +1,7 @@
 const DB_NAME = "NodeNotesDB";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = "pendingAssets";
+const META_STORE = "noteMetadata";
 
 let dbInstance = null;
 
@@ -27,6 +28,9 @@ export function initPendingAssetDb() {
       const db = event.target.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: "pendingId" });
+      }
+      if (!db.objectStoreNames.contains(META_STORE)) {
+        db.createObjectStore(META_STORE, { keyPath: "path" });
       }
     };
   });
@@ -63,6 +67,45 @@ export async function deletePendingAsset(id) {
     const store = transaction.objectStore(STORE_NAME);
     const request = store.delete(id);
 
+    request.onsuccess = () => resolve();
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+
+// --- Note Metadata Cache ---
+// Each record: { path, sha, frontmatterDate, tags, outgoing_links }
+// frontmatterDate: ISO date string or null if missing in frontmatter
+// tags: string[] or []
+// outgoing_links: string[] or []
+
+export async function saveNoteMetadata(metadata) {
+  const db = await initPendingAssetDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([META_STORE], "readwrite");
+    const store = transaction.objectStore(META_STORE);
+    const request = store.put(metadata);
+    request.onsuccess = () => resolve();
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+
+export async function loadAllNoteMetadata() {
+  const db = await initPendingAssetDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([META_STORE], "readonly");
+    const store = transaction.objectStore(META_STORE);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+
+export async function deleteNoteMetadata(path) {
+  const db = await initPendingAssetDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([META_STORE], "readwrite");
+    const store = transaction.objectStore(META_STORE);
+    const request = store.delete(path);
     request.onsuccess = () => resolve();
     request.onerror = (event) => reject(event.target.error);
   });

@@ -29,6 +29,17 @@
   <div id="search-container" class="search-container hidden" role="dialog" aria-label="Search notes">
     <input id="search-input" class="search-input" type="text" placeholder="Search notes…" autocomplete="off"
       autocorrect="off" spellcheck="false" />
+    <div class="search-toolbar">
+      <label class="search-toggle-label">
+        <input type="checkbox" id="search-deeper-toggle" class="search-toggle-checkbox" />
+        <span class="search-toggle-custom"></span>
+        <span class="search-toggle-text">Deeper search (match content)</span>
+      </label>
+      <span id="search-loading-indicator" class="search-loading-indicator hidden">
+        <span class="spinner"></span>
+        <span class="loading-text">Loading...</span>
+      </span>
+    </div>
     <ul id="search-results" class="search-results" role="listbox"></ul>
     <div class="search-hint">Press <kbd>/</kbd> to search · <kbd>↑↓</kbd> navigate · <kbd>Enter</kbd> open ·
       <kbd>Esc</kbd> close
