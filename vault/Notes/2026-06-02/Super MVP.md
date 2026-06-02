@@ -1,8 +1,9 @@
 ---
 title: "Super MVP"
-date: 2026-06-02T10:14:59.529Z
+date: 2026-06-02T10:23:34.524Z
 tags: [vault, web]
 ---
+
 
 CompileFuture Website Checklist ✅
 create Website with Prompt (give competitor url)
