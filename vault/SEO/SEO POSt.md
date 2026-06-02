@@ -1,3 +1,9 @@
+---
+title: "SEO POSt"
+date: 2026-06-02T11:16:03.888Z
+tags: [vault, web]
+---
+
 
 # MASTER PROMPT: STRICT SEO CONTENT GENERATION GUIDELINES
 
@@ -26,6 +32,139 @@ You must follow **every rule strictly**. Any deviation is considered an error.
         
 3. Generate **ONE content piece only**, unless the user explicitly asks for multiple.
     
+---
+## 1.1## 1A. Submission Count Interpretation (Critical)
+
+The number attached to a submission type represents the quantity of submissions to perform.
+
+Example:
+
+Jun 2 (Tue) – 8 Social Bookmarking, 6 Article Promotion, 4 Profile Creation → 18
+
+This means:
+
+Social Bookmarking 8
+Article Promotion 6
+Profile Creation 4
+
+Generate exactly one block for each submission type.
+
+Correct:
+
+Social Bookmarking 8
+Keyword: keyword1, keyword2
+URL: landing page
+
+Article Promotion 6
+Keyword:
+URL:
+
+Profile Creation 4
+Keyword:
+URL:
+
+Incorrect:
+
+Social Bookmarking 1
+...
+Social Bookmarking 2
+...
+Social Bookmarking 3
+...
+(repeated 8 times)
+
+The count is displayed in the heading only and does not require creating multiple blocks.
+
+---
+
+## 1B. One Block Per Submission Type Rule
+
+For every day:
+
+* Each submission type appears exactly once.
+* The submission count remains attached to the submission type name.
+* Do not expand counts into multiple numbered entries.
+* Do not create separate blocks for individual submissions.
+
+Example:
+
+Input:
+
+8 Image Submission
+5 PDF Submission
+4 Social Bookmarking
+
+Output:
+
+Image Submission 8
+Keyword: ...
+URL: ...
+
+PDF Submission 5
+Keyword: ...
+URL: ...
+
+Social Bookmarking 4
+Keyword: ...
+URL: ...
+
+Never:
+
+Image Submission 1
+Image Submission 2
+Image Submission 3
+...
+
+---
+
+## URL Group Selection Rule
+
+Each block requires a single URL group.
+
+Select all keywords from the same landing page group.
+
+Examples:
+
+Valid:
+Keyword: agriculture drone price, cost per acre drone spraying
+URL: https://raptordynamic.com/collections/agriculture-spraying-drones
+
+Invalid:
+Keyword: agriculture drone price, Vector HD580 specs
+URL: mixed URLs
+
+---
+
+## Homepage Exception Rule
+
+The homepage URL group is:
+
+https://raptordynamic.com/
+
+Only these keywords may be combined together:
+
+* drone fungicide application corn
+* agricultural drone sprayer companies
+* professional crop spraying drone
+
+Do not combine homepage keywords with keywords from other URL groups.
+
+---
+
+## URL Mapping Validation (Mandatory)
+
+Before final output:
+
+1. Verify every keyword exists in the keyword dictionary.
+2. Verify every keyword maps to the displayed URL.
+3. Verify all keywords within a block share the same URL.
+4. Verify no mixed URL groups exist.
+5. Verify passive submission types remain blank.
+6. Verify keyword counts match submission type requirements.
+7. Verify keyword combinations have never been used previously anywhere in the schedule.
+8. Verify dates, counts, order, and totals remain unchanged.
+
+If any validation fails, regenerate the block before output.
 
 ---
 
