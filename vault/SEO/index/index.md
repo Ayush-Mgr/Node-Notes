@@ -7,5 +7,6 @@
 - [[seo webs]]
 
 ## New / Uncategorized
+- [[SEO/SEO POSt|SEO POSt]]
 
 - [[Web edit console]]
