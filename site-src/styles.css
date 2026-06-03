@@ -181,6 +181,8 @@ canvas {
   line-height: 1.7;
   font-size: 1rem;
   color: #555;
+  /* Prevent any direct child from breaking out of the content column */
+  overflow-x: hidden;
 }
 
 .note-content h1,
@@ -367,12 +369,16 @@ details.callout[open] .callout-fold-icon {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .note-content td,
 .note-content th {
   padding: 0.75rem;
   border: 1px solid var(--outline);
+  white-space: nowrap;
 }
 
 .note-content th {
@@ -384,6 +390,28 @@ details.callout[open] .callout-fold-icon {
   border: 0;
   border-top: 1px solid var(--outline);
   margin: 2rem 0;
+}
+
+/*
+  MathJax output overflow — applied at all viewport widths because the note
+  content column can be narrow on desktop too (split-panel layout).
+  MathJax renders display math as mjx-container[display="true"]; we make
+  that scrollable so wide matrices don't clip.
+*/
+.note-content mjx-container[display="true"] {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  padding-bottom: 4px; /* prevent scrollbar from clipping descenders */
+}
+
+.note-content mjx-container:not([display="true"]) {
+  max-width: 100%;
+  overflow-x: auto;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .internal-note-link {
@@ -404,6 +432,16 @@ details.callout[open] .callout-fold-icon {
     bottom: 0;
     width: 100vw;
     border-radius: 0;
+  }
+
+  #note-title {
+    padding: 1.5rem 1.25rem 0.75rem;
+    font-size: 1.6rem;
+  }
+
+  .note-content {
+    padding: 0 1.25rem 2rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -792,6 +830,10 @@ details.callout[open] .callout-fold-icon {
   font-family: inherit;
   pointer-events: none;
   transition: fill 0.2s ease, font-weight 0.2s ease, font-size 0.2s ease;
+  paint-order: stroke fill;
+  stroke: var(--surface);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 .local-graph-node.active-node .local-graph-label {
@@ -805,7 +847,15 @@ details.callout[open] .callout-fold-icon {
   font-weight: 600;
 }
 
-/* Deeper Search Styles */
+.local-graph-overflow-text {
+  font-size: 0.65rem;
+  fill: var(--on-surface-variant);
+  opacity: 0.6;
+  pointer-events: none;
+  font-style: italic;
+  font-family: inherit;
+}
+
 .search-toolbar {
   display: flex;
   align-items: center;

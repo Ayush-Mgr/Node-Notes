@@ -22,6 +22,8 @@ const CONFIG = {
   pinnedNotesKey: "nn_pinned_notes",
   vaultSortKey: "nn_vault_sort",
   backlinksCollapsedKey: "nn_backlinks_collapsed",
+  collapsedFoldersKey: "nn_collapsed_folders",
+  lastViewedNoteKey: "nn_last_viewed_note",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -957,7 +959,7 @@ function sortNotesLocal(files) {
 }
 
 function noteCardHtml(note, depth = 0) {
-  const filename = note.displayPath.split("/").pop();
+  const filename = note.displayPath.split("/").pop().replace(/\.md$/i, "");
   const confirming = state.ui.confirmDeletePath === note.path;
   const isPinned = state.vault.pinnedNotes.includes(note.path);
   const disabled = state.ui.isMutating || !state.auth.isAuthenticated ? "disabled" : "";
@@ -969,7 +971,7 @@ function noteCardHtml(note, depth = 0) {
                   type="button"
                   data-action="edit"
                   data-path="${escapeHtml(note.path)}">
-            ${escapeHtml(filename)}
+            <span class="file-icon">📄</span> ${escapeHtml(filename)}
           </button>
           <div class="vault-card__meta" data-metadata-path="${escapeHtml(note.path)}"></div>
         </div>
@@ -1073,7 +1075,7 @@ function renderNoteList() {
   elements.noteCount.textContent = `${notes.length} files`;
 
   if (!state.ui.collapsedFolders) {
-    state.ui.collapsedFolders = new Set();
+    state.ui.collapsedFolders = new Set(storage.getJson(CONFIG.collapsedFoldersKey, []));
   }
 
   const query = state.editor.searchQuery.trim();
@@ -1083,10 +1085,12 @@ function renderNoteList() {
       // Override filename display to show full path in search view
       const origDisplayPath = note.displayPath;
       const cardNote = { ...note, displayPath: origDisplayPath };
-      // Patch the title to show full path instead of filename only
+      // Patch the title to show full path (without .md) instead of filename only
+      const baseFilename = origDisplayPath.split("/").pop().replace(/\.md$/i, "");
+      const cleanDisplayPath = origDisplayPath.replace(/\.md$/i, "");
       return noteCardHtml(cardNote, 0).replace(
-        escapeHtml(origDisplayPath.split("/").pop()),
-        escapeHtml(origDisplayPath)
+        escapeHtml(baseFilename),
+        escapeHtml(cleanDisplayPath)
       );
     }).join("");
   } else {
@@ -1157,6 +1161,7 @@ function enterCreateMode() {
 }
 
 function exitEditMode({ restoreDraft = true } = {}) {
+  storage.remove(CONFIG.lastViewedNoteKey);
   enterCreateMode();
   if (restoreDraft) {
     restoreDraftSnapshot();
@@ -1215,6 +1220,15 @@ async function checkAuth() {
 
     if (state.auth.isAuthenticated) {
       await fetchNotes();
+
+      const lastViewed = storage.get(CONFIG.lastViewedNoteKey);
+      const hasDraft = storage.get(CONFIG.draftBodyKey) || storage.get(CONFIG.draftTitleKey) || storage.get(CONFIG.draftFolderKey);
+      if (!window.location.hash && !hasDraft && lastViewed) {
+        const noteExists = state.vault.notes.some(n => n.path === lastViewed);
+        if (noteExists) {
+          await startEditing(lastViewed);
+        }
+      }
     }
   } catch {
     clearTimeout(coldStartTimer);
@@ -1321,12 +1335,14 @@ function parseFrontmatter(rawContent) {
   const block = rawContent.slice(3, end);
 
   // date
-  const dateMatch = block.match(/^date:\s*(.+)$/im);
+  const dateMatch = block.match(/^(?:date|created|updated):\s*(.+)$/im);
   if (dateMatch) {
     const raw = dateMatch[1].trim().replace(/['"`]/g, "");
-    // Accepts YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss variants
-    if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
-      fm.frontmatterDate = raw.slice(0, 10); // Normalize to YYYY-MM-DD
+    const parsed = Date.parse(raw);
+    if (!isNaN(parsed)) {
+      fm.frontmatterDate = new Date(parsed).toISOString();
+    } else if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+      fm.frontmatterDate = raw.slice(0, 10);
     }
   }
 
@@ -1441,7 +1457,7 @@ function renderBacklinks(path) {
       .map(srcPath => {
         const note = state.vault.notes.find(n => n.path === srcPath);
         const displayName = note ? note.title : srcPath.split("/").pop().replace(/\.md$/i, "");
-        const displayPath = srcPath.replace(/^vault\//, "");
+        const displayPath = srcPath.replace(/^vault\//, "").replace(/\.md$/i, "");
         return `
           <div class="backlink-item" data-backlink-path="${escapeHtml(srcPath)}">
             <span class="backlink-title">${escapeHtml(displayName)}</span>
@@ -1586,6 +1602,7 @@ async function startMetadataSync() {
 
 
 async function startEditing(path) {
+  storage.set(CONFIG.lastViewedNoteKey, path);
   if (state.ui.isMutating || !state.auth.isAuthenticated) {
     if (!state.auth.isAuthenticated) setStatus("error", "Please sign in to edit notes.");
     return;
@@ -2244,13 +2261,14 @@ function bindEvents() {
       // Pinned header has no data-folder — skip it
       if (!folder) return;
       if (!state.ui.collapsedFolders) {
-        state.ui.collapsedFolders = new Set();
+        state.ui.collapsedFolders = new Set(storage.getJson(CONFIG.collapsedFoldersKey, []));
       }
       if (state.ui.collapsedFolders.has(folder)) {
         state.ui.collapsedFolders.delete(folder);
       } else {
         state.ui.collapsedFolders.add(folder);
       }
+      storage.setJson(CONFIG.collapsedFoldersKey, Array.from(state.ui.collapsedFolders));
       renderNoteList();
       return;
     }

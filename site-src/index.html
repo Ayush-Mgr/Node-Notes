@@ -91,6 +91,13 @@
         displayMath: [['\\[', '\\]']],
         processEscapes: true
       },
+      chtml: {
+        // Slight scale-down so wide equations fit narrower panels before they clip.
+        // Horizontal scroll is handled by CSS on mjx-container in styles.css.
+        scale: 0.95,
+        minScale: 0.6,
+        mtextInheritFont: true
+      },
       startup: {
         typeset: false
       }

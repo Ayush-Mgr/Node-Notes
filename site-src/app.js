@@ -8,6 +8,10 @@ const state = {
   historyIndex: 0,
 };
 
+// Tunable graph constants
+const HUB_DEGREE_THRESHOLD = 30;   // nodes with degree above this are treated as hubs
+const LOCAL_GRAPH_MAX_NEIGHBORS = 25; // max neighbors shown in the local graph panel
+
 const graphView = document.getElementById("graph-view");
 const appStatus = document.getElementById("app-status");
 const noteBackdrop = document.getElementById("note-backdrop");
@@ -393,17 +397,30 @@ async function openNote(noteId, pushHash = true) {
       view.innerHTML = `<div class="local-graph-empty">No direct note connections yet.</div>`;
     }
   } else {
-    const localNodes = [];
     const activeNodeSrc = state.nodeById.get(noteId);
-    if (activeNodeSrc) {
-      localNodes.push({ ...activeNodeSrc });
+
+    // Sort neighbors: degree desc, then title asc for stability
+    let sortedNeighborIds = [...neighborIds].sort((a, b) => {
+      const na = state.nodeById.get(a);
+      const nb = state.nodeById.get(b);
+      const degDiff = (nb?.degree ?? 0) - (na?.degree ?? 0);
+      if (degDiff !== 0) return degDiff;
+      return (na?.title ?? a).localeCompare(nb?.title ?? b);
+    });
+
+    const overflowCount = Math.max(0, sortedNeighborIds.length - LOCAL_GRAPH_MAX_NEIGHBORS);
+    if (overflowCount > 0) {
+      sortedNeighborIds = sortedNeighborIds.slice(0, LOCAL_GRAPH_MAX_NEIGHBORS);
     }
-    neighborIds.forEach(id => {
+
+    const localNodes = [];
+    if (activeNodeSrc) localNodes.push({ ...activeNodeSrc });
+    sortedNeighborIds.forEach(id => {
       const nNode = state.nodeById.get(id);
       if (nNode) localNodes.push({ ...nNode });
     });
-    const localNodeIds = new Set(localNodes.map(d => d.id));
 
+    const localNodeIds = new Set(localNodes.map(d => d.id));
     const localLinks = state.data.links
       .filter(link => {
         const s = typeof link.source === "object" ? link.source.id : link.source;
@@ -416,7 +433,7 @@ async function openNote(noteId, pushHash = true) {
       }));
 
     requestAnimationFrame(() => {
-      renderLocalGraph(noteId, localNodes, localLinks);
+      renderLocalGraph(noteId, localNodes, localLinks, overflowCount);
     });
   }
 
@@ -465,18 +482,20 @@ function cleanupLocalGraph() {
   }
 }
 
-function renderLocalGraph(activeNoteId, localNodes, localLinks) {
+function renderLocalGraph(activeNoteId, localNodes, localLinks, overflowCount = 0) {
   const view = document.getElementById("local-graph-view");
   if (!view) return;
 
   const width = view.clientWidth || 300;
   const height = view.clientHeight || 280;
+  const cx = width / 2;
+  const cy = height / 2;
 
   // Pin active note in the exact center
   const activeNode = localNodes.find(d => d.id === activeNoteId);
   if (activeNode) {
-    activeNode.fx = width / 2;
-    activeNode.fy = height / 2;
+    activeNode.fx = cx;
+    activeNode.fy = cy;
   }
 
   const svg = d3.select(view)
@@ -487,17 +506,26 @@ function renderLocalGraph(activeNoteId, localNodes, localLinks) {
 
   localGraphSvg = svg;
 
+  // Overflow badge — rendered as SVG text at the bottom so it stays clipped within view
+  if (overflowCount > 0) {
+    svg.append("text")
+      .attr("class", "local-graph-overflow-text")
+      .attr("x", width / 2)
+      .attr("y", height - 8)
+      .attr("text-anchor", "middle")
+      .text(`+${overflowCount} more connections not shown`);
+  }
+
   const g = svg.append("g");
 
   // D3 zoom filter
   localGraphZoom = d3.zoom()
     .scaleExtent([0.6, 2.5])
     .filter((event) => {
-      // Allow non-wheel interactions; restrict wheel zoom to Ctrl/Cmd modifier
       if (event.type === "wheel") {
         return event.ctrlKey || event.metaKey;
       }
-      return !event.button; // Default filter for non-wheel events
+      return !event.button;
     })
     .on("zoom", (event) => {
       g.attr("transform", event.transform);
@@ -543,11 +571,10 @@ function renderLocalGraph(activeNoteId, localNodes, localLinks) {
   nodeSelection.append("circle")
     .attr("r", d => d.id === activeNoteId ? d.radius + 3 : d.radius);
 
-  nodeSelection.append("text")
+  // Labels — placed per tick via angle from center
+  const labelSelection = nodeSelection.append("text")
     .attr("class", "local-graph-label")
-    .attr("dx", d => d.radius + 6)
-    .attr("dy", 4)
-    .text(d => d.title.length > 24 ? d.title.slice(0, 24) + "..." : d.title);
+    .text(d => d.title.length > 18 ? d.title.slice(0, 18) + "…" : d.title);
 
   nodeSelection
     .on("mouseenter", (event, d) => {
@@ -570,10 +597,12 @@ function renderLocalGraph(activeNoteId, localNodes, localLinks) {
     });
 
   localGraphSimulation = d3.forceSimulation(localNodes)
-    .force("link", d3.forceLink(localLinks).id(d => d.id).distance(60).strength(0.8))
-    .force("charge", d3.forceManyBody().strength(-120))
-    .force("collide", d3.forceCollide().radius(d => d.radius + 18))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("link", d3.forceLink(localLinks).id(d => d.id).distance(80).strength(0.8))
+    .force("charge", d3.forceManyBody().strength(-220))
+    .force("collide", d3.forceCollide().radius(d => d.radius + 15 + Math.min((d.title || "").length * 4.5, 55)))
+    .force("center", d3.forceCenter(cx, cy));
+
+  const LABEL_PADDING = 5; // px gap between node edge and label start
 
   localGraphSimulation.on("tick", () => {
     linkSelection
@@ -584,8 +613,50 @@ function renderLocalGraph(activeNoteId, localNodes, localLinks) {
 
     nodeSelection
       .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+    // Angle-based label placement: outward from graph center, clamped to viewport
+    const LABEL_MARGIN = 4; // px padding from SVG edge
+    const APPROX_LABEL_W = 70; // rough max label width in px (18 chars × ~4px)
+    const APPROX_LABEL_H = 10; // label line height in px
+
+    labelSelection.each(function(d) {
+      const el = d3.select(this);
+      const nx = d.x ?? cx;
+      const ny = d.y ?? cy;
+      const ddx = nx - cx;
+      const ddy = ny - cy;
+      const angle = Math.atan2(ddy, ddx);
+
+      const isRightSide = Math.cos(angle) >= 0;
+      const r = (d.id === activeNoteId ? d.radius + 3 : d.radius) + LABEL_PADDING;
+
+      // Raw label anchor in graph-space (relative to node center)
+      const rawLx = Math.cos(angle) * r;
+      const rawLy = Math.sin(angle) * r + 4;
+
+      // Absolute label anchor in SVG space
+      let absX = nx + rawLx;
+      let absY = ny + rawLy;
+
+      // Clamp so the label text stays within the SVG viewport
+      // For right-anchored text: origin is left edge of text → clamp right boundary
+      // For left-anchored text (text-anchor=end): origin is right edge → clamp left boundary
+      if (isRightSide) {
+        absX = Math.min(absX, width - LABEL_MARGIN - APPROX_LABEL_W);
+      } else {
+        absX = Math.max(absX, LABEL_MARGIN + APPROX_LABEL_W);
+      }
+      absY = Math.max(absY, LABEL_MARGIN + APPROX_LABEL_H);
+      absY = Math.min(absY, height - LABEL_MARGIN - APPROX_LABEL_H);
+
+      // Convert back to node-relative dx/dy
+      el.attr("dx", absX - nx)
+        .attr("dy", absY - ny)
+        .attr("text-anchor", isRightSide ? "start" : "end");
+    });
   });
 }
+
 
 function showTooltip(text, x, y) {
   tooltip.textContent = text;
@@ -728,18 +799,63 @@ function renderGraph() {
     const normalLinks = [];
     const fadedLinks = [];
     const highlightedLinks = [];
+    const hubLinks = [];       // hub-suppressed: ultra-faint unless focused
+    const hubFadedLinks = [];  // hub links that are also faded
     const ghostNormalLinks = [];
     const ghostFadedLinks = [];
     const ghostHighlightedLinks = [];
 
     links.forEach(d => {
-      const targetBucket = !focusId
-        ? (d.ghost ? ghostNormalLinks : normalLinks)
-        : (d.source.id === focusId || d.target.id === focusId)
-          ? (d.ghost ? ghostHighlightedLinks : highlightedLinks)
-          : (d.ghost ? ghostFadedLinks : fadedLinks);
-      targetBucket.push(d);
+      const srcDeg = d.source.degree ?? 0;
+      const tgtDeg = d.target.degree ?? 0;
+      const isHubLink = (srcDeg > HUB_DEGREE_THRESHOLD || tgtDeg > HUB_DEGREE_THRESHOLD);
+      const hubFocused = isHubLink && (d.source.id === focusId || d.target.id === focusId);
+
+      if (d.ghost) {
+        // Ghost links: keep existing ghost bucketing
+        if (!focusId) {
+          ghostNormalLinks.push(d);
+        } else if (d.source.id === focusId || d.target.id === focusId) {
+          ghostHighlightedLinks.push(d);
+        } else {
+          ghostFadedLinks.push(d);
+        }
+        return;
+      }
+
+      if (!focusId) {
+        isHubLink ? hubLinks.push(d) : normalLinks.push(d);
+      } else if (d.source.id === focusId || d.target.id === focusId) {
+        highlightedLinks.push(d); // always fully visible when focused endpoint
+      } else if (isHubLink && !hubFocused) {
+        hubFadedLinks.push(d);    // hub link, not focused: extra faint
+      } else {
+        fadedLinks.push(d);
+      }
     });
+
+    // Hub links (unfocused): ultra-faint
+    if (hubLinks.length > 0) {
+      context.beginPath();
+      hubLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.strokeStyle = "rgba(0, 0, 0, 0.025)";
+      context.lineWidth = 0.6;
+      context.stroke();
+    }
+
+    if (hubFadedLinks.length > 0) {
+      context.beginPath();
+      hubFadedLinks.forEach(d => {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      });
+      context.strokeStyle = "rgba(0, 0, 0, 0.01)";
+      context.lineWidth = 0.5;
+      context.stroke();
+    }
 
     if (normalLinks.length > 0) {
       context.beginPath();
