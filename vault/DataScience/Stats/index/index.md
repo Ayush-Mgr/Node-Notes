@@ -98,7 +98,7 @@ tags: [vault, web]
 - [[seo KEys]]
 
 ## Time Series Analysis
-- [[intro - Time Series Analysis]]
+- [[1. intro - Time Series Analysis]]
 - 
 ## New / Uncategorized
 - [[0.  ANOVA]]
@@ -123,7 +123,7 @@ tags: [vault, web]
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
 - [[Parametric and Non - Parametric]]
-- 1.[[DataScience/Stats/notes/intro - Time Series Analysis]]
+- 1.[[datascience/stats/notes/1. intro - time series analysis]]
 - 2.[[DataScience/Stats/notes/Parametric and Non - Parametric]]
 - [[3. Descriptive Analysis of Time Series]]
 - [[DataScience/Stats/notes/4. ACF & PCF|4. ACF & PCF]]
