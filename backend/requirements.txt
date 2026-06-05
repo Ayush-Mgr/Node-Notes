@@ -4,3 +4,4 @@ httpx
 python-dotenv
 itsdangerous
 starlette
+psycopg2-binary

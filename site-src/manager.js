@@ -2549,25 +2549,13 @@ async function boot() {
   function startKeepAlive() {
     if (keepAliveInterval) return;
     keepAliveInterval = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        keepAlive();
-      }
+      keepAlive();
     }, 5 * 60 * 1000); // 5 minutes
-  }
-
-  function stopKeepAlive() {
-    if (keepAliveInterval) {
-      clearInterval(keepAliveInterval);
-      keepAliveInterval = null;
-    }
   }
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
       keepAlive(); // Ping immediately on returning to visible
-      startKeepAlive();
-    } else {
-      stopKeepAlive();
     }
   });
 

@@ -2,7 +2,6 @@ import os
 import secrets
 import hashlib
 import base64
-import sqlite3
 from contextlib import asynccontextmanager
 from urllib.parse import urlparse
 from typing import Optional
@@ -11,7 +10,7 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import httpx
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 import logging
 
@@ -28,7 +27,11 @@ if not SESSION_SECRET:
         "Define a stable SESSION_SECRET env var for production to enable restart-proof sessions."
     )
     SESSION_SECRET = secrets.token_urlsafe(32)
-SESSION_TTL = timedelta(hours=24)
+try:
+    from .session_store import SQLiteSessionStore, PostgresSessionStore
+except ImportError:
+    from session_store import SQLiteSessionStore, PostgresSessionStore
+
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8080/manager.html")
 ENVIRONMENT = os.getenv("ENVIRONMENT", "").strip().lower()
 REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
@@ -37,15 +40,12 @@ DEFAULT_BRANCH = os.getenv("GITHUB_REPO_BRANCH", "main")
 ALLOWED_USERS = {u.strip().lower() for u in os.getenv("ALLOWED_USERS", "Ayush-Mgr").split(",") if u.strip()}
 VAULT_PREFIX = "vault/"
 
-
 def is_https_url(url: str) -> bool:
     return url.lower().startswith("https://")
-
 
 def frontend_origin(url: str) -> str:
     parsed = urlparse(url)
     return f"{parsed.scheme}://{parsed.netloc}" if parsed.scheme and parsed.netloc else ""
-
 
 SESSION_COOKIE_SECURE = ENVIRONMENT == "production" or is_https_url(FRONTEND_URL)
 SESSION_COOKIE_SAMESITE = "none" if SESSION_COOKIE_SECURE else "lax"
@@ -59,77 +59,29 @@ ALLOW_ORIGINS = [
     }
     if origin
 ]
-DB_PATH = os.getenv("DATABASE_PATH", os.path.join(os.path.dirname(__file__), "sessions.db"))
+
+STORE_TYPE = os.getenv("SESSION_STORE", "sqlite").strip().lower()
+SESSION_TTL_HOURS = int(os.getenv("SESSION_TTL_HOURS", "168"))
+
+if STORE_TYPE == "postgres":
+    DB_URL = os.getenv("DATABASE_URL")
+    if ENVIRONMENT == "production" and not DB_URL:
+        raise ValueError("CRITICAL: SESSION_STORE is postgres in production, but DATABASE_URL is not set!")
+    session_store = PostgresSessionStore(DB_URL)
+else:
+    if ENVIRONMENT == "production":
+        logger.warning("DURABILITY WARNING: Using SQLite session store in PRODUCTION. Data will wipe on Render free tier sleep.")
+    DB_PATH = os.getenv("DATABASE_PATH", os.path.join(os.path.dirname(__file__), "sessions.db"))
+    session_store = SQLiteSessionStore(DB_PATH)
+
+logger.info(f"Initialized SessionStore: {STORE_TYPE.upper()} | TTL: {SESSION_TTL_HOURS} hours")
 
 def utc_now_str() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-def get_db_conn():
-    conn = sqlite3.connect(DB_PATH, timeout=10.0)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL;")
-    conn.execute("PRAGMA synchronous=NORMAL;")
-    return conn
-
-def init_db():
-    with get_db_conn() as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS sessions (
-                session_id TEXT PRIMARY KEY,
-                github_token TEXT NOT NULL,
-                user_login TEXT,
-                user_avatar_url TEXT,
-                created_at TEXT NOT NULL,
-                expires_at TEXT NOT NULL
-            )
-        """)
-        conn.commit()
-
-def create_session(session_id: str, token: str, login: str, avatar_url: str):
-    now_str = utc_now_str()
-    expires_str = (datetime.now(timezone.utc) + SESSION_TTL).strftime("%Y-%m-%dT%H:%M:%SZ")
-    with get_db_conn() as conn:
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO sessions (session_id, github_token, user_login, user_avatar_url, created_at, expires_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-            """,
-            (session_id, token, login, avatar_url, now_str, expires_str)
-        )
-        conn.commit()
-
-def get_session(session_id: str):
-    with get_db_conn() as conn:
-        cursor = conn.execute(
-            "SELECT github_token, user_login, user_avatar_url, created_at, expires_at FROM sessions WHERE session_id = ?",
-            (session_id,)
-        )
-        return cursor.fetchone()
-
-def update_session_expiry(session_id: str):
-    expires_str = (datetime.now(timezone.utc) + SESSION_TTL).strftime("%Y-%m-%dT%H:%M:%SZ")
-    with get_db_conn() as conn:
-        conn.execute(
-            "UPDATE sessions SET expires_at = ? WHERE session_id = ?",
-            (expires_str, session_id)
-        )
-        conn.commit()
-
-def delete_session(session_id: str):
-    with get_db_conn() as conn:
-        conn.execute("DELETE FROM sessions WHERE session_id = ?", (session_id,))
-        conn.commit()
-
-def cleanup_expired_sessions():
-    now_str = utc_now_str()
-    with get_db_conn() as conn:
-        conn.execute("DELETE FROM sessions WHERE expires_at < ?", (now_str,))
-        conn.commit()
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    session_store.init_db()
     async with httpx.AsyncClient(
         headers={
             "Accept": "application/vnd.github.v3+json",
@@ -147,6 +99,7 @@ app.add_middleware(
     secret_key=SESSION_SECRET,
     https_only=SESSION_COOKIE_SECURE,
     same_site=SESSION_COOKIE_SAMESITE,
+    max_age=SESSION_TTL_HOURS * 3600,
 )
 
 app.add_middleware(
@@ -192,19 +145,35 @@ def is_path_safe(path: str) -> bool:
 def pop_session(request: Request) -> None:
     session_id = request.session.get("session_id")
     if session_id:
-        delete_session(session_id)
+        try:
+            session_store.delete_session(session_id)
+        except Exception as e:
+            logger.error(f"Failed to delete session {session_id}: {e}")
     request.session.clear()
 
 async def github_proxy(request: Request, method: str, path: str, json_body: Optional[dict] = None):
-    cleanup_expired_sessions()
+    try:
+        session_store.cleanup_expired_sessions()
+    except Exception as e:
+        logger.warning(f"Failed to cleanup expired sessions: {e}")
+
     session_id = request.session.get("session_id")
-    token_data = get_session(session_id) if session_id else None
+    token_data = None
+    if session_id:
+        try:
+            token_data = session_store.get_session(session_id)
+        except Exception as e:
+            logger.error(f"DB Error getting session: {e}")
+            raise HTTPException(status_code=503, detail="Session store unavailable")
 
     if not token_data or utc_now_str() > token_data["expires_at"]:
         pop_session(request)
         raise HTTPException(status_code=401, detail="Session expired or invalid")
 
-    update_session_expiry(session_id)
+    try:
+        session_store.update_session_expiry(session_id, SESSION_TTL_HOURS)
+    except Exception as e:
+        logger.warning(f"Failed to update session expiry: {e}")
 
     token = token_data["github_token"]
     url = f"https://api.github.com{path}"
@@ -226,7 +195,10 @@ async def github_proxy(request: Request, method: str, path: str, json_body: Opti
 
 @app.get("/auth/login")
 async def login(request: Request):
-    cleanup_expired_sessions()
+    try:
+        session_store.cleanup_expired_sessions()
+    except Exception:
+        pass
     state = secrets.token_urlsafe(32)
     verifier, challenge = get_pkce_challenge()
 
@@ -240,7 +212,10 @@ async def login(request: Request):
 
 @app.get("/auth/callback")
 async def callback(request: Request, code: str, state: str):
-    cleanup_expired_sessions()
+    try:
+        session_store.cleanup_expired_sessions()
+    except Exception:
+        pass
     if state != request.session.get("oauth_state"):
         raise HTTPException(status_code=400, detail="Invalid state")
 
@@ -278,12 +253,17 @@ async def callback(request: Request, code: str, state: str):
         return RedirectResponse(url=f"{FRONTEND_URL}?error=unauthorized")
 
     session_id = secrets.token_urlsafe(32)
-    create_session(
-        session_id=session_id,
-        token=token,
-        login=user_data.get("login"),
-        avatar_url=user_data.get("avatar_url")
-    )
+    try:
+        session_store.create_session(
+            session_id=session_id,
+            token=token,
+            login=user_data.get("login"),
+            avatar_url=user_data.get("avatar_url"),
+            ttl_hours=SESSION_TTL_HOURS
+        )
+    except Exception as e:
+        logger.error(f"DB Error creating session: {e}")
+        return JSONResponse(status_code=503, content={"error": "Session store unavailable"})
     request.session["session_id"] = session_id
 
     return RedirectResponse(url=FRONTEND_URL)
@@ -295,15 +275,28 @@ async def logout(request: Request):
 
 @app.get("/auth/status")
 async def auth_status(request: Request):
-    cleanup_expired_sessions()
+    try:
+        session_store.cleanup_expired_sessions()
+    except Exception as e:
+        logger.warning(f"Failed to cleanup expired sessions: {e}")
+
     session_id = request.session.get("session_id")
-    token_data = get_session(session_id) if session_id else None
+    token_data = None
+    if session_id:
+        try:
+            token_data = session_store.get_session(session_id)
+        except Exception as e:
+            logger.error(f"DB Error getting session in auth/status: {e}")
+            return JSONResponse(status_code=503, content={"error": "Session store unavailable"})
 
     if not token_data or utc_now_str() > token_data["expires_at"]:
         pop_session(request)
         return {"authenticated": False}
 
-    update_session_expiry(session_id)
+    try:
+        session_store.update_session_expiry(session_id, SESSION_TTL_HOURS)
+    except Exception as e:
+        logger.warning(f"Failed to update session expiry: {e}")
 
     return {
         "authenticated": True,
