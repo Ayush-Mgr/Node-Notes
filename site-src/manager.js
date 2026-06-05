@@ -80,6 +80,7 @@ const state = {
     draftSnapshot: null,
     titleEdited: false,
     searchQuery: "",
+    viewMode: "write",
   },
   ui: {
     listStatus: "idle",
@@ -163,26 +164,21 @@ function setStatus(type, message) {
 function setEditorMode(mode) {
   const preview = mode === "preview";
   const previewCanvas = elements.previewPane.querySelector(".editor-canvas");
-  const writeCanvas = elements.writePane.querySelector(".editor-canvas");
+  
+  // Track active mode in state
+  state.editor.viewMode = mode;
 
   // 1. Determine active source scroller and capture percentage
-  let sourceScroller = null;
-  if (preview) {
-    if (elements.bodyInput && elements.bodyInput.scrollTop > 0) {
-      sourceScroller = elements.bodyInput;
-    } else if (writeCanvas && writeCanvas.scrollTop > 0) {
-      sourceScroller = writeCanvas;
-    } else {
-      sourceScroller = (writeCanvas && writeCanvas.scrollHeight > writeCanvas.clientHeight) ? writeCanvas : elements.bodyInput;
-    }
-  } else {
-    sourceScroller = previewCanvas;
-  }
+  const sourceScroller = preview ? elements.bodyInput : previewCanvas;
 
   let pct = 0;
   if (sourceScroller) {
     const max = Math.max(1, sourceScroller.scrollHeight - sourceScroller.clientHeight);
     pct = sourceScroller.scrollTop / max;
+  }
+
+  if (preview && previewCanvas) {
+    previewCanvas.dataset.targetScrollPct = pct.toString();
   }
 
   let renderPromise = Promise.resolve();
@@ -208,14 +204,9 @@ function setEditorMode(mode) {
         previewCanvas.scrollTop = pct * max;
       }
     } else {
-      // Write mode: apply scroll to BOTH elements.bodyInput AND writeCanvas
       if (elements.bodyInput) {
         const max = Math.max(1, elements.bodyInput.scrollHeight - elements.bodyInput.clientHeight);
         elements.bodyInput.scrollTop = pct * max;
-      }
-      if (writeCanvas) {
-        const max = Math.max(1, writeCanvas.scrollHeight - writeCanvas.clientHeight);
-        writeCanvas.scrollTop = pct * max;
       }
     }
   };
@@ -2454,6 +2445,45 @@ window.addEventListener("beforeunload", (e) => {
 });
 
 async function boot() {
+  // Setup ResizeObserver for scroll sync correction
+  const previewCanvas = elements.previewPane.querySelector(".editor-canvas");
+  if (previewCanvas) {
+    let lastHeight = previewCanvas.scrollHeight;
+    let resizeRaf = null;
+
+    // Observe preview canvas AND its body to catch content changes vs container changes
+    const ro = new ResizeObserver(() => {
+      if (state.editor.viewMode !== "preview") return;
+
+      const newHeight = previewCanvas.scrollHeight;
+      if (Math.abs(newHeight - lastHeight) < 3) return; // Skip minor jitter
+      lastHeight = newHeight;
+
+      const pctStr = previewCanvas.dataset.targetScrollPct;
+      if (!pctStr) return;
+      const pct = parseFloat(pctStr);
+      if (isNaN(pct)) return;
+
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        const max = Math.max(1, previewCanvas.scrollHeight - previewCanvas.clientHeight);
+        previewCanvas.scrollTop = pct * max;
+      });
+    });
+    
+    ro.observe(previewCanvas);
+    if (elements.previewBody) ro.observe(elements.previewBody);
+    if (elements.previewTitle) ro.observe(elements.previewTitle);
+
+    // Keep target scroll percentage fresh when user scrolls manually
+    previewCanvas.addEventListener("scroll", () => {
+      if (state.editor.viewMode !== "preview") return;
+      const max = Math.max(1, previewCanvas.scrollHeight - previewCanvas.clientHeight);
+      const pct = previewCanvas.scrollTop / max;
+      previewCanvas.dataset.targetScrollPct = pct.toString();
+    }, { passive: true });
+  }
+
   // Load pin and sort preferences
   state.vault.pinnedNotes = storage.getJson(CONFIG.pinnedNotesKey, []);
   state.vault.sortPreference = storage.get(CONFIG.vaultSortKey, "newest");
