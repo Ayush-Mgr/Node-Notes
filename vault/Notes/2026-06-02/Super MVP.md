@@ -21,7 +21,7 @@ add _headers file for cloudflare pages / if using workers then disable workers.d
 
 
 sources:
-ai skill : webdesignguidelines.md vercel's design , tailwindagentskills,
+ai skill : webdesignguidelines.md vercel's design , tailwindagentskills,https://impeccable.style
 mcp server :astro js mcp
 
 Prompt:
