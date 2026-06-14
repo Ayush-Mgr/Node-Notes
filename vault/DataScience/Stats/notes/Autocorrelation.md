@@ -1,11 +1,18 @@
 ---
 title: "Autocorrelation"
-date: 2026-06-04T05:47:02.551Z
+date: 2026-06-14T14:39:24.494Z
 tags: [vault, web]
 ---
 
 
-so autocorrelation check the correlation of yesterday and today according to average of past records.
+
+so autocorrelation check the correlation of a variable yesterday and today according to average of past 
+
+> this variable yesterday and today is also called as **lagged** value of x
+> here the yesterday's value of x could be called **lagged value of x by 1 day** 
+
+> *"lag" is simply the formal statistical word for a delay or a step back in time.*
+
 
 example how much similar todays and yesterdays temperature after finding difference in todays temperature and yesterdays temperature and finding how similar the difference is.
 
