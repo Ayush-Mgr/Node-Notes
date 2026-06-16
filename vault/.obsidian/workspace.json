@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "eb924708bd311d3b",
+        "id": "2731dc9600890ad9",
         "type": "tabs",
         "children": [
           {
-            "id": "d0804cc7dcc40643",
+            "id": "395b98e93b029f57",
             "type": "leaf",
             "state": {
-              "type": "graph",
+              "type": "empty",
               "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -191,8 +191,18 @@
       "bases:Create new base": false
     }
   },
-  "active": "d0804cc7dcc40643",
+  "active": "395b98e93b029f57",
   "lastOpenFiles": [
+    "DataScience/Programming/index/index.md",
+    "Notes/2026-06-02/Super MVP.md",
+    "Notes/2026-06-02",
+    "Notes",
+    "DataScience/Stats/notes/Autocorrelation.md",
+    "DataScience/Stats/notes/4. ACF & PCF.md",
+    "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
+    "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
+    "Assets/DataScience/Pasted_image_2026-06-05T06-24-03-793Z_xoj4_image.png",
+    "Assets/DataScience/Pasted_image_2026-05-25T08-18-55-269Z_9gid_98012Fig1Grph56227.png",
     "DataScience/Stats/notes/variance  & its coefficient.md",
     "DataScience/Stats/notes/0. MEASURES OF DISPERSION.md",
     "DataScience/Stats/notes/Standard_deviation & coefficient.md",
@@ -202,7 +212,6 @@
     "SEO/Web edit console.md",
     "Random/Onpage TOOL.md",
     "Random",
-    "DataScience/Programming/index/index.md",
     "Assets/DataScience/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
@@ -214,8 +223,6 @@
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-54-062Z_g175_image.png",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
-    "Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
-    "Assets/DataScience/Stats/notes/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
     "Assets/DataScience/Stats/notes",
     "Assets/DataScience/Stats",
     "Assets/DataScience",
@@ -228,11 +235,6 @@
     "Random Shits and Notes/Untriaged/un_1.md",
     "Random Shits and Notes/Untriaged/torchviz.md",
     "Random Shits and Notes/Untriaged/the advices.md",
-    "Random Shits and Notes/Untriaged/the Beast style.md",
-    "Random Shits and Notes/Untriaged/stored procedure.md",
-    "Random Shits and Notes/Untriaged/something resonates.md",
-    "Random Shits and Notes/Untriaged/sets.md",
-    "Random Shits and Notes/Untriaged/scalar.md",
     "Random Shits and Notes/Untriaged",
     "Random Shits and Notes",
     "Untitled.base",
