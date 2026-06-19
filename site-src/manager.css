@@ -1060,6 +1060,12 @@
       opacity: 1;
     }
 
+    @media (hover: none) {
+      .vault-card__action-btn {
+        opacity: 1;
+      }
+    }
+
     .vault-card__action-btn:hover {
       background: rgba(0,0,0,0.06);
       color: var(--ink);

@@ -686,10 +686,12 @@ details.callout[open] .callout-fold-icon {
   }
   .note-panel__content-col {
     overflow-y: visible;
+    flex: none;
   }
   .note-panel__sidebar-col {
     width: 100%;
     border-left: none;
+    flex: none;
   }
 }
 
