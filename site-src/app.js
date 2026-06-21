@@ -738,6 +738,14 @@ function renderGraph() {
         })
     )
     .on("mousemove", (event) => {
+      if (state.activeNoteId) {
+        if (hoveredNode) {
+          hoveredNode = null;
+          hideTooltip();
+          canvas.style.cursor = "default";
+        }
+        return;
+      }
       const [mx, my] = d3.pointer(event);
       const x = currentZoomTransform.invertX(mx);
       const y = currentZoomTransform.invertY(my);

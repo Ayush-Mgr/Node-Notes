@@ -408,10 +408,7 @@ details.callout[open] .callout-fold-icon {
 }
 
 .note-content mjx-container:not([display="true"]) {
-  max-width: 100%;
-  overflow-x: auto;
-  display: inline-block;
-  vertical-align: middle;
+  /* No scrollbar for inline math */
 }
 
 .internal-note-link {
