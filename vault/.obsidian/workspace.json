@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "0. Big data.md",
+                "file": "0. Big data intro.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0. Big data"
+              "title": "0. Big data intro"
             }
           }
         ],
@@ -213,7 +213,7 @@
   "active": "5d960219b2da564e",
   "lastOpenFiles": [
     "DataScience/Stats/notes/0.  ANOVA.md",
-    "0. Big data.md",
+    "0. Big data intro.md",
     "DataScience/Stats/notes/2. Descriptive stats vs  inferential statistics.md",
     "DataScience/Stats/notes/0. MEASURES OF DISPERSION.md",
     "DataScience/Programming/notes/0. Introduction to radial basis functions.md",

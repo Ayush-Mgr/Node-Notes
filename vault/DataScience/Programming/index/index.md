@@ -143,7 +143,7 @@
 - [[Priority Queue (Priority In, Priority Out)]]
 - [[Queue (FIFO - First In, First Out)]]
 - [[Stack]]
-- [[0. Big data]]
+- [[0. Big data intro]]
 - [[pixel arts]]
 - [[px,percent,rem]]
 - [[something resonates]]
