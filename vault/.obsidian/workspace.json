@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "0. Big data intro.md",
+                "file": "DataScience/Programming/notes/0 . summary.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0. Big data intro"
+              "title": "0 . summary"
             }
           }
         ],
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "deviation",
+                "query": "time se",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -89,7 +89,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -210,10 +211,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "5d960219b2da564e",
+  "active": "74348123305635ac",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/0.  ANOVA.md",
+    "DataScience/Maths/notes/-1 trick for Homogeneous system.md",
+    "DataScience/Stats/notes/Viterbi Algorithm.md",
+    "DataScience/Stats/notes/1.1 One-Sample Test for Mean.md",
+    "DataScience/Stats/notes/1. THEORY OF PROBABILITY.md",
     "0. Big data intro.md",
+    "DataScience/Stats/notes/0.  ANOVA.md",
     "DataScience/Stats/notes/2. Descriptive stats vs  inferential statistics.md",
     "DataScience/Stats/notes/0. MEASURES OF DISPERSION.md",
     "DataScience/Programming/notes/0. Introduction to radial basis functions.md",
@@ -246,15 +251,11 @@
     "Assets/DataScience/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
     "Assets/DataScience/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
     "Private/Random/index/index.md",
-    "Private/Random/Project.md",
-    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-54-062Z_g175_image.png",
     "Assets/DataScience/Stats/notes",
     "Assets/DataScience/Stats",
     "Assets/DataScience",
-    "DataScience/Machine_Learning/notes/0 Problem solving agents.md",
-    "DataScience/Machine_Learning/notes/1 . Propositional logic.md",
     "Random Shits and Notes/Untriaged",
     "Random Shits and Notes",
     "Untitled.base"
