@@ -41,44 +41,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/3. EDA.md",
+                "file": "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "3. EDA"
-            }
-          },
-          {
-            "id": "492f41b1032d783b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "DataScience/Stats/notes/4.supervised unsupervised data.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "4.supervised unsupervised data"
-            }
-          },
-          {
-            "id": "2c3f8cd1586e430d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Private/Random/Project.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Project"
+              "title": "5.  Model evaluation  and Validation"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -252,14 +224,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "2c3f8cd1586e430d",
+  "active": "d6533b92be3ac1c2",
   "lastOpenFiles": [
-    "Ig DA automation.md",
-    "Private/Random/Project.md",
-    "Random/Onpage TOOL.md",
-    "5.  Model evaluation  and Validation.md",
-    "DataScience/Stats/notes/4.supervised unsupervised data.md",
+    "DataScience/Stats/notes/4. supervised unsupervised data.md",
+    "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
     "DataScience/Stats/notes/3. EDA.md",
+    "Private/Random/Project.md",
+    "Ig DA automation.md",
+    "Random/Onpage TOOL.md",
     "DataScience/Stats/notes/variance  & its coefficient.md",
     "DataScience/Programming/notes/cumulative frequency.md",
     "DataScience/Stats/notes/Standard_deviation & coefficient.md",
