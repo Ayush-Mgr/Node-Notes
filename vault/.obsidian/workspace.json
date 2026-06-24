@@ -76,23 +76,9 @@
               "icon": "lucide-file",
               "title": "Project"
             }
-          },
-          {
-            "id": "0ff5abe38fb6b2ec",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Ig DA automation.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Ig DA automation"
-            }
           }
         ],
-        "currentTab": 5
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -266,10 +252,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "0ff5abe38fb6b2ec",
+  "active": "2c3f8cd1586e430d",
   "lastOpenFiles": [
-    "Private/Random/Project.md",
     "Ig DA automation.md",
+    "Private/Random/Project.md",
     "Random/Onpage TOOL.md",
     "5.  Model evaluation  and Validation.md",
     "DataScience/Stats/notes/4.supervised unsupervised data.md",
