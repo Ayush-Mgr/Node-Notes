@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Machine_Learning/notes/Euclidean distance.md",
+                "file": "6.Clustering.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Euclidean distance"
+              "title": "6.Clustering"
             }
           }
         ],
@@ -156,12 +156,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "DataScience/Machine_Learning/notes/Euclidean distance.md",
+                "file": "6.Clustering.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": false
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Euclidean distance"
+              "title": "Outgoing links from 6.Clustering"
             }
           },
           {
@@ -199,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DataScience/Machine_Learning/notes/Euclidean distance.md",
+                "file": "6.Clustering.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Euclidean distance"
+              "title": "Outline of 6.Clustering"
             }
           },
           {
@@ -240,9 +240,9 @@
   },
   "active": "4bfddd0a1cfff965",
   "lastOpenFiles": [
-    "6.Clustering.md",
     "DataScience/Machine_Learning/notes/Euclidean distance.md",
     "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
+    "6.Clustering.md",
     "DataScience/Programming/notes/Knn classification.md",
     "DataScience/Programming/notes/0 AI ML SYLLABUSS.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
