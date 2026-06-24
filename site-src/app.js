@@ -58,21 +58,35 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => HTML_ESCAPES[char]);
 }
 
-const mathExtension = {
-  name: 'math',
-  level: 'inline',
-  start: (src) => src.match(/\$/)?.index ?? -1,
+const mathBlockExtension = {
+  name: 'mathBlock',
+  level: 'block',
+  start: (src) => src.indexOf('$$'),
   tokenizer(src) {
-    const block = /^\$\$([\s\S]*?)\$\$/.exec(src);
-    if (block) return { type: 'math', raw: block[0], text: block[1], displayMode: true };
-    const inline = /^\$([^$\n]+?)\$/.exec(src);
-    if (inline) return { type: 'math', raw: inline[0], text: inline[1], displayMode: false };
+    const match = /^\$\$([\s\S]*?)\$\$(?:[ \t]*(?:\n|$))/.exec(src);
+    if (!match) return undefined;
+    return { type: 'mathBlock', raw: match[0], text: match[1].trim() };
   },
   renderer(token) {
-    return token.displayMode ? `\\[${escapeHtml(token.text)}\\]` : `\\(${escapeHtml(token.text)}\\)`;
+    return `<div class="math-block">\\[${escapeHtml(token.text)}\\]</div>`;
   }
 };
-if (typeof marked !== 'undefined') marked.use({ extensions: [mathExtension] });
+
+const mathInlineExtension = {
+  name: 'mathInline',
+  level: 'inline',
+  start: (src) => src.indexOf('$'),
+  tokenizer(src) {
+    const match = /^\$(?!\$)((?:\\.|[^$\n])+?)\$/.exec(src);
+    if (!match) return undefined;
+    return { type: 'mathInline', raw: match[0], text: match[1].trim() };
+  },
+  renderer(token) {
+    return `\\(${escapeHtml(token.text)}\\)`;
+  }
+};
+
+if (typeof marked !== 'undefined') marked.use({ extensions: [mathBlockExtension, mathInlineExtension] });
 
 
 function stripFrontmatter(markdown) {
@@ -187,6 +201,32 @@ function rewriteWikilinks(markdown) {
   });
 }
 
+function protectMarkdownSegments(markdown) {
+  const protectedSegments = [];
+  const save = (segment) => {
+    const index = protectedSegments.push(segment) - 1;
+    return `NNPROTECT${index}END`;
+  };
+
+  let output = markdown;
+  output = output.replace(/(^|\n)(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n\2[ \t]*(?=\n|$)/g, (match) => save(match));
+  output = output.replace(/`[^`\n]*`/g, (match) => save(match));
+  output = output.replace(/\$\$[\s\S]*?\$\$/g, (match) => save(match));
+  output = output.replace(/\$(?!\$)(?:\\.|[^$\n])+?\$/g, (match) => save(match));
+
+  return {
+    markdown: output,
+    restore(value) {
+      return value.replace(/NNPROTECT(\d+)END/g, (_, index) => protectedSegments[Number(index)] ?? "");
+    }
+  };
+}
+
+function countMathBlockDelimiters(line) {
+  const matches = line.match(/\$\$/g);
+  return matches ? matches.length : 0;
+}
+
 function getCalloutIcon(type) {
   const icons = {
     note: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
@@ -283,7 +323,7 @@ function parseCallouts(markdown) {
         fenceLength = 0;
       }
     } else if (inMathBlock) {
-      if (cleanLine.match(/^\s*\$\$\s*$/)) {
+      if (countMathBlockDelimiters(cleanLine) % 2 === 1) {
         inMathBlock = false;
       }
     } else {
@@ -291,7 +331,7 @@ function parseCallouts(markdown) {
       if (fenceMatch) {
         fenceChar = fenceMatch[1][0];
         fenceLength = fenceMatch[1].length;
-      } else if (cleanLine.match(/^\s*\$\$\s*$/)) {
+      } else if (countMathBlockDelimiters(cleanLine) % 2 === 1) {
         inMathBlock = true;
       }
     }
@@ -336,15 +376,14 @@ function parseCallouts(markdown) {
 }
 
 function preprocessObsidianMarkdown(markdown) {
-  return parseCallouts(
-    rewriteHtmlImageSources(
-      rewriteMarkdownImageSources(
-        rewriteWikilinks(
-          stripFrontmatter(markdown),
-        ),
-      ),
-    )
+  const stripped = stripFrontmatter(markdown);
+  const protectedPass = protectMarkdownSegments(stripped);
+  const rewritten = rewriteHtmlImageSources(
+    rewriteMarkdownImageSources(
+      rewriteWikilinks(protectedPass.markdown),
+    ),
   );
+  return parseCallouts(protectedPass.restore(rewritten));
 }
 
 async function openNote(noteId, pushHash = true) {
