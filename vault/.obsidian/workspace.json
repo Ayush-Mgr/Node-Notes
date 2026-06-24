@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/0 . summary.md",
+                "file": "DataScience/Stats/notes/0. Big data intro.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0 . summary"
+              "title": "0. Big data intro"
             }
           }
         ],
@@ -55,7 +55,7 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical",
+                "sortOrder": "byModifiedTime",
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "time se",
+                "query": "big",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -89,8 +89,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -211,46 +210,46 @@
       "bases:Create new base": false
     }
   },
-  "active": "74348123305635ac",
+  "active": "ced007a432b33e06",
   "lastOpenFiles": [
+    "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
+    "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
+    "DataScience/Stats/notes/Plan.md",
+    "DataScience/Stats/notes/5. AR, MA, ARMA.md",
+    "DataScience/Stats/notes/4. ACF & PCF.md",
+    "DataScience/Stats/notes/0. source.md",
+    "DataScience/Programming/notes/2. set theory.md",
+    "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
+    "DataScience/Programming/notes/0 . summary.md",
     "DataScience/Maths/notes/-1 trick for Homogeneous system.md",
     "DataScience/Stats/notes/Viterbi Algorithm.md",
     "DataScience/Stats/notes/1.1 One-Sample Test for Mean.md",
     "DataScience/Stats/notes/1. THEORY OF PROBABILITY.md",
-    "0. Big data intro.md",
+    "DataScience/Stats/notes/0. Big data intro.md",
     "DataScience/Stats/notes/0.  ANOVA.md",
     "DataScience/Stats/notes/2. Descriptive stats vs  inferential statistics.md",
     "DataScience/Stats/notes/0. MEASURES OF DISPERSION.md",
     "DataScience/Programming/notes/0. Introduction to radial basis functions.md",
-    "DataScience/Stats/notes/Plan.md",
-    "DataScience/Stats/notes/5. AR, MA, ARMA.md",
     "Assets/DataScience/Pasted_image_2026-06-18T16-34-28-390Z_11r9_image_82c0513a_2cca_40d8_9e95_9626dc42ea7c.jpg",
     "Notes/2026-06-15/meme music generator.md",
     "Notes/2026-06-15",
-    "DataScience/Stats/index/STATS index.md",
     "DataScience/Programming/index/index.md",
     "Notes/2026-06-02/Super MVP.md",
     "Notes/2026-06-02",
     "Notes",
     "DataScience/Stats/notes/Autocorrelation.md",
-    "DataScience/Stats/notes/4. ACF & PCF.md",
-    "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
-    "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "Assets/DataScience/Pasted_image_2026-06-05T06-24-03-793Z_xoj4_image.png",
     "Assets/DataScience/Pasted_image_2026-05-25T08-18-55-269Z_9gid_98012Fig1Grph56227.png",
     "DataScience/Stats/notes/variance  & its coefficient.md",
     "DataScience/Stats/notes/Standard_deviation & coefficient.md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
-    "DataScience/Programming/notes/9. LOOPS.md",
-    "SEO/Web edit console.md",
-    "Random/Onpage TOOL.md",
     "Random",
     "Assets/DataScience/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Pasted_image_2026-05-19T11-16-01-971Z_690h_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Pasted_image_2026-05-18T11-36-30-104Z_k65g_Unknown.png",
     "Assets/DataScience/Pasted_image_2026-05-18T11-36-03-144Z_63v4_Unknown.jpeg",
     "Assets/DataScience/Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png",
-    "Private/Random/index/index.md",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-17-36-295Z_ofqg_2bd608cad84afa821404ab94f9cab1db4783afdd.svg",
     "Assets/DataScience/Stats/notes/Pasted_image_2026-05-19T11-16-54-062Z_g175_image.png",
     "Assets/DataScience/Stats/notes",
