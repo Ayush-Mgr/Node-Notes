@@ -55,7 +55,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "6.Clustering.md",
+                "file": "DataScience/Stats/notes/6.Clustering.md",
                 "mode": "source",
                 "source": false
               },
@@ -156,7 +156,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "6.Clustering.md",
+                "file": "DataScience/Stats/notes/6.Clustering.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": false
               },
@@ -199,7 +199,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "6.Clustering.md",
+                "file": "DataScience/Stats/notes/6.Clustering.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -238,12 +238,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "4bfddd0a1cfff965",
+  "active": "ced007a432b33e06",
   "lastOpenFiles": [
     "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
     "DataScience/Programming/notes/Knn classification.md",
     "DataScience/Stats/notes/variance  & its coefficient.md",
-    "6.Clustering.md",
+    "DataScience/Stats/notes/6.Clustering.md",
     "DataScience/Machine_Learning/notes/Euclidean distance.md",
     "DataScience/Programming/notes/0 AI ML SYLLABUSS.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
