@@ -1,6 +1,13 @@
 - it shows how much each individual data differs from mean of the dataset  
 - *[[0. MEASURES OF DISPERSION#^dd62a0|Absolute Measure]]*	 ^f36366
-	- formula : $$\text{Variance} = \frac{\sum f (x - \bar{x})^2}{(\sum f) - 1}$$
+	- simple fkormula$$
+\sigma^2
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+(x_i-\mu)^2
+$$
+	- formula for table : $$\text{Variance} = \frac{\sum f (x - \bar{x})^2}{(\sum f) - 1}$$
 	-  $x$ = midpoint = $\frac{ Upper Value  - Lower value} { 2}$
 	   
 - *[[0. MEASURES OF DISPERSION#^830a35|Relative measures]]* ^2996cf

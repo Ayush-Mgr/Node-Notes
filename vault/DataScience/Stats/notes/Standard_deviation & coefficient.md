@@ -2,6 +2,7 @@
 - *[[0. MEASURES OF DISPERSION#^dd62a0|Absolute Measure]]*
 	**Formula:**
 	-    $\sigma  = \sqrt{variance}$
+		- [[variance  & its coefficient|variance]]
 - *[[0. MEASURES OF DISPERSION#^830a35|Relative measures]]*
 	- $\text{Coefficient of } \sigma= \frac{\sigma}{\bar{X}} \times 100\%$
 	-  coefficient of standard deviation could also be used to measure the differences in standard deviation of same series with large difference in their mean
