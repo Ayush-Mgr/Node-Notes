@@ -82,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "normal distribution",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -225,6 +225,8 @@
   },
   "active": "d6533b92be3ac1c2",
   "lastOpenFiles": [
+    "DataScience/Programming/notes/cumulative frequency.md",
+    "DataScience/Stats/notes/variance  & its coefficient.md",
     "DataScience/Stats/notes/Standard_deviation & coefficient.md",
     "DataScience/Stats/notes/2. data transformation.md",
     "DataScience/Stats/notes/1.  data preprocessing.md",
@@ -250,8 +252,6 @@
     "DataScience/Stats/notes/Viterbi Algorithm.md",
     "DataScience/Stats/notes/1. THEORY OF PROBABILITY.md",
     "DataScience/Stats/notes/0.  ANOVA.md",
-    "DataScience/Stats/notes/2. Descriptive stats vs  inferential statistics.md",
-    "DataScience/Stats/notes/0. MEASURES OF DISPERSION.md",
     "Assets/DataScience/Pasted_image_2026-06-18T16-34-28-390Z_11r9_image_82c0513a_2cca_40d8_9e95_9626dc42ea7c.jpg",
     "Notes/2026-06-15",
     "Notes/2026-06-02",

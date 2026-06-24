@@ -7,7 +7,7 @@
 \sum_{i=1}^{N}
 (x_i-\mu)^2
 $$
-	- formula for table : $$\text{Variance} = \frac{\sum f (x - \bar{x})^2}{(\sum f) - 1}$$
+	- formula for [[cumulative frequency|cumulative]] : $$\text{Variance} = \frac{\sum f (x - \bar{x})^2}{(\sum f) - 1}$$
 	-  $x$ = midpoint = $\frac{ Upper Value  - Lower value} { 2}$
 	   
 - *[[0. MEASURES OF DISPERSION#^830a35|Relative measures]]* ^2996cf
