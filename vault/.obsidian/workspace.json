@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/variance  & its coefficient.md",
+                "file": "3. EDA.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "variance  & its coefficient"
+              "title": "3. EDA"
             }
           }
         ],
@@ -225,15 +225,15 @@
   },
   "active": "d6533b92be3ac1c2",
   "lastOpenFiles": [
-    "DataScience/Programming/notes/cumulative frequency.md",
     "DataScience/Stats/notes/variance  & its coefficient.md",
+    "DataScience/Programming/notes/cumulative frequency.md",
     "DataScience/Stats/notes/Standard_deviation & coefficient.md",
     "DataScience/Stats/notes/2. data transformation.md",
     "DataScience/Stats/notes/1.  data preprocessing.md",
     "DataScience/Stats/notes/1.1 One-Sample Test for Mean.md",
     "DataScience/Stats/notes/kurtosis.md",
     "DataScience/Stats/notes/Bowley’s Coefficient of Skewness.md",
-    "Standerd deviation.md",
+    "3. EDA.md",
     "DataScience/Stats/notes/normal distribution.md",
     "Pasted image 20260624140555.png",
     "DataScience/Stats/notes/Odds Vs Probability.md",
