@@ -1,9 +1,14 @@
+---
+title: "variance  & its coefficient"
+date: 2026-06-24T21:03:50.818Z
+tags: [vault, web]
+---
+
 - it shows how much each individual data differs from mean of the dataset  
 - *[[0. MEASURES OF DISPERSION#^dd62a0|Absolute Measure]]*	 ^f36366
-	- simple fkormula$$
-\sigma^2
-=
-\frac{1}{N}
+	- simple formula
+$$
+\sigma^2=\frac{1}{N}
 \sum_{i=1}^{N}
 (x_i-\mu)^2
 $$
