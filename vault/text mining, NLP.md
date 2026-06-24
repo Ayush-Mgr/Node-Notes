@@ -1,3 +1,4 @@
+## [[12. Semantic Analysis in NLP|NLP]]
 Key Tasks in Natural Language Processing :
 
 NLP involves several fundamental tasks used to analyze textual data.
@@ -121,10 +122,3 @@ Assigns text to predefined categories.
 
 > NLP tasks such as tokenization, stop word removal, stemming, lemmatization, named entity recognition, and text classification help transform unstructured text into meaningful information that can be analyzed, categorized, and used for decision-making.
 
-So your summary:
-
-> **"helps to find the information for analysis"**
-
-is correct. A slightly better wording is:
-
-> **"helps extract meaningful information from text for analysis and prediction."** 👍
