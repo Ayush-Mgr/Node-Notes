@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Text Mining, NLP.md",
+                "file": "DataScience/Stats/notes/8. TF-IDF.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Text Mining, NLP"
+              "title": "8. TF-IDF"
             }
           }
         ]
@@ -197,6 +197,10 @@
   },
   "active": "cf6d77f63e9f17a3",
   "lastOpenFiles": [
+    "DataScience/Stats/notes/7. text mining, NLP.md",
+    "DataScience/Stats/notes/8. TF-IDF.md",
+    "DataScience/Stats/notes/variance  & its coefficient.md",
+    "Text Mining, NLP.md",
     "DataScience/Stats/notes/6.Clustering.md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Stats/notes/0.  ANOVA.md",
@@ -210,9 +214,7 @@
     "DataScience/Programming/notes/Operating System OS.md",
     "DataScience/Programming/notes/6. Debugging.md",
     "DataScience/Programming/notes/12. Semantic Analysis in NLP.md",
-    "Text Mining, NLP.md",
     "DataScience/Programming/notes/Knn classification.md",
-    "DataScience/Stats/notes/variance  & its coefficient.md",
     "DataScience/Machine_Learning/notes/Euclidean distance.md",
     "DataScience/Programming/notes/0 AI ML SYLLABUSS.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
@@ -222,8 +224,6 @@
     "Private/Random/Ig DA automation.md",
     "Private/Random/Onpage TOOL.md",
     "DataScience/Programming/notes/cumulative frequency.md",
-    "DataScience/Stats/notes/Standard_deviation & coefficient.md",
-    "DataScience/Stats/notes/2. data transformation.md",
     "Assets/DataScience/Pasted_image_2026-06-18T16-34-28-390Z_11r9_image_82c0513a_2cca_40d8_9e95_9626dc42ea7c.jpg",
     "Notes/2026-06-15",
     "Notes/2026-06-02",
