@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
+                "file": "DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "5.  Model evaluation  and Validation"
+              "title": "5.  Model evaluation, Validation and Hyperparameter Tuning"
             }
           }
         ],
@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
+                "file": "DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 5.  Model evaluation  and Validation"
+              "title": "Outline of 5.  Model evaluation, Validation and Hyperparameter Tuning"
             }
           },
           {
@@ -212,7 +212,7 @@
   "active": "f867d6ea0d24dddd",
   "lastOpenFiles": [
     "DataScience/Stats/notes/5.1 finding best models.md",
-    "DataScience/Stats/notes/5.  Model evaluation  and Validation.md",
+    "DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
     "DataScience/Stats/notes/3. EDA.md",
     "DataScience/Stats/notes/Standard_deviation & coefficient.md",
