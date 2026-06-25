@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Text Mining, NLP.md",
+                "file": "DataScience/Stats/notes/0. Big data intro.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Text Mining, NLP"
+              "title": "Outline of 0. Big data intro"
             }
           },
           {
@@ -195,8 +195,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
