@@ -75,11 +75,10 @@ const mathBlockExtension = {
 const mathInlineExtension = {
   name: 'mathInline',
   level: 'inline',
-  start: (src) => src.indexOf('$'),
+  start: (src) => src.match(/\$/)?.index ?? -1,
   tokenizer(src) {
-    const match = /^\$(?!\$)((?:\\.|[^$\n])+?)\$/.exec(src);
-    if (!match) return undefined;
-    return { type: 'mathInline', raw: match[0], text: match[1].trim() };
+    const inline = /^\$([^$\n]+?)\$/.exec(src);
+    if (inline) return { type: 'mathInline', raw: inline[0], text: inline[1] };
   },
   renderer(token) {
     return `\\(${escapeHtml(token.text)}\\)`;
@@ -376,14 +375,23 @@ function parseCallouts(markdown) {
 }
 
 function preprocessObsidianMarkdown(markdown) {
-  const stripped = stripFrontmatter(markdown);
-  const protectedPass = protectMarkdownSegments(stripped);
-  const rewritten = rewriteHtmlImageSources(
-    rewriteMarkdownImageSources(
-      rewriteWikilinks(protectedPass.markdown),
-    ),
+  let stripped = stripFrontmatter(markdown);
+  const placeholders = [];
+  
+  stripped = stripped.replace(/(\$\$[\s\S]*?\$\$|`{3,}[\s\S]*?`{3,}|`[^`]+`|\$[^$\n]+\$)/g, (match) => {
+    placeholders.push(match);
+    return `__PLACEHOLDER_${placeholders.length - 1}__`;
+  });
+
+  let processed = parseCallouts(
+    rewriteHtmlImageSources(
+      rewriteMarkdownImageSources(
+        rewriteWikilinks(stripped)
+      )
+    )
   );
-  return parseCallouts(protectedPass.restore(rewritten));
+
+  return processed.replace(/__PLACEHOLDER_(\d+)__/g, (_, index) => placeholders[index]);
 }
 
 async function openNote(noteId, pushHash = true) {
@@ -412,6 +420,23 @@ async function openNote(noteId, pushHash = true) {
 
   if (window.MathJax) {
     MathJax.typesetPromise([noteContent]).catch(() => { });
+  }
+
+  noteContent.querySelectorAll('pre code.language-mermaid').forEach((block) => {
+    const pre = block.parentNode;
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = block.textContent;
+    pre.parentNode.replaceChild(div, pre);
+  });
+
+  if (window.mermaid) {
+    const mermaidNodes = noteContent.querySelectorAll('.mermaid');
+    if (mermaidNodes.length > 0) {
+      mermaid.run({ nodes: mermaidNodes }).catch((e) => {
+        console.error('Mermaid render error:', e);
+      });
+    }
   }
 
   notePanel.classList.remove("hidden");

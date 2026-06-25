@@ -407,12 +407,23 @@ details.callout[open] .callout-fold-icon {
   padding-bottom: 4px; /* prevent scrollbar from clipping descenders */
 }
 
+.note-content .math-block {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
 .note-content mjx-container:not([display="true"]) {
   display: inline-block;
   max-width: 100%;
   overflow-x: auto;
   vertical-align: middle;
-  -webkit-overflow-scrolling: touch;
+}
+
+.note-content .mermaid {
+  margin: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
 }
 
 .math-block {
