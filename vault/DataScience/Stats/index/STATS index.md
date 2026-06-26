@@ -142,3 +142,21 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/Standard_deviation & coefficient.md|Standard_deviation & coefficient.md]]
 - [[DataScience/Stats/notes/0. Big data intro.md|0. Big data intro.md]]
 - [[DataScience/Stats/notes/2. data transformation.md|2. data transformation.md]]
+
+<!-- AUTO_STATS_RECENT_START -->
+## Recently Updated Stats Notes
+- [[DataScience/Stats/notes/0. Big data intro|0. Big data intro]]
+- [[DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning|5.  Model evaluation, Validation and Hyperparameter Tuning]]
+- [[DataScience/Stats/notes/5.1 finding best models|5.1 finding best models]]
+- [[DataScience/Stats/notes/8. GRAPH|8. GRAPH]]
+- [[DataScience/Stats/notes/9. ethics|9. ethics]]
+- [[DataScience/Stats/notes/7. text mining, NLP|7. text mining, NLP]]
+- [[DataScience/Stats/notes/8. TF-IDF|8. TF-IDF]]
+- [[DataScience/Stats/notes/variance  & its coefficient|variance  & its coefficient]]
+- [[DataScience/Stats/notes/1.  data preprocessing|1.  data preprocessing]]
+- [[DataScience/Stats/notes/2. data transformation|2. data transformation]]
+- [[DataScience/Stats/notes/3. EDA|3. EDA]]
+- [[DataScience/Stats/notes/4. supervised unsupervised data|4. supervised unsupervised data]]
+- [[DataScience/Stats/notes/5. AR, MA, ARMA|5. AR, MA, ARMA]]
+- [[DataScience/Stats/notes/6.Clustering|6.Clustering]]
+<!-- AUTO_STATS_RECENT_END -->
