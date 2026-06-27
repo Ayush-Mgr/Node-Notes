@@ -157,6 +157,6 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/2. data transformation|2. data transformation]]
 - [[DataScience/Stats/notes/3. EDA|3. EDA]]
 - [[DataScience/Stats/notes/4. supervised unsupervised data|4. supervised unsupervised data]]
-- [[DataScience/Stats/notes/5. AR, MA, ARMA|5. AR, MA, ARMA]]
+- [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
 - [[DataScience/Stats/notes/6.Clustering|6.Clustering]]
 <!-- AUTO_STATS_RECENT_END -->
