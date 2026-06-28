@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/index/STATS index.md",
+                "file": "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STATS index"
+              "title": "1. intro - Time Series Analysis"
             }
           }
         ],
@@ -212,8 +212,8 @@
   },
   "active": "fbb08355979a6726",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
