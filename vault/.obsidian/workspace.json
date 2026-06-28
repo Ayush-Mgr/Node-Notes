@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/Linear Regression.md",
+                "file": "DataScience/Stats/notes/Parametric and Non - Parametric.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Linear Regression"
+              "title": "Parametric and Non - Parametric"
             }
           }
         ],
@@ -212,6 +212,7 @@
   },
   "active": "fbb08355979a6726",
   "lastOpenFiles": [
+    "DataScience/Stats/notes/Linear Regression.md",
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/index/STATS index.md",
@@ -237,7 +238,6 @@
     "9. ethics.md",
     "Text Mining, NLP.md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
-    "DataScience/Stats/notes/0.  ANOVA.md",
     "Assets/DataScience/Pasted image 20260624140555.png",
     "Assets/DataScience/Pasted_image_2026-06-18T16-34-28-390Z_11r9_image_82c0513a_2cca_40d8_9e95_9626dc42ea7c.jpg",
     "Notes/2026-06-15",
