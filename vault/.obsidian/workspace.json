@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/Parametric and Non - Parametric.md",
+                "file": "DataScience/Stats/notes/5. Covariance.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Parametric and Non - Parametric"
+              "title": "5. Covariance"
             }
           }
         ],
@@ -212,9 +212,9 @@
   },
   "active": "fbb08355979a6726",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/Linear Regression.md",
-    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
+    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
+    "DataScience/Stats/notes/Linear Regression.md",
     "DataScience/Stats/index/STATS index.md",
     "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",

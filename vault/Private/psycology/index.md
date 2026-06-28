@@ -69,7 +69,7 @@
 - [[4.Method of Least Square]]
 - [[row-echelon form]]
 - [[LINEAR EQUATION]]
-- [[5.Covariance]]
+- [[5. Covariance]]
 - [[1.2 Two-Sample Test for Mean]]
 - [[Lorenz Curve]]
 - [[binomial distribution]]
