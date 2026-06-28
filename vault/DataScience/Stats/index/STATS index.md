@@ -48,6 +48,8 @@ tags: [vault, web]
 - [[Bowley’s Coefficient of Skewness]]
 - [[kurtosis]]
 - [[4. Partition Values - quartiles, deciles, and percentiles]]
+- [[DataScience/Stats/notes/variance & its coefficient.md|variance & its coefficient.md]]
+- [[DataScience/Stats/notes/Autocorrelation|Autocorrelation]]
 
 ## Hypothesis Testing & P-Values
 - [[0.1 Hypothesis]]
@@ -125,7 +127,7 @@ tags: [vault, web]
 -  [[DataScience/Stats/notes/7. text mining, NLP.md|7. text mining, NLP.md]]
 - [[DataScience/Stats/notes/8. TF-IDF.md|8. TF-IDF.md]]
 - [[DataScience/Stats/notes/8. GRAPH.md|8. GRAPH.md]]
-- [[DataScience/Stats/notes/6.Clustering.md|6.Clustering.md]]
+- [[DataScience/Stats/notes/9. ethics.md|9. ethics.md]]
 
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes
@@ -150,10 +152,6 @@ tags: [vault, web]
 - [[continuous series]]
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
-
-- [[DataScience/Stats/notes/Autocorrelation|Autocorrelation]]
-- [[DataScience/Stats/notes/9. ethics.md|9. ethics.md]]
-- [[DataScience/Stats/notes/variance & its coefficient.md|variance & its coefficient.md]]
 
 - [[DataScience/Stats/notes/4. supervised unsupervised data.md|4. supervised unsupervised data.md]]
 - [[5.1 finding best models|finding best models.md]]
