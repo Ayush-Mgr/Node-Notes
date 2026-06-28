@@ -104,8 +104,8 @@ tags: [vault, web]
 - [[Parametric and Non - Parametric|2. Parametric and Non - Parametric]]
 - [[3. Descriptive Analysis of Time Series]]
 - [[4. ACF & PCF]]
--  [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
-
+- [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
+- [[6.Dickey Fuller Tests and ADF]]
 
 
 
