@@ -114,7 +114,7 @@ tags: [vault, web]
 ## Big Data
 
 - [[DataScience/Stats/notes/0. Big data intro|0. Big data intro]]
-- [[DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning|5.  Model evaluation, Validation and Hyperparameter Tuning]]
+- [[5.  Model evaluation, Validation and Hyper-parameter Tuning|5.  Model evaluation, Validation and Hyperparameter Tuning]]
 - [[DataScience/Stats/notes/5.1 finding best models|5.1 finding best models]]
 - [[DataScience/Stats/notes/8. GRAPH|8. GRAPH]]
 - [[DataScience/Stats/notes/9. ethics|9. ethics]]
