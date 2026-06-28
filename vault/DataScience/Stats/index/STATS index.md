@@ -110,6 +110,7 @@ tags: [vault, web]
 - [[7. Box-Jenkins Methodology]]
 - [[8.Forcasting]]
 - [[9. Forecast Accuracy (MAE, MSE, RMSE, MAPE)]]
+- [[10. Time Series Regression]]
 
 ## Big Data
 
