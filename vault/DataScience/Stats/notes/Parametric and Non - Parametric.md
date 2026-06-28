@@ -15,7 +15,7 @@ we use regression functions to find the trends.
 
  1. Linear equation:
 
-$$y = mx+b $$
+$$y_t = mx_t+b $$
 
 guessing the average  flow of data points using [[Linear regression]] method.
 
