@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/index/STATS index.md",
+                "file": "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STATS index"
+              "title": "5. AR, MA, ARMA,ARIMA"
             }
           },
           {
@@ -65,7 +65,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -239,8 +239,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "134ffc9b0c24eb56",
+  "active": "267e55774c93e844",
   "lastOpenFiles": [
+    "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/4. ACF & PCF.md",
     "DataScience/Stats/notes/ARMA_chart.png",
     "DataScience/Stats/notes/MA_chart.png",
     "DataScience/Stats/notes/AR_chart.png",
@@ -261,7 +263,6 @@
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/matplotlib/mpl-data/images/zoom_to_rect.svg",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/matplotlib/mpl-data/images/zoom_to_rect.png",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/matplotlib/mpl-data/images/zoom_to_rect-symbolic.svg",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/matplotlib/mpl-data/images/subplots_large.png",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
@@ -274,9 +275,7 @@
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy/random/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/pyparsing/ai/best_practices.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/pip-25.2.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
-    "DataScience/Stats/index/STATS index.md",
     "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
-    "DataScience/Stats/notes/4. ACF & PCF.md",
     "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
