@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/8.Forcasting.md",
+                "file": "DataScience/Stats/index/STATS index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "8.Forcasting"
+              "title": "STATS index"
             }
           },
           {
@@ -269,11 +269,13 @@
   },
   "active": "d4bbb6001c1dfaed",
   "lastOpenFiles": [
-    "DataScience/Stats/index/STATS index.md",
-    "DataScience/Stats/notes/8.Forcasting.md",
-    "DataScience/Stats/notes/7. Box-Jenkins Methodology.md",
-    "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
+    "DataScience/Stats/index/STATS index.md",
+    "9. Forecast Accuracy (MAE, MSE, RMSE, MAPE).md",
+    "DataScience/Stats/notes/7. Box-Jenkins Methodology.md",
+    "DataScience/Stats/notes/representation of  various probabilistic concepts.md",
+    "DataScience/Stats/notes/8.Forcasting.md",
+    "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",
     "SEO/SEO SKILL.md",
     "DataScience/Stats/notes/ARMA_chart.png",
@@ -312,8 +314,6 @@
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/notes/5. Covariance.md",
-    "DataScience/Stats/notes/Linear Regression.md",
-    "DataScience/Stats/notes/4. supervised unsupervised data.md",
-    "DataScience/Stats/notes/2. Parametric and Non - Parametric.md"
+    "DataScience/Stats/notes/Linear Regression.md"
   ]
 }

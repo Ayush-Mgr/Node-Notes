@@ -21,6 +21,7 @@ tags: [vault, web]
 - [[7. mathematical expectations]]
 - [[representation of  various probabilistic concepts]]
 
+
 ## Distributions & Random Variables
 - [[Probability distribution]]
 - [[1.theoretical distribution]]
@@ -104,11 +105,11 @@ tags: [vault, web]
 - [[Parametric and Non - Parametric|2. Parametric and Non - Parametric]]
 - [[3. Descriptive Analysis of Time Series]]
 - [[4. ACF & PCF]]
-- [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
+- [[5. AR, MA, ARMA,ARIMA]]
 - [[6.Dickey Fuller Tests and ADF]]
 - [[7. Box-Jenkins Methodology]]
 - [[8.Forcasting]]
-- 
+- [[9. Forecast Accuracy (MAE, MSE, RMSE, MAPE)]]
 
 ## Big Data
 
