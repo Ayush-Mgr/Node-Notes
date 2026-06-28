@@ -79,7 +79,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -253,10 +253,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ced007a432b33e06",
+  "active": "267e55774c93e844",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
     "SEO/SEO SKILL.md",
+    "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
     "DataScience/Stats/index/STATS index.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",
     "DataScience/Stats/notes/ARMA_chart.png",
