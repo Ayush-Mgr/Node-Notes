@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/Parametric and Non - Parametric.md",
+                "file": "DataScience/Stats/notes/Linear Regression.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Parametric and Non - Parametric"
+              "title": "Linear Regression"
             }
           }
         ],
@@ -212,12 +212,12 @@
   },
   "active": "fbb08355979a6726",
   "lastOpenFiles": [
+    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/index/STATS index.md",
     "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
-    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
     "DataScience/Stats/notes/2. Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/8. TF-IDF.md",
