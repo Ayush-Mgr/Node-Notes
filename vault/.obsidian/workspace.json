@@ -35,7 +35,8 @@
               "title": "1. intro - Time Series Analysis"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -209,10 +210,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "87e4c0563b732f9c",
+  "active": "fbb08355979a6726",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/notes/5. Covariance.md",
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/Linear Regression.md",
