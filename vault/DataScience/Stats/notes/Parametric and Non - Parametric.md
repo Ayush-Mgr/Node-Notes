@@ -45,4 +45,6 @@ $$\hat{T} = \frac{1}{k} \sum_{i=d-1}^{d} y_t+i$$
 $k$: The size of your window (how many total points you are averaging).  
 
 $d$: How many points you look at backwards and forwards from your current day. (The rule is $k=2d+1$) .
+
+
 ![[Pasted_image_2026-05-18T11-34-29-953Z_vg3h_movingaverage1.png]]
