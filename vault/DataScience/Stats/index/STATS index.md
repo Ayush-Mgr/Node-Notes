@@ -143,8 +143,8 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/0. Big data intro.md|0. Big data intro.md]]
 - [[DataScience/Stats/notes/2. data transformation.md|2. data transformation.md]]
 
-<!-- AUTO_STATS_RECENT_START -->
-## Recently Updated Stats Notes
+<!-- AUTO_STATS_RECENT_CREATED_START -->
+## Recently Created Stats Notes
 - [[DataScience/Stats/notes/0. Big data intro|0. Big data intro]]
 - [[DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning|5.  Model evaluation, Validation and Hyperparameter Tuning]]
 - [[DataScience/Stats/notes/5.1 finding best models|5.1 finding best models]]
@@ -159,4 +159,4 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/4. supervised unsupervised data|4. supervised unsupervised data]]
 - [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
 - [[DataScience/Stats/notes/6.Clustering|6.Clustering]]
-<!-- AUTO_STATS_RECENT_END -->
+<!-- AUTO_STATS_RECENT_CREATED_END -->

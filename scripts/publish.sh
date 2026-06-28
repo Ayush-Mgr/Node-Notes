@@ -23,8 +23,8 @@ rsync -a --delete --delete-excluded \
 
 cd "$REPO_ROOT"
 
-# Auto-update stats index before checking for changes
-python3 "$REPO_ROOT/scripts/update_stats_index.py"
+# Auto-update configured recent-created index sections before checking for changes
+python3 "$REPO_ROOT/scripts/update_recent_created_indexes.py"
 
 if git diff --quiet && git diff --cached --quiet; then
   echo "→ No changes in vault. Nothing to commit."
