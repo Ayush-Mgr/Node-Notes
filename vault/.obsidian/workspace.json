@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/index/STATS index.md",
+                "file": "11.Advance Time Series Models.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STATS index"
+              "title": "11.Advance Time Series Models"
             }
           },
           {
@@ -107,7 +107,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -160,8 +160,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -282,13 +281,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "77eb104213073ac3",
+  "active": "267e55774c93e844",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/3. Residual calculation, correlation, and VIF.md",
+    "DataScience/Stats/index/STATS index.md",
+    "11.Advance Time Series Models.md",
     "DataScience/Stats/notes/10. Time Series Regression.md",
+    "DataScience/Stats/notes/3. Residual calculation, correlation, and VIF.md",
     "DataScience/Stats/notes/6. Correlation coefficient (r).md",
     "DataScience/Stats/notes/Linear Regression.md",
-    "DataScience/Stats/index/STATS index.md",
     "Untitled.md",
     "DataScience/Stats/notes/9. Forecast Accuracy (MAE, MSE, RMSE, MAPE).md",
     "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
@@ -328,7 +328,6 @@
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/LICENSE.md",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy/random/LICENSE.md",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/pyparsing/ai/best_practices.md"
+    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy/random/LICENSE.md"
   ]
 }
