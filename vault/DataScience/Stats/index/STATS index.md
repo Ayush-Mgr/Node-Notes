@@ -106,7 +106,7 @@ tags: [vault, web]
 - [[4. ACF & PCF]]
 - [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
 - [[6.Dickey Fuller Tests and ADF]]
-- [[7.Box-Jenkins Methodology]]
+- [[7. Box-Jenkins Methodology]]
 
 
 
