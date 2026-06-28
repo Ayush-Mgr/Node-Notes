@@ -99,8 +99,36 @@ tags: [vault, web]
 
 ## Time Series Analysis
 - [[1. intro - Time Series Analysis]]
-- 
-## New / Uncategorized
+- [[Parametric and Non - Parametric|2. Parametric and Non - Parametric]]
+- [[3. Descriptive Analysis of Time Series]]
+- [[4. ACF & PCF]]
+-  [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
+
+
+
+
+## Big Data
+
+- [[DataScience/Stats/notes/0. Big data intro|0. Big data intro]]
+- [[DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning|5.  Model evaluation, Validation and Hyperparameter Tuning]]
+- [[DataScience/Stats/notes/5.1 finding best models|5.1 finding best models]]
+- [[DataScience/Stats/notes/8. GRAPH|8. GRAPH]]
+- [[DataScience/Stats/notes/9. ethics|9. ethics]]
+- [[DataScience/Stats/notes/7. text mining, NLP|7. text mining, NLP]]
+- [[DataScience/Stats/notes/8. TF-IDF|8. TF-IDF]]
+- [[DataScience/Stats/notes/variance  & its coefficient|variance  & its coefficient]]
+- [[DataScience/Stats/notes/1.  data preprocessing|1.  data preprocessing]]
+- [[DataScience/Stats/notes/2. data transformation|2. data transformation]]
+- [[DataScience/Stats/notes/3. EDA|3. EDA]]
+- [[DataScience/Stats/notes/4. supervised unsupervised data|4. supervised unsupervised data]]
+- [[DataScience/Stats/notes/6.Clustering|6.Clustering]]
+-  [[DataScience/Stats/notes/7. text mining, NLP.md|7. text mining, NLP.md]]
+- [[DataScience/Stats/notes/8. TF-IDF.md|8. TF-IDF.md]]
+- [[DataScience/Stats/notes/8. GRAPH.md|8. GRAPH.md]]
+- [[DataScience/Stats/notes/6.Clustering.md|6.Clustering.md]]
+
+<!-- AUTO_STATS_RECENT_CREATED_START -->
+## Recently Created Stats Notes
 - [[0.  ANOVA]]
 - [[0. source]]
 - [[0. source_1]]
@@ -122,18 +150,11 @@ tags: [vault, web]
 - [[continuous series]]
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
-- [[Parametric and Non - Parametric]]
-- 1.[[datascience/stats/notes/1. intro - time series analysis]]
-- 2.[[DataScience/Stats/notes/Parametric and Non - Parametric]]
-- [[3. Descriptive Analysis of Time Series]]
 
 - [[DataScience/Stats/notes/Autocorrelation|Autocorrelation]]
 - [[DataScience/Stats/notes/9. ethics.md|9. ethics.md]]
 - [[DataScience/Stats/notes/variance & its coefficient.md|variance & its coefficient.md]]
-- [[DataScience/Stats/notes/7. text mining, NLP.md|7. text mining, NLP.md]]
-- [[DataScience/Stats/notes/8. TF-IDF.md|8. TF-IDF.md]]
-- [[DataScience/Stats/notes/8. GRAPH.md|8. GRAPH.md]]
-- [[DataScience/Stats/notes/6.Clustering.md|6.Clustering.md]]
+
 - [[DataScience/Stats/notes/4. supervised unsupervised data.md|4. supervised unsupervised data.md]]
 - [[5.1 finding best models|finding best models.md]]
 - [[DataScience/Stats/notes/5. Model evaluation and Validation.md|5. Model evaluation and Validation.md]]
@@ -143,20 +164,4 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/0. Big data intro.md|0. Big data intro.md]]
 - [[DataScience/Stats/notes/2. data transformation.md|2. data transformation.md]]
 
-<!-- AUTO_STATS_RECENT_CREATED_START -->
-## Recently Created Stats Notes
-- [[DataScience/Stats/notes/0. Big data intro|0. Big data intro]]
-- [[DataScience/Stats/notes/5.  Model evaluation, Validation and Hyperparameter Tuning|5.  Model evaluation, Validation and Hyperparameter Tuning]]
-- [[DataScience/Stats/notes/5.1 finding best models|5.1 finding best models]]
-- [[DataScience/Stats/notes/8. GRAPH|8. GRAPH]]
-- [[DataScience/Stats/notes/9. ethics|9. ethics]]
-- [[DataScience/Stats/notes/7. text mining, NLP|7. text mining, NLP]]
-- [[DataScience/Stats/notes/8. TF-IDF|8. TF-IDF]]
-- [[DataScience/Stats/notes/variance  & its coefficient|variance  & its coefficient]]
-- [[DataScience/Stats/notes/1.  data preprocessing|1.  data preprocessing]]
-- [[DataScience/Stats/notes/2. data transformation|2. data transformation]]
-- [[DataScience/Stats/notes/3. EDA|3. EDA]]
-- [[DataScience/Stats/notes/4. supervised unsupervised data|4. supervised unsupervised data]]
-- [[5. AR, MA, ARMA,ARIMA|5. AR, MA, ARMA]]
-- [[DataScience/Stats/notes/6.Clustering|6.Clustering]]
 <!-- AUTO_STATS_RECENT_CREATED_END -->
