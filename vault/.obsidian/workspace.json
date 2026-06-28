@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
+                "file": "DataScience/Stats/notes/4. ACF & PCF.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "3. Descriptive Analysis of Time Series"
+              "title": "4. ACF & PCF"
             }
           },
           {
@@ -212,6 +212,7 @@
   "active": "87e4c0563b732f9c",
   "lastOpenFiles": [
     "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/1. intro - Time Series Analysis.md",
     "DataScience/Stats/notes/5. Covariance.md",
@@ -219,7 +220,6 @@
     "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",
     "DataScience/Stats/notes/4. supervised unsupervised data.md",
-    "DataScience/Stats/notes/3. Descriptive Analysis of Time Series.md",
     "DataScience/Stats/notes/2. Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/8. TF-IDF.md",
     "DataScience/Stats/notes/8. GRAPH.md",
