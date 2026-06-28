@@ -286,6 +286,7 @@
   "lastOpenFiles": [
     "DataScience/Stats/notes/3. Residual calculation, correlation, and VIF.md",
     "DataScience/Stats/notes/10. Time Series Regression.md",
+    "DataScience/Stats/notes/6. Correlation coefficient (r).md",
     "DataScience/Stats/notes/Linear Regression.md",
     "DataScience/Stats/index/STATS index.md",
     "Untitled.md",
@@ -328,7 +329,6 @@
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy/random/LICENSE.md",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/pyparsing/ai/best_practices.md",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/pip-25.2.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
+    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/pyparsing/ai/best_practices.md"
   ]
 }
