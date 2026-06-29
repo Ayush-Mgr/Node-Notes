@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/8.Forcasting.md",
+                "file": "DataScience/Stats/index/STATS index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "8.Forcasting"
+              "title": "STATS index"
             }
           },
           {
@@ -281,8 +281,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "77eb104213073ac3",
+  "active": "ced007a432b33e06",
   "lastOpenFiles": [
+    "DataScience/Stats/notes/8.Forcasting.md",
     "DataScience/Stats/index/STATS index.md",
     "DataScience/Stats/notes/10. Time Series Regression.md",
     "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
@@ -297,7 +298,6 @@
     "DataScience/Stats/notes/5.  Model evaluation, Validation and Hyper-parameter Tuning.md",
     "DataScience/Stats/notes/7. Box-Jenkins Methodology.md",
     "DataScience/Stats/notes/representation of  various probabilistic concepts.md",
-    "DataScience/Stats/notes/8.Forcasting.md",
     "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/4. ACF & PCF.md",
     "SEO/SEO SKILL.md",
