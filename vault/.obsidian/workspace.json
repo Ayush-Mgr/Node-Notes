@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/index/STATS index.md",
+                "file": "DataScience/Stats/notes/7. Box-Jenkins Methodology.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STATS index"
+              "title": "7. Box-Jenkins Methodology"
             }
           },
           {
@@ -283,8 +283,8 @@
   },
   "active": "77eb104213073ac3",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/6.Dickey Fuller Tests and ADF.md",
     "DataScience/Stats/notes/11.Advance Time Series Models.md",
     "DataScience/Stats/notes/8.Forcasting.md",
     "DataScience/Stats/notes/10. Time Series Regression.md",
