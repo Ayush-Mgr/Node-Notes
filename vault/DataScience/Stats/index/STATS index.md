@@ -134,6 +134,8 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/8. GRAPH.md|8. GRAPH.md]]
 - [[DataScience/Stats/notes/9. ethics.md|9. ethics.md]]
 
+Data Vizuilizaion  
+
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes
 - [[0.  ANOVA]]
