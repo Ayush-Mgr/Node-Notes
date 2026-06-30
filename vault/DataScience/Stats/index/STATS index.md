@@ -137,7 +137,7 @@ tags: [vault, web]
 ## Data visualization   
 
 [[1. Data Visualization intro]] 
-[[2.data types]]
+[[2.data & chart types]]
 
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes

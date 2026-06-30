@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2.data types.md",
+                "file": "2.data & chart types.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2.data types"
+              "title": "2.data & chart types"
             }
           },
           {
@@ -283,7 +283,7 @@
   },
   "active": "cd9263b3caf3062d",
   "lastOpenFiles": [
-    "2.data types.md",
+    "2.data & chart types.md",
     "DataScience/Stats/index/STATS index.md",
     "DataScience/Stats/notes/1. Data Visualization intro.md",
     "Private/Random/7 ..md",
