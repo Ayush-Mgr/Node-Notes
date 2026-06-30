@@ -140,7 +140,7 @@ tags: [vault, web]
 [[2.data & chart types]]
 [[3.perceptio,colour&ux]]
 [[4.Multivariate,Network,Hierarchical]]
-[[5.]]
+[[5.Storytelling with Data and ethics]]
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes
 - [[0.  ANOVA]]
