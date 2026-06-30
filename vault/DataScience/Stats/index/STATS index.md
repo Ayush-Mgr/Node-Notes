@@ -134,7 +134,9 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/8. GRAPH.md|8. GRAPH.md]]
 - [[DataScience/Stats/notes/9. ethics.md|9. ethics.md]]
 
-Data Vizuilizaion  
+## Data visualization   
+
+[[1. Data Visualization intro]] 
 
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes

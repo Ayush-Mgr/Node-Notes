@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/index/STATS index.md",
+                "file": "DataScience/Stats/notes/1. Data Visualization intro.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STATS index"
+              "title": "1. Data Visualization intro"
             }
           },
           {
@@ -281,11 +281,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "77eb104213073ac3",
+  "active": "ced007a432b33e06",
   "lastOpenFiles": [
+    "DataScience/Stats/index/STATS index.md",
+    "DataScience/Stats/notes/1. Data Visualization intro.md",
     "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/5. AR, MA, ARMA.md",
-    "DataScience/Stats/index/STATS index.md",
     "Private/Random/App.md",
     "Private/Random/7 ..md",
     "Private/Random/6. reddit video maker.md",
@@ -327,7 +328,6 @@
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/matplotlib/mpl-data/images/zoom_to_rect-symbolic.svg",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
     "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
-    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md"
+    "DataScience/Stats/notes/venv/lib/python3.13/site-packages/numpy-2.5.0.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md"
   ]
 }
