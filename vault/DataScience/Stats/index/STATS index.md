@@ -139,7 +139,8 @@ tags: [vault, web]
 [[1. Data Visualization intro]] 
 [[2.data & chart types]]
 [[3.perceptio,colour&ux]]
-[[4.]]
+[[4.Multivariate,Network,Hierarchical]]
+[[5.]]
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes
 - [[0.  ANOVA]]
