@@ -142,6 +142,7 @@ tags: [vault, web]
 [[4.Multivariate,Network,Hierarchical]]
 [[5.Storytelling with Data and ethics]]
 [[6.Eda]]
+[[7. Comparisons, Definitions, and Chart Selection]]
 
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes
