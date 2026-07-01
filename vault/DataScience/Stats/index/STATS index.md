@@ -143,6 +143,7 @@ tags: [vault, web]
 [[5.Storytelling with Data and ethics]]
 [[6.Eda]]
 [[7. Comparisons, Definitions, and Chart Selection]]
+[[8. Continuous and Discrete Data]]
 
 <!-- AUTO_STATS_RECENT_CREATED_START -->
 ## Recently Created Stats Notes
