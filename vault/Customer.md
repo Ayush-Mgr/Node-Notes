@@ -1,0 +1,420 @@
+# 1. Customer Value
+
+**Definition:**  
+Customer Value is the **perceived benefit** a customer receives from a product or service compared to its cost.
+
+### Formula
+
+$$  
+\text{Customer Value} = \text{Perceived Benefits} - \text{Total Cost}  
+$$
+
+**Benefits include:**
+
+- Product quality
+    
+- Service quality
+    
+- Brand reputation
+    
+- Convenience
+    
+
+**Costs include:**
+
+- Price
+    
+- Time
+    
+- Effort
+    
+- Risk
+    
+
+**Example:**  
+A ₹25,000 smartphone with excellent features and service offers high customer value.
+
+---
+
+# 2. Customer Expectation
+
+**Definition:**  
+Customer Expectation is what a customer believes or hopes they will receive from a product or service.
+
+### Sources of Expectations
+
+- Previous experiences
+    
+- Advertisements
+    
+- Reviews
+    
+- Word of mouth
+    
+- Brand reputation
+    
+
+**Example:**  
+If a hotel advertises luxury rooms, customers expect clean, comfortable, and premium accommodation.
+
+---
+
+# 3. Customer Satisfaction
+
+**Definition:**  
+Customer Satisfaction is the degree to which a product or service meets or exceeds customer expectations.
+
+### Formula
+
+$$  
+\text{Satisfaction} = \text{Perceived Performance} - \text{Expectation}  
+$$
+
+- Performance > Expectation → Delighted customer
+    
+- Performance = Expectation → Satisfied customer
+    
+- Performance < Expectation → Dissatisfied customer
+    
+
+**Benefits**
+
+- Repeat purchases
+    
+- Positive reviews
+    
+- Increased loyalty
+    
+- Higher profits
+    
+
+---
+
+# 4. Customer Centricity
+
+**Definition:**  
+Customer Centricity is a business approach that places the customer at the center of all decisions and activities.
+
+### Characteristics
+
+- Understand customer needs
+    
+- Personalize services
+    
+- Build long-term relationships
+    
+- Improve customer experience
+    
+
+**Example:**  
+Amazon recommends products based on your purchase history.
+
+---
+
+# 5. Customer Acquisition
+
+**Definition:**  
+Customer Acquisition is the process of attracting and converting new customers.
+
+### Steps
+
+1. Identify target customers
+    
+2. Generate leads
+    
+3. Market the product
+    
+4. Convert leads into customers
+    
+
+### Acquisition Channels
+
+- Social media
+    
+- SEO
+    
+- Email marketing
+    
+- Advertising
+    
+- Referrals
+    
+
+---
+
+# 6. Customer Retention
+
+**Definition:**  
+Customer Retention is the ability of a business to keep existing customers over time.
+
+### Retention Strategies
+
+- Excellent customer service
+    
+- Loyalty programs
+    
+- Personalized communication
+    
+- Quick complaint resolution
+    
+- Regular engagement
+    
+
+**Importance**
+
+- Lower cost than acquiring new customers
+    
+- Higher customer lifetime value
+    
+- Increased profitability
+    
+
+---
+
+# 7. Customer Loyalty
+
+**Definition:**  
+Customer Loyalty is a customer's commitment to repeatedly purchase from the same brand.
+
+### Types
+
+- Behavioral Loyalty (repeat purchases)
+    
+- Emotional Loyalty (strong attachment)
+    
+
+### Benefits
+
+- Repeat business
+    
+- Positive word of mouth
+    
+- Lower marketing costs
+    
+- Stable revenue
+    
+
+---
+
+# 8. Customer Lifetime Value (CLV)
+
+**Definition:**  
+Customer Lifetime Value (CLV) is the total profit a business expects to earn from a customer during their entire relationship.
+
+### Simple Formula
+
+$$  
+\text{CLV} = \text{Average Purchase Value} \times \text{Purchase Frequency} \times \text{Customer Lifespan}  
+$$
+
+### Example
+
+- Average Purchase = ₹2,000
+    
+- Purchases per Year = 5
+    
+- Customer Lifespan = 4 years
+    
+
+CLV = ₹2,000 × 5 × 4 = **₹40,000**
+
+**Importance**
+
+- Identifies valuable customers
+    
+- Guides marketing investments
+    
+- Improves retention strategies
+    
+
+---
+
+# 9. Customer Experience Management (CEM)
+
+**Definition:**  
+Customer Experience Management (CEM) is the process of managing every interaction a customer has with a business to ensure a positive experience.
+
+### Customer Journey
+
+```
+Awareness
+   ↓
+Purchase
+   ↓
+Usage
+   ↓
+Support
+   ↓
+Feedback
+   ↓
+Loyalty
+```
+
+### Benefits
+
+- Higher satisfaction
+    
+- Better retention
+    
+- Improved loyalty
+    
+- Stronger brand image
+    
+
+---
+
+# 10. Enterprise Marketing Management (EMM)
+
+**Definition:**  
+Enterprise Marketing Management (EMM) is the planning, execution, monitoring, and optimization of all marketing activities using technology.
+
+### Functions
+
+- Campaign management
+    
+- Budget management
+    
+- Marketing analytics
+    
+- Customer segmentation
+    
+- Performance tracking
+    
+
+### Benefits
+
+- Better marketing efficiency
+    
+- Improved ROI
+    
+- Coordinated marketing efforts
+    
+
+---
+
+# 11. Customer Satisfaction Measurement
+
+Businesses measure customer satisfaction using different methods.
+
+### Methods
+
+- Customer surveys
+    
+- Feedback forms
+    
+- Interviews
+    
+- Complaint analysis
+    
+- Online reviews
+    
+
+### Common Metrics
+
+- **CSAT (Customer Satisfaction Score):** Measures satisfaction with a product or service.
+    
+- **NPS (Net Promoter Score):** Measures how likely customers are to recommend the business.
+    
+- **CES (Customer Effort Score):** Measures how easy it is for customers to complete a task or resolve an issue.
+    
+
+**Importance**
+
+- Identifies areas for improvement
+    
+- Improves service quality
+    
+- Increases customer loyalty
+    
+
+---
+
+# 12. Web-based Customer Support
+
+**Definition:**  
+Web-based Customer Support provides customer assistance through online platforms.
+
+### Examples
+
+- Live chat
+    
+- Chatbots
+    
+- Email support
+    
+- FAQs
+    
+- Knowledge bases
+    
+- Customer portals
+    
+- Social media support
+    
+
+### Benefits
+
+- 24/7 availability
+    
+- Faster response time
+    
+- Lower support costs
+    
+- Global accessibility
+    
+- Improved customer convenience
+    
+
+---
+
+# Quick Revision Table
+
+|Topic|Key Point|
+|---|---|
+|Customer Value|Benefits received compared to costs|
+|Customer Expectation|What customers expect before purchase|
+|Customer Satisfaction|Performance compared to expectations|
+|Customer Centricity|Customer-focused business approach|
+|Customer Acquisition|Attracting and converting new customers|
+|Customer Retention|Keeping existing customers|
+|Customer Loyalty|Repeat purchases and brand commitment|
+|Customer Lifetime Value (CLV)|Total expected profit from a customer|
+|Customer Experience Management (CEM)|Managing the entire customer journey|
+|Enterprise Marketing Management (EMM)|Technology-driven management of marketing activities|
+|Customer Satisfaction Measurement|Surveys, CSAT, NPS, CES, feedback|
+|Web-based Customer Support|Online customer service through digital channels|
+
+## Frequently Asked Exam Questions
+
+**2 Marks**
+
+- Define Customer Value.
+    
+- What is Customer Satisfaction?
+    
+- Define Customer Lifetime Value (CLV).
+    
+- What is Customer Centricity?
+    
+- Name two web-based customer support tools.
+    
+
+**5 Marks**
+
+- Explain Customer Acquisition and Customer Retention.
+    
+- Discuss Customer Experience Management (CEM).
+    
+- Explain methods of Customer Satisfaction Measurement.
+    
+- Describe Enterprise Marketing Management (EMM).
+    
+
+**10 Marks**
+
+- Explain Customer Value, Expectation, and Satisfaction with examples.
+    
+- Discuss Customer Acquisition, Retention, and Loyalty.
+    
+- Explain CLV and its importance in CRM.
+    
+- Describe Web-based Customer Support and its benefits.
