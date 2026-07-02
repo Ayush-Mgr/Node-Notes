@@ -149,7 +149,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 9
       }
     ],
     "direction": "vertical"
@@ -323,10 +323,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "799898bf660013d0",
+  "active": "4fa032c563b5d740",
   "lastOpenFiles": [
-    "CRM/Index/CRM index.md",
     "3.Marketing and sales.md",
+    "CRM/Index/CRM index.md",
     "CRM/Notes/0. introduction to CRM.md",
     "CRM/Notes/2.planning.md",
     "DataScience/Stats/notes/5.Storytelling with Data and ethics.md",
