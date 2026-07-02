@@ -55,7 +55,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "3.Marketing and sales.md",
+                "file": "CRM/Notes/3.Marketing and sales.md",
                 "mode": "source",
                 "source": false
               },
@@ -140,12 +140,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/Parametric and Non - Parametric.md",
+                "file": "CRM/Notes/3.Marketing and sales.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Parametric and Non - Parametric"
+              "title": "3.Marketing and sales"
             }
           }
         ],
@@ -323,12 +323,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "4fa032c563b5d740",
+  "active": "ced007a432b33e06",
   "lastOpenFiles": [
-    "3.Marketing and sales.md",
     "CRM/Index/CRM index.md",
-    "CRM/Notes/0. introduction to CRM.md",
     "CRM/Notes/2.planning.md",
+    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
+    "CRM/Notes/3.Marketing and sales.md",
+    "CRM/Notes/0. introduction to CRM.md",
     "DataScience/Stats/notes/5.Storytelling with Data and ethics.md",
     "DataScience/Stats/notes/6.Eda.md",
     "CRM/Notes/1. Customer.md",
@@ -346,7 +347,6 @@
     "DataScience/Stats/notes/3.perceptio,colour&ux.md",
     "DataScience/Stats/notes/1. Data Visualization intro.md",
     "Private/Random/7 ..md",
-    "DataScience/Stats/notes/Parametric and Non - Parametric.md",
     "DataScience/Stats/notes/5. AR, MA, ARMA.md",
     "Private/Random/App.md",
     "Private/Random/6. reddit video maker.md",
