@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Stats/notes/5.Storytelling with Data and ethics.md",
+                "file": "CRM/Notes/2.planning.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "5.Storytelling with Data and ethics"
+              "title": "2.planning"
             }
           },
           {
@@ -323,10 +323,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ced007a432b33e06",
+  "active": "799898bf660013d0",
   "lastOpenFiles": [
-    "DataScience/Stats/notes/6.Eda.md",
     "DataScience/Stats/notes/5.Storytelling with Data and ethics.md",
+    "DataScience/Stats/notes/6.Eda.md",
     "CRM/Notes/2.planning.md",
     "CRM/Index/CRM index.md",
     "CRM/Notes/1. Customer.md",
