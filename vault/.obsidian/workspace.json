@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "CRM/Notes/0. introduction to CRM.md",
+                "file": "CRM/Index/CRM index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0. introduction to CRM"
+              "title": "CRM index"
             }
           },
           {
@@ -297,8 +297,8 @@
   },
   "active": "c45eb3d0cd2072fa",
   "lastOpenFiles": [
-    "job.md",
     "CRM/Notes/0. introduction to CRM.md",
+    "job.md",
     "5.Storytelling with Data and ethics.md",
     "CRM/Index/CRM index.md",
     "CRM/Notes",
