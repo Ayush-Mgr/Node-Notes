@@ -1,2 +1,2 @@
 [[0. introduction to CRM]]
-[[Customer]]
+[[1. Customer]]

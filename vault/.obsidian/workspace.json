@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Customer.md",
+                "file": "1. Customer.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Customer"
+              "title": "1. Customer"
             }
           },
           {
@@ -311,8 +311,8 @@
   },
   "active": "4ac0423b3a75639d",
   "lastOpenFiles": [
-    "Customer.md",
     "CRM/Index/CRM index.md",
+    "1. Customer.md",
     "CRM/Notes/0. introduction to CRM.md",
     "job.md",
     "5.Storytelling with Data and ethics.md",
