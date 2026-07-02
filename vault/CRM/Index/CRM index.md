@@ -1,3 +1,4 @@
 [[0. introduction to CRM]]
 [[1. Customer]]
 [[2.planning]]
+[[3.Marketing and sales]]
