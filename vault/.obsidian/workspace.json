@@ -148,8 +148,7 @@
               "title": "4.Implementation"
             }
           }
-        ],
-        "currentTab": 9
+        ]
       }
     ],
     "direction": "vertical"
@@ -323,10 +322,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "4fa032c563b5d740",
+  "active": "87e4c0563b732f9c",
   "lastOpenFiles": [
-    "Private/Random/job.md",
     "CRM/Notes/4.Implementation.md",
+    "Private/Random/job.md",
     "CRM/Index/CRM index.md",
     "CRM/Notes/3.Marketing and sales.md",
     "CRM/Notes/2.planning.md",
