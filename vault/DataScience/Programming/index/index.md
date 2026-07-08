@@ -45,6 +45,7 @@
 - [[15.1 The Pandas Plot]]
 
 ## SQL & Databases
+- [[0. source_1]]
 - [[1. Introduction  SQL]]
 - [[1. Databases for Developers]]
 - [[2. Data base & DBMS.]]
@@ -124,9 +125,8 @@
 - [[cumulative frequency]]
 - [[discrete to continuous]]
 - [[INTRO]]
-- [[Private]]
 - [[Untitled 1_3]]
-- [[eg2.Mode]]
+
 
 ## New / Uncategorized
 - [[0. source_1_SQL]]
