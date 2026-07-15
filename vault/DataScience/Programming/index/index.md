@@ -1,6 +1,6 @@
 # Programming
 
-## Python Basics
+## Python 
 - [[0. Introduction to radial basis functions]]
 - [[2. keywords and identifiers]]
 - [[3. Variables & Data Types]]
@@ -22,7 +22,7 @@
 - [[print()]]
 - [[abs()]]
 
-## Data Science Libraries (NumPy, Pandas, Matplotlib)
+### Data Science Libraries (NumPy, Pandas, Matplotlib)
 - [[NumPy]]
 - [[13.1 NUMPY ARREY]]
 - [[13.2 Indexing  and Slicing]]
@@ -44,12 +44,12 @@
 - [[15. Matplotlib]]
 - [[15.1 The Pandas Plot]]
 
-## SQL & Databases
+## SQL 
 - [[0. source_1]]
+-  [[0.1 Creating a DATABASE process]]
 - [[1. Introduction  SQL]]
 - [[1. Databases for Developers]]
 - [[2. Data base & DBMS.]]
-- [[0.1 Creating a DATABASE process]]
 - [[3. Table..]]
 - [[4. ER diagram]]
 - [[primary key]]
@@ -57,25 +57,15 @@
 - [[6.Group By & Having]]
 - [[7.JOINS]]
 - [[8. SUBQUERY]]
-- [[VIEWS]]
 - [[9. stored procedure]]
 - [[10. Trigger]]
 - [[11.  WINDOWS FUNCTIONs]]
 - [[12. POSTGRE SQL]]
+- [[VIEWS]]
 - [[ALTER]]
 - [[DELETE]]
 - [[UPDATE]]
 
-## Algorithms & Data Structures
-- [[11 TREEs]]
-- [[A* algorithm]]
-- [[A* path finder]]
-- [[3. A* script]]
-- [[1. MAze - script]]
-- [[Binary decisions trees]]
-- [[Knn classification]]
-- [[Permutation and combinations]]
-- [[Range & coefficient of range]]
 
 ## Machine Learning Concepts (In Programming)
 - [[0 AI ML SYLLABUSS]]
@@ -91,19 +81,7 @@
 - [[11. Phrase Structure Parsing And Dependency Parsing]]
 - [[12. Semantic Analysis in NLP]]
 
-## Logic & Math (In Programming)
-- [[1. sets]]
-- [[2. set theory]]
-- [[3. Knowledge representation using logic]]
-- [[5.Propositional Logic & Truth Tables]]
-- [[6. Predicates and Quantifiers]]
-- [[2.First-order logic and predicate calculus]]
-- [[4.  Functions and Relations]]
-- [[8. Properties of Relations &  Functions]]
-- [[10. rank Co-relation]]
-- [[3. scatter diagram]]
-- [[4.Correlation]]
-- [[2. straight line and parabola]]
+
 
 ## Miscellaneous
 - [[mac bash]]

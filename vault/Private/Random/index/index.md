@@ -25,4 +25,10 @@
 - [[the Beast style]]
 - [[the advices]]
 - [[what you practice]]
+- 
+## yt
+- [[A* algorithm]]
+- [[A* path finder]]
+- [[3. A* script]]
 - [[yt]]
+- [[1. MAze - script]]

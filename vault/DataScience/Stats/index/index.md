@@ -168,7 +168,6 @@ tags: [vault, web]
 - [[continuous series]]
 - [[discrete series]]
 - [[interquartile range & quartile deviation   & Coefficient]]
-
 - [[DataScience/Stats/notes/4. supervised unsupervised data.md|4. supervised unsupervised data.md]]
 - [[5.1 finding best models|finding best models.md]]
 - [[DataScience/Stats/notes/5. Model evaluation and Validation.md|5. Model evaluation and Validation.md]]
@@ -177,5 +176,8 @@ tags: [vault, web]
 - [[DataScience/Stats/notes/Standard_deviation & coefficient.md|Standard_deviation & coefficient.md]]
 - [[DataScience/Stats/notes/0. Big data intro.md|0. Big data intro.md]]
 - [[DataScience/Stats/notes/2. data transformation.md|2. data transformation.md]]
-
+-  [[11 TREEs]]
+- [[Binary decisions trees]]
+- [[Knn classification]]
+- [[4.Correlation]]
 <!-- AUTO_STATS_RECENT_CREATED_END -->
