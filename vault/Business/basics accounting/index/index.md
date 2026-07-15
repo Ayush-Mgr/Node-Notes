@@ -11,7 +11,6 @@
 - [[Inflation - loosing value of money]]
 - [[LLC (Limited Liability Company) Notes]]
 - [[Liabilities]]
-- [[Price to earning ratio (P.E)]]
 - [[Read Balance Sheet]]
 - [[Recession - people spending less]]
 - [[Shareholders’ Equity]]

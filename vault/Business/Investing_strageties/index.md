@@ -7,15 +7,12 @@
 - [[Shareholders’ Equity]]
 - [[Liabilities]]
 - [[Expense]]
-- [[Expense_1]]
-- [[Expense_2]]
 - [[retained earnings]]
 - [[earnings per share (ESP)]]
 - [[BONDS]]
 - [[BONDS , GOLDS & INFLATIONS]]
 - [[Inflation - loosing value of money]]
 - [[Recession - people spending less]]
-- [[principle vs. Compound Interest]]
 - [[NPV]]
 - [[Close-end and Open-end]]
 - [[📘 C Corporation]]
@@ -42,7 +39,6 @@
 - [[business Validation]]
 - [[Market Share]]
 - [[Market Prediction]]
-- [[Price to earning ratio (P.E)]]
 - [[formula Growth stock valuation - over priced_under priced?]]
 - [[Screener Query]]
 - [[Secondary companies]]
@@ -56,4 +52,3 @@
 - [[BUffet]]
 
 ## Uncategorized
-- [[vault/DataScience/1. INtro]]

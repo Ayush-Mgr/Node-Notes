@@ -25,5 +25,4 @@
 - [[formula Growth stock valuation - over priced_under priced?]]
 - [[management]]
 - [[peter lynch the inter view]]
-- [[principle vs. Compound Interest]]
 - [[why  INVEST]]

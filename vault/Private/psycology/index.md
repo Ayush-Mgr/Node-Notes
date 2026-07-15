@@ -18,7 +18,6 @@
 - [[THE Thoughts]]
 - [[Embrace boredom]]
 - [[ig live lofi]]
-- [[8.Antigravity]]
 
 ## Music & Chords
 - [[Bsus4]]
@@ -37,14 +36,10 @@
 - [[Priority Queue (Priority In, Priority Out)]]
 - [[stored procedure]]
 - [[px,percent,rem]]
-- [[6. Debugging]]
 - [[App]]
-- [[5.Inputl & Output]]
 - [[Counter]]
 - [[Seo small Prompts]]
 - [[seo webs]]
-- [[6. reddit video maker]]
-- [[yt?]]
 
 ## Machine Learning & AI
 - [[Unsupervised Learning]]
@@ -54,9 +49,7 @@
 - [[Sketch recognition]]
 - [[MNIST]]
 - [[Manhattan distance]]
-- [[2.unInformed Search]]
 - [[Breath First Search]]
-- [[4. Inference Rules and Resolution]]
 
 ## Math & Stats
 - [[Equation]]
@@ -65,12 +58,8 @@
 - [[scalar]]
 - [[absolute value]]
 - [[Geometric representation of a linear equation]]
-- [[1. curve fitting]]
-- [[4.Method of Least Square]]
 - [[row-echelon form]]
 - [[LINEAR EQUATION]]
-- [[5. Covariance]]
-- [[1.2 Two-Sample Test for Mean]]
 - [[Lorenz Curve]]
 - [[binomial distribution]]
 - [[interquartile range & quartile deviation   & Coefficient]]
@@ -80,11 +69,8 @@
 - [[closure]]
 - [[sets]]
 - [[Absolute, relative and percentage Errors]]
-- [[3. Techniques of counting]]
 - [[Associative]]
-- [[2. Groups]]
 - [[Significant Figures]]
-- [[3. Free-hand method]]
 
 ## Business & Miscellaneous
 - [[management]]
@@ -98,24 +84,8 @@
 - [[Firfirey]]
 - [[COC]]
 - [[Carrier]]
-- [[3. Identity Aspects]]
-- [[3. Originality Aspects]]
-- [[0. source]]
-- [[0. source_1]]
 - [[7 .]]
 - [[un_1]]
 
 ## Untitled
-- [[Untitled_1]]
-- [[Untitled_2]]
-- [[Untitled_3]]
-- [[Untitled_4]]
-- [[Untitled_6]]
 - [[career plan]]
-- [[Untitled 1_1]]
-- [[Untitled 1_2]]
-- [[Untitled 2]]
-- [[Untitled 2_2]]
-- [[Untitled 2_3]]
-- [[Untitled 2_4]]
-- [[Untitled 3]]

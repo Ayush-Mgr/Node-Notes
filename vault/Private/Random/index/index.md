@@ -1,6 +1,5 @@
 # Random
 
-- [[6. reddit video maker]]
 - [[7 .]]
 - [[App]]
 - [[Asus2]]
@@ -29,6 +28,4 @@
 ## yt
 - [[A* algorithm]]
 - [[A* path finder]]
-- [[3. A* script]]
 - [[yt]]
-- [[1. MAze - script]]

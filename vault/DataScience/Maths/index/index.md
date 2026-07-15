@@ -12,26 +12,15 @@
 - [[Elementary Transformations]]
 - [[Gaussian Elimination]]
 - [[augmented matrix]]
-- [[5. Basis AND Rank]]
-- [[4. linear Independence]]
-- [[3. Vector Sub-spaces]]
-- [[1.1 vector Spaces]]
 - [[vector]]
-- [[7. affine subspace]]
-- [[6. linear maping]]
 - [[n-dimensional real space]]
 
 ## Calculus & Analysis
-- [[1.Calculus]]
-- [[0. calculus Vs precalculus]]
-- [[3 .  Limits]]
 - [[3 .1  Limits and curves.]]
 - [[Derivatives]]
 - [[polynomial]]
 
 ## Logic & Proofs
-- [[7.Logic and Proof Techniques]]
-- [[0.1 Proofs (Direct, Contrapositive, Contradiction)]]
 
 ## Equations & Systems
 - [[system of linear equations IN MATRIX FORM]]
@@ -40,24 +29,17 @@
 - [[the general solution]]
 
 ## Machine Learning & AI Math
-- [[1. Multiple Linear Regression]]
 - [[Torch]]
-- [[1. Backpropagation algorithm]]
 - [[Depth First Search]]
 - [[FEature selection  & Handwritten Digit Recognition]]
 - [[Ml & mathemetics]]
 - [[AI - ML  TO DO]]
 
 ## Other
-- [[1. Types of data categorical and numerical]]
 - [[inflation]]
-- [[1. intro_1]]
 - [[Untitled_5]]
-- [[18.  UntitledPassage Retrieval]]
 
 ## New / Uncategorized
-- [[2. Groups]]
-- [[3. Techniques of counting]]
 - [[Absolute, relative and percentage Errors]]
 - [[Associative]]
 - [[Counter]]
@@ -74,14 +56,3 @@
 - [[sets]]
 -  [[Permutation and combinations]]
 -  [[Range & coefficient of range]]
-- [[1. sets]]
-- [[2. set theory]]
-- [[3. Knowledge representation using logic]]
-- [[5.Propositional Logic & Truth Tables]]
-- [[6. Predicates and Quantifiers]]
-- [[2.First-order logic and predicate calculus]]
-- [[4.  Functions and Relations]]
-- [[8. Properties of Relations &  Functions]]
-- [[10. rank Co-relation]]
-- [[3. scatter diagram]]
-- [[2. straight line and parabola]]

@@ -2,4 +2,4 @@
 [[1. Customer]]
 [[2.planning]]
 [[3.Marketing and sales]]
-[[4.Implementation ]]
+[[4.Implementation]]
