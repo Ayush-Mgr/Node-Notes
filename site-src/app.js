@@ -440,23 +440,60 @@ async function openNote(noteId, pushHash = true) {
       tocContainer.classList.add('hidden');
     } else {
       tocContainer.classList.remove('hidden');
+      
+      const tree = [];
+      const stack = [{ level: 0, children: tree }];
+      
       headings.forEach((h, i) => {
         if (!h.id) {
           h.id = `heading-${i}-${h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
         }
+        const level = parseInt(h.tagName[1]);
+        const item = { heading: h, level, children: [] };
         
-        const link = document.createElement('a');
-        link.href = `#${h.id}`;
-        link.textContent = h.textContent;
-        link.className = `toc-link toc-level-${h.tagName[1]}`;
-        
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          h.scrollIntoView({ behavior: 'smooth' });
-        });
-        
-        tocList.appendChild(link);
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+        stack[stack.length - 1].children.push(item);
+        stack.push(item);
       });
+
+      function renderTree(items) {
+        if (items.length === 0) return null;
+        const ul = document.createElement('ul');
+        ul.className = 'toc-tree';
+        items.forEach(item => {
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = `#${item.heading.id}`;
+          link.textContent = item.heading.textContent;
+          link.className = 'toc-link';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            item.heading.scrollIntoView({ behavior: 'smooth' });
+          });
+          
+          if (item.children.length > 0) {
+            const details = document.createElement('details');
+            details.open = true;
+            const summary = document.createElement('summary');
+            summary.appendChild(link);
+            details.appendChild(summary);
+            details.appendChild(renderTree(item.children));
+            li.appendChild(details);
+          } else {
+            li.appendChild(link);
+          }
+          ul.appendChild(li);
+        });
+        return ul;
+      }
+      
+      const rendered = renderTree(tree);
+      if (rendered) {
+        tocList.appendChild(rendered);
+      }
     }
   }
 

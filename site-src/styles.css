@@ -707,12 +707,45 @@ details.callout[open] .callout-fold-icon {
   color: var(--on-surface);
 }
 
-.toc-level-1 { margin-left: 0; font-weight: 600; }
-.toc-level-2 { margin-left: 0.5rem; }
-.toc-level-3 { margin-left: 1rem; }
-.toc-level-4 { margin-left: 1.5rem; }
-.toc-level-5 { margin-left: 2rem; }
-.toc-level-6 { margin-left: 2.5rem; }
+.toc-tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-tree ul {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.toc-tree li {
+  margin: 0.2rem 0;
+}
+
+.toc-tree details > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.toc-tree details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.toc-tree details > summary::before {
+  content: "▶";
+  font-size: 0.6rem;
+  color: var(--on-surface-variant);
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.toc-tree details[open] > summary::before {
+  transform: rotate(90deg);
+}
 
 .note-panel__content-col {
   flex: 1;
