@@ -26,6 +26,7 @@
 - [[Alter]]
 - [[DELETE]]
 - [[UPDATE]]
+- [[private enviroment]]
 
 
 ## Machine Learning Concepts (In Programming)
