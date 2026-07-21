@@ -430,6 +430,36 @@ async function openNote(noteId, pushHash = true) {
     pre.parentNode.replaceChild(div, pre);
   });
 
+  const tocContainer = document.getElementById('toc-container');
+  const tocList = document.getElementById('toc-list');
+  if (tocContainer && tocList) {
+    const headings = noteContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    tocList.innerHTML = '';
+    
+    if (headings.length === 0) {
+      tocContainer.classList.add('hidden');
+    } else {
+      tocContainer.classList.remove('hidden');
+      headings.forEach((h, i) => {
+        if (!h.id) {
+          h.id = `heading-${i}-${h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        }
+        
+        const link = document.createElement('a');
+        link.href = `#${h.id}`;
+        link.textContent = h.textContent;
+        link.className = `toc-link toc-level-${h.tagName[1]}`;
+        
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          h.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        tocList.appendChild(link);
+      });
+    }
+  }
+
   if (window.mermaid) {
     const mermaidNodes = noteContent.querySelectorAll('.mermaid');
     if (mermaidNodes.length > 0) {
