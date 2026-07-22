@@ -13,12 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/0.Interpolation.md",
+                "file": "DataScience/Programming/notes/with().md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0.Interpolation"
+              "title": "with()"
+            }
+          },
+          {
+            "id": "680cacc4e3d6853a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "DataScience/Programming/index/index.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "index"
             }
           }
         ]
@@ -197,32 +211,32 @@
   },
   "active": "b0b675af74fc8418",
   "lastOpenFiles": [
-    "DataScience/Programming/notes/1. Databases for Developers.md",
-    "DataScience/Programming/notes/0.Interpolation.md",
-    "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
-    "DataScience/Programming/notes/0. source_1_SQL.md",
-    "DataScience/Programming/notes/0. Introduction to radial basis functions.md",
-    "DataScience/Programming/notes/0 . summary.md",
-    "DataScience/Machine_Learning/notes/0 AI ML SYLLABUSS.md",
-    "DataScience/Programming/index/index.md",
-    "DataScience/Programming/notes/private enviroment.md",
-    "DataScience/Machine_Learning/notes/Environment.md",
-    "DataScience/Maths/index/index.md",
-    "Private/Random/index/index.md",
-    "DataScience/Stats/index/index.md",
-    "DataScience/Machine_Learning/index/index.md",
-    "DataScience/Programming/notes/NLTK (Natural Language Toolkit).md",
+    "DataScience/Programming/notes/VIEWS.md",
+    "DataScience/Programming/notes/UPDATE.md",
+    "DataScience/Programming/notes/Untitled 1_3.md",
+    "DataScience/Programming/notes/Untitled.md",
+    "DataScience/Programming/notes/un_1.md",
+    "DataScience/Programming/notes/TorchVison.md",
+    "DataScience/Programming/notes/torch.nn.LAyers.md",
+    "DataScience/Programming/notes/theory of attributes.md",
+    "DataScience/Programming/notes/Tensor.md",
+    "DataScience/Programming/notes/super.md",
     "DataScience/Programming/notes/string.md",
-    "Private/Random/A* path finder.md",
-    "Private/Random/A* algorithm.md",
-    "Private/Random/3. A* script.md",
-    "Private/Random/1. MAze - script.md",
-    "DataScience/Stats/notes/eg2.Mode.md",
-    "DataScience/Stats/notes/Knn classification.md",
-    "DataScience/Stats/notes/Binary decisions trees.md",
-    "DataScience/Stats/notes/4.Correlation.md",
-    "DataScience/Stats/notes/11 TREEs.md",
-    "DataScience/Maths/notes/Range & coefficient of range.md",
+    "DataScience/Programming/notes/stored procedure.md",
+    "DataScience/Programming/notes/Stack.md",
+    "DataScience/Programming/notes/something resonates.md",
+    "DataScience/Programming/notes/Reading file.md",
+    "DataScience/Programming/notes/Random.md",
+    "DataScience/Programming/notes/Queue (FIFO - First In, First Out).md",
+    "DataScience/Programming/notes/px,percent,rem.md",
+    "DataScience/Programming/notes/private enviroment.md",
+    "DataScience/Programming/notes/Priority Queue (Priority In, Priority Out).md",
+    "DataScience/Programming/notes/print().md",
+    "DataScience/Programming/notes/primary key.md",
+    "DataScience/Programming/notes/pixel arts.md",
+    "DataScience/Programming/notes/parent & child.md",
+    "DataScience/Programming/notes/pandas.md",
+    "DataScience/Programming/notes/Operating System OS.md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
