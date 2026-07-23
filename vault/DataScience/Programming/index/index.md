@@ -17,6 +17,7 @@
 - [[NumPy]]
 - [[pandas]]
 - [[matplotlib]]
+-  [[gspread]]
 
 ## SQL 
 - [[2. Data base & DBMS.]]
@@ -27,6 +28,7 @@
 - [[DELETE]]
 - [[UPDATE]]
 - [[private enviroment]]
+
 
 
 ## Machine Learning Concepts (In Programming)
