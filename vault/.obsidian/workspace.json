@@ -41,16 +41,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/gspread.md",
+                "file": "SEO/seo KEys.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "gspread"
+              "title": "seo KEys"
+            }
+          },
+          {
+            "id": "8e513f06fa252393",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "SEO/Seo Guest posting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Seo Guest posting"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -224,10 +238,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "af06e4c4049ed4af",
+  "active": "8e513f06fa252393",
   "lastOpenFiles": [
-    "DataScience/Programming/index/index.md",
+    "SEO/seo KEys.md",
+    "SEO/Seo Guest posting.md",
+    "SEO/seo webs.md",
     "DataScience/Programming/notes/gspread.md",
+    "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/0 . summary.md",
     "DataScience/Programming/index/Web_Dev_index.md",
     "DataScience/Programming/notes/with().md",
@@ -249,9 +266,6 @@
     "DataScience/Programming/notes/Random.md",
     "DataScience/Programming/notes/Queue (FIFO - First In, First Out).md",
     "DataScience/Programming/notes/px,percent,rem.md",
-    "DataScience/Programming/notes/private enviroment.md",
-    "DataScience/Programming/notes/Priority Queue (Priority In, Priority Out).md",
-    "DataScience/Programming/notes/print().md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
