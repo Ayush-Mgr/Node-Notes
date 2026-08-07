@@ -109,16 +109,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "prof seo.md",
+                "file": "SEO/brand overview.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "prof seo"
+              "title": "brand overview"
+            }
+          },
+          {
+            "id": "aa4a741ebcffbe52",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "SEO/SEO.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "SEO"
             }
           }
         ],
-        "currentTab": 7
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -294,14 +308,19 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "237db45c059fe6ec",
+  "active": "ced007a432b33e06",
   "lastOpenFiles": [
-    "SEO/Low qul Backlinks - seo webs.md",
-    "prof seo.md",
+    "SEO/brand overview.md",
+    "SEO/SEO.md",
     "SEO/Web edit console.md",
-    "Untitled.md",
-    "SEO/seo KEys.md",
+    "SEO/Seo small Prompts.md",
+    "SEO/Low qul Backlinks - seo webs.md",
+    "SEO/SEO PORTFOLIO.md",
     "SEO/Seo Guest posting.md",
+    "SEO/SEO POSt.md",
+    "SEO/SEO SKILL& TOOLS.md",
+    "SEO/seo KEys.md",
+    "Untitled.md",
     "DataScience/Programming/notes/gspread.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/0 . summary.md",
@@ -317,11 +336,6 @@
     "DataScience/Programming/notes/theory of attributes.md",
     "DataScience/Programming/notes/Tensor.md",
     "DataScience/Programming/notes/super.md",
-    "DataScience/Programming/notes/string.md",
-    "DataScience/Programming/notes/stored procedure.md",
-    "DataScience/Programming/notes/Stack.md",
-    "DataScience/Programming/notes/something resonates.md",
-    "DataScience/Programming/notes/Reading file.md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
