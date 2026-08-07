@@ -25,6 +25,15 @@ Home
 └── Lofi
 ```
 
+| Future Page                                      | Primary Keyword (Target)               | Supporting Keywords to Include                                                                                                                                                                       |
+| :----------------------------------------------- | :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Homepage** (`index.html`)                      | `Automation Engineer`                  | Python Automation, Data Analytics Portfolio, Analytics Engineer, Python Developer Portfolio,SEO Analytics, SEO Reporting, Python for SEO, SEO Automation, Google Search Console, Technical SEO Audit |
+| **Automation Projects** (`/automation`)          | `ETL Projects`                         | Python Automation, Data Pipeline Projects, Reporting Automation, Google Sheets API, GitHub Actions, Looker Studio, Python ETL                                                                        |
+| **Football Prediction** (`/football-prediction`) | `Machine Learning Football Prediction` | Football Prediction Model, Football ML Project, Random Forest Football Prediction, Data Analytics Project                                                                                            |
+| **NLP Projects** (`/nlp-projects`)               | `Python NLP Projects`                  | NLP Chatbot Project, Natural Language Processing Projects, Language Model Project, Text Processing Python                                                                                            |
+
+
+ 
 ---
 
 # Homepage

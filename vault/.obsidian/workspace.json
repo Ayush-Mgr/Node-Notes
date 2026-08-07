@@ -123,12 +123,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SEO/SEO.md",
+                "file": "SEO/SEO PORTFOLIO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SEO"
+              "title": "SEO PORTFOLIO"
             }
           }
         ],
@@ -308,18 +308,18 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ced007a432b33e06",
+  "active": "aa4a741ebcffbe52",
   "lastOpenFiles": [
-    "SEO/brand overview.md",
-    "SEO/SEO.md",
-    "SEO/Web edit console.md",
-    "SEO/Seo small Prompts.md",
-    "SEO/Low qul Backlinks - seo webs.md",
-    "SEO/SEO PORTFOLIO.md",
-    "SEO/Seo Guest posting.md",
     "SEO/SEO POSt.md",
     "SEO/SEO SKILL& TOOLS.md",
+    "SEO/Seo small Prompts.md",
+    "SEO/Web edit console.md",
     "SEO/seo KEys.md",
+    "SEO/Seo Guest posting.md",
+    "SEO/SEO.md",
+    "SEO/brand overview.md",
+    "SEO/Low qul Backlinks - seo webs.md",
+    "SEO/SEO PORTFOLIO.md",
     "Untitled.md",
     "DataScience/Programming/notes/gspread.md",
     "DataScience/Programming/index/index.md",
