@@ -1,5 +1,14 @@
-- Data science student in West Bengal
-- Ayush Thapa data science student
-- yush mgr
-
-- ayush thapa
+- `Ayush Thapa data science portfolio`
+- `Ayush Thapa NLP projects`
+- `yush mgr portfolio`
+- `data science student in West Bengal`
+- `data science student portfolio India`
+- `NLP chatbot project`
+- `natural language processing projects`
+- `Python NLP project`
+- `machine learning football prediction`
+- `organic SEO specialist`
+- `technical SEO and analytics`
+- `Google Search Console SEO`
+- `data-driven SEO`
+- `SEO keyword research`
