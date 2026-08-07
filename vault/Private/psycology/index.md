@@ -39,7 +39,7 @@
 - [[App]]
 - [[Counter]]
 - [[Seo small Prompts]]
-- [[seo webs]]
+- [[Low qul Backlinks - seo webs]]
 
 ## Machine Learning & AI
 - [[Unsupervised Learning]]

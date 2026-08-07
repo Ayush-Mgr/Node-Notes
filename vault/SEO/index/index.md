@@ -4,7 +4,7 @@
 - [[Seo small Prompts]]
 - [[brand overview]]
 - [[seo KEys]]
-- [[seo webs]]
+- [[Low qul Backlinks - seo webs]]
 
 ## New / Uncategorized
 - [[SEO POSt]]
