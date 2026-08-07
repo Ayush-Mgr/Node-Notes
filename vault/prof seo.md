@@ -1,18 +1,11 @@
 ## Keywords
-- `Ayush Thapa data science portfolio`
-- `Ayush Thapa NLP projects`
-- `yush mgr portfolio`
-- `data science student in West Bengal`
-- `data science student portfolio India`
-- `NLP chatbot project`
-- `natural language processing projects`
-- `Python NLP project`
-- `machine learning football prediction`
-- `organic SEO specialist`
-- `technical SEO and analytics`
-- `Google Search Console SEO`
-- `data-driven SEO`
-- `SEO keyword research`
+| Page                | Primary keyword                                                        | Supporting keywords                                                           |
+| ------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Homepage            | Ayush Thapa data science portfolio,data science student in West Bengal | yush mgr portfolio, data science student portfolio India                      |
+| NLP Projects        | Ayush Thapa NLP projects                                               | NLP chatbot project, natural language processing projects, Python NLP project |
+| Football Prediction | machine learning football prediction                                   | football ML project terms                                                     |
+| SEO Portfolio       | organic SEO specialist                                                 | data-driven SEO, SEO keyword research                                         |
+| Technical SEO       | technical SEO and analytics                                            | Google Search Console SEO                                                     |
 
 ## the plan 
 
