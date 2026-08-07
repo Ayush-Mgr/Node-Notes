@@ -74,9 +74,37 @@
               "icon": "lucide-book-up",
               "title": "Release Notes 1.13.4"
             }
+          },
+          {
+            "id": "d0ffd379a3ee3a79",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Untitled.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "63d92fb4c76482cb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Untitled.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Untitled"
+            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -252,8 +280,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "642ccf5321b0f0da",
+  "active": "63d92fb4c76482cb",
   "lastOpenFiles": [
+    "Untitled 1.md",
+    "Untitled.md",
     "SEO/seo KEys.md",
     "SEO/Seo Guest posting.md",
     "SEO/seo webs.md",
@@ -278,8 +308,6 @@
     "DataScience/Programming/notes/something resonates.md",
     "DataScience/Programming/notes/Reading file.md",
     "DataScience/Programming/notes/Random.md",
-    "DataScience/Programming/notes/Queue (FIFO - First In, First Out).md",
-    "DataScience/Programming/notes/px,percent,rem.md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
