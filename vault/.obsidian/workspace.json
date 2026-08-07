@@ -62,9 +62,21 @@
               "icon": "lucide-file",
               "title": "Seo Guest posting"
             }
+          },
+          {
+            "id": "642ccf5321b0f0da",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.13.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.13.4"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -84,7 +96,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -238,7 +252,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "8e513f06fa252393",
+  "active": "642ccf5321b0f0da",
   "lastOpenFiles": [
     "SEO/seo KEys.md",
     "SEO/Seo Guest posting.md",
