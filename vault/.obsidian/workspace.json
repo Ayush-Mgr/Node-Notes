@@ -166,7 +166,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "env",
+                "query": "seo",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -187,7 +187,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -310,16 +311,17 @@
   },
   "active": "aa4a741ebcffbe52",
   "lastOpenFiles": [
-    "SEO/SEO POSt.md",
-    "SEO/SEO SKILL& TOOLS.md",
-    "SEO/Seo small Prompts.md",
-    "SEO/Web edit console.md",
     "SEO/seo KEys.md",
     "SEO/Seo Guest posting.md",
     "SEO/SEO.md",
-    "SEO/brand overview.md",
+    "DataScience/Programming/Web_Dev/Meta tag.md",
     "SEO/Low qul Backlinks - seo webs.md",
+    "SEO/SEO POSt.md",
+    "SEO/Seo small Prompts.md",
+    "SEO/SEO SKILL& TOOLS.md",
     "SEO/SEO PORTFOLIO.md",
+    "SEO/Web edit console.md",
+    "SEO/brand overview.md",
     "Untitled.md",
     "DataScience/Programming/notes/gspread.md",
     "DataScience/Programming/index/index.md",
@@ -335,7 +337,6 @@
     "DataScience/Programming/notes/torch.nn.LAyers.md",
     "DataScience/Programming/notes/theory of attributes.md",
     "DataScience/Programming/notes/Tensor.md",
-    "DataScience/Programming/notes/super.md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
