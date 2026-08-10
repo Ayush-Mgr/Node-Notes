@@ -7,8 +7,34 @@ Technical SEO          15%
 User Experience       10%
 Brand Signals            10%
 
+---
 
-different pagers should have different intents never same and use keywords on that intent
+different pages should have different intents never exact same variaration is ok and use keywords on that intent, internal link is good and contextual 
+
+Multiple blogs can have the same broad intent
+
+All of these are informational:
+
+- What is GoHighLevel?
+- How does GoHighLevel work?
+- How to set up GoHighLevel?
+- How to automate follow-ups?
+- How to create a GoHighLevel funnel?
+
+That's completely fine because their **specific search needs are different**.
+```                 
+			  SERVICE PAGE              (Main intent)
+          GoHighLevel Consultant
+                    ↑
+        ┌───────────┼───────────┐
+        ↑           ↑           ↑
+   What is GHL?  Automation   Funnels    (main intent's diffrent verisons)
+        ↑           ↑           ↑
+     How it       Follow-up   How to
+     works        automation  create
+```
+
+---
 ### The important mental model
 
 Don't think:
