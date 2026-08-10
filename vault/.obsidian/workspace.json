@@ -123,12 +123,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SEO/SEO PORTFOLIO.md",
+                "file": "SEO/SEO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SEO PORTFOLIO"
+              "title": "SEO"
             }
           }
         ],
@@ -187,8 +187,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -311,15 +310,15 @@
   },
   "active": "aa4a741ebcffbe52",
   "lastOpenFiles": [
+    "SEO/SEO POSt.md",
+    "SEO/SEO.md",
+    "SEO/SEO PORTFOLIO.md",
     "SEO/seo KEys.md",
     "SEO/Seo Guest posting.md",
-    "SEO/SEO.md",
     "DataScience/Programming/Web_Dev/Meta tag.md",
     "SEO/Low qul Backlinks - seo webs.md",
-    "SEO/SEO POSt.md",
     "SEO/Seo small Prompts.md",
     "SEO/SEO SKILL& TOOLS.md",
-    "SEO/SEO PORTFOLIO.md",
     "SEO/Web edit console.md",
     "SEO/brand overview.md",
     "Untitled.md",
