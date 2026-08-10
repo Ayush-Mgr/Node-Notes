@@ -7,6 +7,26 @@ Technical SEO          15%
 User Experience       10%
 Brand Signals            10%
 
+
+different pagers should have different intents never same and use keywords on that intent
+### The important mental model
+
+Don't think:
+
+> **"One keyword = one page."**
+
+Think:
+
+> **"One search intent = one primary page."**
+
+A keyword can have several related keywords, but if they represent the **same search intent**, they generally belong to the same primary page.
+
+And blogs aren't simply **"more pages = more traffic."**
+
+They're a way to capture **additional search intents around your commercial topic** and then funnel relevant users toward your important pages.
+
+That's the foundation of **topic clusters + internal linking**.
+
 ---
 ## Search intent
 **Search intent = what the person actually wants when they search a keyword.**
@@ -59,23 +79,23 @@ That's much better than:
 
 **Keyword → 5 pages targeting exactly the same thing → Google decides which URL to rank.**
 
-### The important mental model
 
-Don't think:
 
-> **"One keyword = one page."**
+several different keywords can have the **same intent**.
 
-Think:
+### Example
 
-> **"One search intent = one primary page."**
+Imagine these searches:
 
-A keyword can have several related keywords, but if they represent the **same search intent**, they generally belong to the same primary page.
+- `best CRM for small business`
+- `best CRM software for small businesses`
+- `CRM for small companies`
+- `top CRM for small business`
 
-And blogs aren't simply **"more pages = more traffic."**
+Different keywords, but the searcher essentially wants the **same thing**:
 
-They're a way to capture **additional search intents around your commercial topic** and then funnel relevant users toward your important pages.
+> **"Help me choose a CRM for my small business."**
 
-That's the foundation of **topic clusters + internal linking**.
-
+That's **one intent**, not four.
 ---
 ## s
