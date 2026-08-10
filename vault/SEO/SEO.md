@@ -1,4 +1,4 @@
-Depends on : 
+ Depends on : 
 
 Content Quality        30%
 Backlinks                   20%
