@@ -53,12 +53,14 @@
             "id": "922ebd06b05d55b5",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.13.6"
+                "file": "SEO/SEO SKILL& TOOLS.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.13.6"
+              "icon": "lucide-file",
+              "title": "SEO SKILL& TOOLS"
             }
           },
           {
@@ -178,7 +180,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "seo",
+                "query": "tools",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
