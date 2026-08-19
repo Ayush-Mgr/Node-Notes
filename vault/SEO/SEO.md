@@ -124,4 +124,20 @@ Different keywords, but the searcher essentially wants the **same thing**:
 
 That's **one intent**, not four.
 ---
-## s
+## target urls 
+| URL type               |   Include?   |    Priority    | Why                                                                            |
+| ---------------------- | :----------: | :------------: | ------------------------------------------------------------------------------ |
+| **Homepage `/`**       |    ✅ Yes     |  🔴 Essential  | Targets broad brand + primary service + location keywords                      |
+| **Service pages**      |    ✅ Yes     |  🔴 Essential  | Main commercial keyword targets                                                |
+| **Product pages**      |    ✅ Yes     |  🔴 Essential  | For individual products/services                                               |
+| **Location pages**     |    ✅ Yes     | 🟠 If relevant | For genuine location-specific searches                                         |
+| **Blog/article pages** |    ✅ Yes     | 🟡 Supporting  | Target informational keywords and support service pages                        |
+| **Pricing pages**      | ✅ Sometimes  |       🟡       | Good for cost/price searches if the page actually exists                       |
+| **Case studies**       | 🟡 Sometimes | 🟢 Supporting  | Can target specific problems/services, but usually not primary keyword targets |
+| **About page**         | ❌ Usually no |       —        | Not normally a keyword landing page                                            |
+| **Contact page**       | ❌ Usually no |       —        | Don't target commercial keywords here                                          |
+| **Team/Doctor pages**  | ❌ Usually no |       —        | Useful for E-E-A-T, not usually keyword targets                                |
+| **Privacy Policy**     |     ❌ No     |       —        | No SEO keyword targeting                                                       |
+| **Terms & Conditions** |     ❌ No     |       —        | No SEO keyword targeting                                                       |
+| **FAQ page**           | 🟡 Sometimes |       🟡       | Useful if it genuinely targets a question cluster                              |
+| **Gallery**            | ❌ Usually no |       —        | Images support SEO but gallery isn't usually a keyword landing page            |
