@@ -141,3 +141,4 @@ That's **one intent**, not four.
 | **Terms & Conditions** |     ❌ No     |       —        | No SEO keyword targeting                                                       |
 | **FAQ page**           | 🟡 Sometimes |       🟡       | Useful if it genuinely targets a question cluster                              |
 | **Gallery**            | ❌ Usually no |       —        | Images support SEO but gallery isn't usually a keyword landing page            |
+
