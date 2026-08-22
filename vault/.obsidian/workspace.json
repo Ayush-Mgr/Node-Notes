@@ -64,6 +64,18 @@
             }
           },
           {
+            "id": "307f903f15470f62",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.13.7"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.13.7"
+            }
+          },
+          {
             "id": "8e513f06fa252393",
             "type": "leaf",
             "state": {
@@ -146,7 +158,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -322,7 +334,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "922ebd06b05d55b5",
+  "active": "307f903f15470f62",
   "lastOpenFiles": [
     "SEO/SEO PORTFOLIO.md",
     "SEO/SEO POSt.md",
