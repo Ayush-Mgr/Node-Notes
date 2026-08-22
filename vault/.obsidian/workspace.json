@@ -146,7 +146,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 9
       }
     ],
     "direction": "vertical"
@@ -322,8 +322,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "8e513f06fa252393",
+  "active": "aa4a741ebcffbe52",
   "lastOpenFiles": [
+    "SEO/SEO PORTFOLIO.md",
     "SEO/seo KEys.md",
     "SEO/Seo Guest posting.md",
     "SEO/SEO.md",
@@ -333,7 +334,6 @@
     "SEO/Seo small Prompts.md",
     "SEO/SEO SKILL& TOOLS.md",
     "SEO/SEO POSt.md",
-    "SEO/SEO PORTFOLIO.md",
     "DataScience/Programming/Web_Dev/Meta tag.md",
     "Untitled.md",
     "DataScience/Programming/notes/gspread.md",

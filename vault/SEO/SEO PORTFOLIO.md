@@ -3,23 +3,9 @@
 ```text
 Home
 │
-├── Automation
-│   ├── Python ETL & Reporting Automation
-│   ├── Google Sheets API Automation
-│   ├── GitHub Actions Workflow
-│   └── Looker Studio Dashboard
-│
-├── Data Projects
-│   ├── Football Prediction
-│   ├── NLP Projects
-│   └── Future Analytics Projects
-│
-├── SEO Automation
-│   ├── Technical SEO
-│   ├── SEO Analytics
-│   ├── SEO Reporting
-│   └── Python for SEO
-│
+├── Automation Portfolio 
+├── Football Prediction
+├── NLP Projects
 ├── Notes Graph
 │
 └── Lofi
