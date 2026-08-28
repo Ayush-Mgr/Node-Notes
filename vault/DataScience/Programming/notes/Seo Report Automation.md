@@ -20,3 +20,5 @@
 | **`%d`** | Day of the month (zero-padded)  | `04`                              |
 | **`%A`** | Full weekday name               | `Saturday`                        |
 | **`%a`** | Abbreviated weekday name        | `Sat`                             |
+## def find month row
+`row_str = " ".join(str(cell) for cell in row[:3])` sqeez the 3 cols into one for pattern search  
