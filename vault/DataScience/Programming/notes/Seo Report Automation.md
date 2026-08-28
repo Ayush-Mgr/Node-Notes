@@ -9,3 +9,14 @@
 5. target_month.strftime("%B") : `strftime` stands for "String Format Time", and it is Python's built-in tool for translating a raw `date` object into a readable string of text.
 	By passing it the special code `"%B"`, you are specifically telling it: _"Give me the full written name of the month."_
 	So if `target_month` is `2026-07-19`, then `strftime("%B")` spits out the word `"July"`. (If you had used `"%m"` instead, it would have spit out `"07"`).
+	
+| Code     | What it does                    | Example Output (for July 4, 2026) |
+| -------- | ------------------------------- | --------------------------------- |
+| **`%B`** | Full month name                 | `July`                            |
+| **`%b`** | Abbreviated month name          | `Jul`                             |
+| **`%m`** | Month as a zero-padded number   | `07`                              |
+| **`%Y`** | Year with century (4 digits)    | `2026`                            |
+| **`%y`** | Year without century (2 digits) | `26`                              |
+| **`%d`** | Day of the month (zero-padded)  | `04`                              |
+| **`%A`** | Full weekday name               | `Saturday`                        |
+| **`%a`** | Abbreviated weekday name        | `Sat`                             |
