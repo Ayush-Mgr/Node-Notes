@@ -336,11 +336,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ced007a432b33e06",
+  "active": "cf4ba50da79e0eb6",
   "lastOpenFiles": [
-    "DataScience/Programming/notes/0. Introduction to radial basis functions.md",
-    "DataScience/Programming/notes/Decorators.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
+    "`from functools import wraps`.md",
+    "DataScience/Programming/notes/Decorators.md",
+    "DataScience/Programming/notes/0. Introduction to radial basis functions.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/0 . summary.md",
     "SEO/SEO.md",
@@ -363,7 +364,6 @@
     "DataScience/Programming/notes/Untitled.md",
     "DataScience/Programming/notes/un_1.md",
     "DataScience/Programming/notes/TorchVison.md",
-    "DataScience/Programming/notes/torch.nn.LAyers.md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
