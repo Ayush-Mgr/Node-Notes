@@ -12,6 +12,7 @@
 - [[with()]]
 - [[print()]]
 - [[abs()]]
+- [[Decorators]]
 
 ### Data Science Libraries (NumPy, Pandas, Matplotlib)
 - [[NumPy]]

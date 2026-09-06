@@ -27,6 +27,7 @@
 # retry_helper.py
 - `from gspread.exceptions import APIError`  gets errors from Api servers
 -  RateLimiter  has delay (amount of delay before next call ) and the last call ( amount of time passed after last call ) 
+- 
  - [[Decorators|`from functools import wraps`]]
  - 
  
