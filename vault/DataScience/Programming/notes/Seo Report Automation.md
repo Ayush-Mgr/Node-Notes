@@ -25,4 +25,4 @@
 
 
 # retry_helper.py
-
+`from gspread.exceptions import APIError`  gets errors from Api servers
