@@ -25,6 +25,7 @@
 
 
 # retry_helper.py
+409 403 connection errors and delay
 - `from gspread.exceptions import APIError`  gets errors from Api servers
 -  RateLimiter  has delay (amount of delay before next call ) and the last call ( amount of time passed after last call ) 
 - `time.monotonic()` is a stopwatch that constantly ticks forward from pc turned on, now = time.monotonic()  This line looks at the stopwatch right _now_ and saves the exact current time
