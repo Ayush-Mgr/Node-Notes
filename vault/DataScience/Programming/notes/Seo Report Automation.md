@@ -29,5 +29,5 @@
 -  RateLimiter  has delay (amount of delay before next call ) and the last call ( amount of time passed after last call ) 
 - `time.monotonic()` is a stopwatch that constantly ticks forward from pc turned on, now = time.monotonic()  This line looks at the stopwatch right _now_ and saves the exact current time
  - [[Decorators|`from functools import wraps`]]
- - 
+ - `def retry_quota_error(sleep_func=time.sleep):` this function has two functions in it one is sleep_func=time.sleep that we will use in wrapper and another is the function getting wrapped the func
  
