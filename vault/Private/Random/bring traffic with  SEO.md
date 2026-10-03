@@ -2,8 +2,13 @@ thumbnail:  why your Claude , chatgpt, website sucks
 
 # Script 
 
-it has become very easy to create websites using ai
-all this websites (scene : awesome webs slides   ) looks amazin with 3d renders and effects , but the lack  one verry important feaure that every sucessfull  wbsite with high traffic has
+v3: you may be wondering why ur wesite as no ttraffic even though it has awesome designs 
+v1 : it has become very easy to create websites using ai,
+v2 :all this websites (scene : awesome webs slides   ) looks amazin with 3d renders and effects , 
+
+but the lack  one verry important feaure that every sucessfull  wbsite with high traffic has
+
+which casue them to have zero site visits event hough the site is amazing and   
 
 even a site like this (a simple poor visual website ) could beat this whole sum website if they got this feature  
 
