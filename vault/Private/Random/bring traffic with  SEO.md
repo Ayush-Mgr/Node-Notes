@@ -27,21 +27,11 @@ for that search on google `site:domain.com` and see result is your domain there 
 which is to connect it to Google Search Console create ur account connect it to console 
 and index it to ur website
 
-check sitemap.xml is present for ur website it covers ur 
+check sitemap.xml is present for ur website it a map for google crawler to understand ur complex page strctrure    
 
+include basic robots.txt 
 
-
-. Does every important page target something people actually search for?
-Explain:
-
-> Don't build a page and then randomly stuff keywords into it.  
-> Decide what someone would search to find that page.
-
-For a business:
-
-`/web-design` → web design services  
-`/seo` → SEO services  
-`/about` → brand/about intent
+and after gsc set up go to index and check noindex pages and try to index it so google could see those pages 
 
 
 
@@ -50,7 +40,8 @@ For a business:
 
 
 
-Keyword
+
+Keyword 
 
 
 Onpages
