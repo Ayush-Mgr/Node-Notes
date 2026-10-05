@@ -63,12 +63,9 @@ such as :
 and finally we check and Fix the basics of the pages  
 
 which includes 
-- title : dose it includes the keywords and represents the intent 
-- H1 : isit present 
-- meta description : same keywords 
-- descriptive URL : same keywords 
-- useful content : same keywords 
-- image alt text : same keywords 
+- **Title** → Does it clearly describe the page, match the search intent, and naturally include the primary keyword?
+- **H1** → Is there a clear main heading that tells the user what the page is about?
+- meta description , descriptive URL, content and  image alt text  : do they include keywords  
 
 
 
