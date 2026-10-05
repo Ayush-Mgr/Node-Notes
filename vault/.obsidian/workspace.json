@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "temp.md",
+                "file": "SEO/SEO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "temp"
+              "title": "SEO"
             }
           }
         ],
@@ -242,8 +242,8 @@
   },
   "active": "7b3ef5e08d42c2c0",
   "lastOpenFiles": [
-    "Private/Random/bring traffic with  SEO.md",
     "temp.md",
+    "Private/Random/bring traffic with  SEO.md",
     "Private/Random/1. MAze - script.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
     "DataScience/Programming/notes/Decorators.md",
