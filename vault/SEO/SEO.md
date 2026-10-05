@@ -61,12 +61,12 @@ This is the key concept that solves your blog-vs-target-page confusion.
 
 ### 4 main types
 
-|Intent|What the user wants|Example|
-|---|---|---|
-|**Informational**|Learn something|`what is GoHighLevel CRM`|
-|**Commercial**|Research before buying|`GoHighLevel vs HubSpot`|
-|**Transactional**|Buy/hire/do something|`GoHighLevel consultant Brisbane`|
-|**Navigational**|Find a specific site/brand|`GoHighLevel login`|
+| Intent            | What the user wants        | Example                           |
+| ----------------- | -------------------------- | --------------------------------- |
+| **Informational** | Learn something            | `what is GoHighLevel CRM`         |
+| **Commercial**    | Research before buying     | `GoHighLevel vs HubSpot`          |
+| **Transactional** | Buy/hire/do something      | `GoHighLevel consultant Brisbane` |
+| **Navigational**  | Find a specific site/brand | `GoHighLevel login`               |
 
 ### Why this matters for your SEO pages
 

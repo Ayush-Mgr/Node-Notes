@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -240,12 +240,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7b3ef5e08d42c2c0",
+  "active": "7980d85dfad44135",
   "lastOpenFiles": [
+    "SEO/SEO.md",
     "temp.md",
     "Private/Random/bring traffic with  SEO.md",
-    "Private/Random/1. MAze - script.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
+    "Private/Random/1. MAze - script.md",
     "DataScience/Programming/notes/Decorators.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/index/Web_Dev_index.md",
@@ -253,7 +254,6 @@
     "Python Decorators.md",
     "DataScience/Programming/notes/0 . summary.md",
     "SEO/seo KEys.md",
-    "SEO/SEO.md",
     "SEO/SEO PORTFOLIO.md",
     "SEO/Low qul Backlinks - seo webs.md",
     "SEO/brand overview.md",

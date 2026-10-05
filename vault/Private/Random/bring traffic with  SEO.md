@@ -38,6 +38,26 @@ and after gsc set up go to index and check noindex pages and try to index it so 
 
 
 
+Does every important page target something people actually search for?
+
+Don't build a page and then randomly stuff keywords into it.  
+
+Decide what someone would search to find that page. in technical term we call it search intend 
+for each page the intent for the page should be clear 
+such as :
+
+| Intent            | What the user wants        | Example                   |
+| ----------------- | -------------------------- | ------------------------- |
+| **Informational** | Learn something            | ``Is GTA 6 even coming?`` |
+| **Commercial**    | Research before buying     | ``GTA 6 vs GTA 5``        |
+| **Transactional** | Buy/hire/do something      | `` Buy GTA 6``            |
+| **Navigational**  | Find a specific site/brand | ``GTA 6 Rockstar Games``  |
+
+ For a business:
+ 
+`/web-design` → web design services  
+`/seo` → SEO services  
+`/about` → brand/about intent
 
 
 
