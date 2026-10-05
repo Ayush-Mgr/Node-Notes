@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -240,10 +240,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7980d85dfad44135",
+  "active": "7b3ef5e08d42c2c0",
   "lastOpenFiles": [
-    "temp.md",
     "Private/Random/bring traffic with  SEO.md",
+    "temp.md",
     "Private/Random/1. MAze - script.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
     "DataScience/Programming/notes/Decorators.md",
