@@ -4,7 +4,7 @@ audience : people who made websites using ai and now thinking how to get traffic
 
 v3: you may be wondering why ur website as no traffic even though it has awesome designs 
 v1 : it has become very easy to create websites using ai,
-v2 :all this websites (scene : awesome webs slides   ) looks amazing with 3d renders and effects , 
+v2 :all this websites (scene : awesome webs slides) looks amazing with 3d renders and effects , 
 
 but the lack  one very important feature that every successful  website with high traffic has
 
@@ -38,11 +38,7 @@ include basic robots.txt
 and after gsc set up go to index and check noindex pages and try to index it so google could see those pages 
 
 
-
-
-
-
-Does every important page target something people actually search for?
+second Does every important page target something people actually search for?
 
 Don't build a page and then randomly stuff keywords into it.  
 
@@ -63,6 +59,16 @@ such as :
 `/seo` → SEO services  
 `/about` → brand/about intent
 
+ 
+
+# Keyword 
+
+if you have no idea about keywords  those are words or sentence  that your client might use to search the website , 
+
+
+
+
+# Onpages
 
 and finally we check and Fix the basics of the pages  
 
@@ -73,17 +79,11 @@ which includes
 
 if not done hang on cause we moving towards 
 
-# Keyword 
-
-if you have no idea about keywords  those are words or sentence  that your client might use to search the website
-
-Onpages
-
-
-
 off page 
 
 
 
 
 
+Tag 
+#yt 
