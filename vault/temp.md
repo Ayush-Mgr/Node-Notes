@@ -1,144 +1,171 @@
-Exactly. That changes the scope **a lot**.
+Yes. This is the point where your video can become very practical.
 
-For a YouTube video aimed at people who built a website with AI and are now thinking:
+Your basic idea is right:
 
-> **"Okay, my website exists. How do I get people to actually find it?"**
+> **Find relevant keywords → look at search volume → look at difficulty → choose something realistic for the website.**
 
-you don't need to teach a professional 50-point SEO audit.
+I'd just add **two things before volume/KD**: **relevance and intent**. And I'd correct one factual point: search volume is generally **monthly**, not daily. Semrush and Ahrefs both describe it as an estimate of average monthly searches. [Semrush](https://www.semrush.com/free-tools/keyword-search-volume-checker/?utm_source=chatgpt.com)
 
-The old video is useful because it shows the _full audit universe_, but your audience needs a **practical starter audit**.
+### Raw sketch for your keyword section
 
-### I'd simplify it to 7 things
+## Keyword Research
 
-**1. Can Google find and index the site?**  
-Check:
+If you have no idea what keywords are:
 
-- `site:domain.com`
-- Google Search Console
-- sitemap
-- robots.txt
-- noindex problems
+> Keywords are the words or phrases people type into Google to find something.
 
-**2. Does every important page target something people actually search for?**  
-Explain:
+They can be short:
 
-> Don't build a page and then randomly stuff keywords into it.  
-> Decide what someone would search to find that page.
+> `SEO`
 
-For a business:
+or more specific, long-tail searches:
 
-`/web-design` → web design services  
-`/seo` → SEO services  
-`/about` → brand/about intent
+> `best SEO agency for small business`
 
-**3. Fix the basic on-page stuff**  
-For important pages:
+### But which keywords should you choose?
 
-- title
-- H1
-- meta description
-- descriptive URL
-- useful content
-- image alt text
+Use a free keyword research tool such as **Semrush Keyword Magic Tool / Keyword Search Volume Checker** or **Ahrefs Keyword Generator**.
 
-You don't need to teach character-count obsession.
+Enter a **core keyword related to your website/business**.
 
-**4. Make the site fast and usable on mobile**  
-Use PageSpeed Insights.
+For example:
 
-Show the viewer:
+> `web design`
 
-> "Don't obsess over getting 100/100. Find the things actually making the page slow."
+The tool will give you related keyword ideas along with things like:
 
-This is particularly relevant to AI-built websites because AI website generators can produce bloated pages/scripts.
+- **Search volume** → approximately how many searches the keyword gets **per month**
+- **Keyword Difficulty (KD)** → an estimate of how difficult it is to rank for that keyword
+- **Search intent**
+- **Related keyword ideas**
 
-**5. Make Google understand the site structure**  
-Show simple internal linking:
+Semrush currently provides monthly volume, KD, intent and SERP information, while Ahrefs also provides volume, KD and traffic-potential data. [Semrush](https://www.semrush.com/free-tools/keyword-search-volume-checker/?utm_source=chatgpt.com)
 
-```
-Homepage
-   ↓
-Service page
-   ↓
-Supporting article
-   ↓
-Contact / conversion page
-```
+### So what makes a good keyword?
 
-That's much easier for a beginner to understand than a full crawl-depth/orphan-page lesson.
+Don't simply pick the keyword with the highest volume.
 
-**6. Create content around actual questions people search**
+Look for a balance of:
 
-This is probably the most valuable part of your video.
+**1. Relevance**  
+Does the keyword actually relate to what you offer?
 
-Instead of:
+**2. Search intent**  
+Does the person searching actually want what your page provides?
 
-> "I made an AI website → now I'll publish 100 AI-generated blogs."
+**3. Search volume**  
+Is there enough demand to make targeting it worthwhile?
 
-Show:
+**4. Difficulty**  
+Can a website like yours realistically compete?
+
+For a **new website**, you generally don't want to immediately fight for extremely competitive keywords.
+
+For example:
 
 ```
-Service
-   ↓
-What people ask before buying
-   ↓
-Useful article
-   ↓
-Internal link back to service
+SEO
+Volume: VERY HIGH
+KD: VERY HIGH
+
+↓ probably difficult for a new site
+
+SEO for plumbers in Brisbane
+Volume: LOWER
+KD: LOWER
+
+↓ potentially much more realistic
 ```
 
-And emphasize **don't mass-publish AI garbage just for SEO**.
+So:
 
-The audit transcript itself makes the point that content targeting and quality require human/manual evaluation rather than blindly trusting a tool. Pasted text(20261005-065536)
+> **High volume + low difficulty = attractive**
 
-**7. Get some authority / promotion**
+but also:
 
-For beginners, keep it simple:
+> **Moderate volume + low difficulty + very high relevance = often a better opportunity for a new website.**
 
-- Google Business Profile if local
-- relevant directories
-- partnerships
-- communities
-- genuine mentions
-- useful social distribution
-- backlinks earned through useful content/projects
-
-Don't turn the video into a backlink-building masterclass.
+Semrush itself notes that there is no universal "good" search-volume number and that lower-volume keywords can be more valuable when they have stronger relevance and intent. [Semrush](https://www.semrush.com/free-tools/keyword-search-volume-checker/?utm_source=chatgpt.com)
 
 ---
 
-## Your video could have a much better hook
+## One thing I would definitely add to your video
 
-Something like:
+After the tool gives you a promising keyword, **Google the keyword yourself.**
 
-> **"You built a website with ChatGPT, Claude, Lovable, Bolt, or whatever AI tool. Congratulations. Now here's the problem: nobody knows it exists."**
+This is extremely important.
+
+Suppose the tool says:
+
+```
+Keyword: web design
+Volume: 10,000
+KD: 30
+```
+
+You might think:
+
+> "Amazing! Easy keyword."
+
+But search Google.
+
+If the first page is:
+
+```
+Adobe
+Wix
+Squarespace
+Shopify
+Forbes
+Huge agencies
+```
+
+then your actual competition may be much tougher than the KD number makes it look.
+
+KD is only an **estimate**, and different tools calculate it differently. Ahrefs explicitly recommends manual SERP analysis for a fuller understanding of ranking difficulty. [Ahrefs](https://ahrefs.com/academy/how-to-use-ahrefs/ahrefs-seo-metrics/keyword-and-search-traffic?utm_source=chatgpt.com)
+
+So your actual process becomes:
+
+```
+Core topic
+   ↓
+Keyword tool
+   ↓
+Related keywords
+   ↓
+Filter by relevance + intent
+   ↓
+Check volume
+   ↓
+Check KD
+   ↓
+Google the keyword yourself
+   ↓
+Look at who's actually ranking
+   ↓
+Choose realistic keyword
+```
+
+That's a **very solid beginner keyword-research workflow**.
+
+### And this connects perfectly to your previous section
+
+You already established:
+
+> **What does the user want? → Search intent**
+
+Now:
+
+> **What are people actually typing? → Keywords**
 
 Then:
 
-> **"In the next 15 minutes, I'll show you the basic SEO audit you should run before spending money on backlinks or ads."**
+> **How much demand and competition is there? → Volume + KD**
 
-That's a much more focused promise than:
+So the flow of your video is becoming very logical:
 
-> "Complete 50-point SEO audit."
-
----
-
-## And I would NOT show the whole company audit
-
-Use the Modern Craftsman audit as **behind-the-scenes knowledge**, not as the video's scope.
-
-Your company's PDF goes much further into keyword strategy, competitors, local SEO, content planning, architecture and growth planning. moderncraftsman - Site Audit moderncraftsman - Site Audit
-
-For your audience, you can compress all of that into:
-
-> **"Once the technical basics are fixed, then you move into keyword research, content, competitors and authority building."**
-
-Done.
-
-### The viewer's journey should be:
-
-**AI website → Google can find it → pages target real searches → site is usable → useful content → promotion → measure results**
-
-That's enough.
-
-And actually, **that's probably a better YouTube video than a professional audit tutorial**, because you're solving a very specific beginner problem rather than trying to teach all of SEO in one video.
+**2. Find the search intent**  
+↓  
+**3. Fix the page around that intent**  
+↓  
+**4. Research keywords to target and track**

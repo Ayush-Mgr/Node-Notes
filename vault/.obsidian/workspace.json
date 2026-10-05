@@ -35,7 +35,8 @@
               "title": "temp"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -211,10 +212,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7980d85dfad44135",
+  "active": "2c1f1863c6c521fb",
   "lastOpenFiles": [
-    "temp.md",
     "Private/Random/bring traffic with  SEO.md",
+    "temp.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
     "Private/Random/1. MAze - script.md",
     "SEO/SEO.md",
