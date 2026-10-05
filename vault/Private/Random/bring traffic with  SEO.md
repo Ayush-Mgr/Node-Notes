@@ -17,9 +17,9 @@ and the feature is SEO, search engine optimization. this feasture will make ur w
 and i will show you how to do it from knowing what people search, and how to optimize  so that your website should be the first thing they should see when they search on google 
 
 
-
 # 1. audit 
-first we need to diagnose the website by checking dose it fill this criteria (an clipboard with criteria mark buttons)
+first we need to diagnose the website by checking weather it fill this criteria (an clipboard with criteria mark buttons)
+
 
 
 
