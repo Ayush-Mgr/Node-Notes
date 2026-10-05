@@ -19,6 +19,23 @@ and i will show you how to do it from knowing what people search, and how to opt
 
 
 # 1. audit 
-first we need to diagnose the website by cheking dose it fill this criterias (an clipboard with critria mark buttons)
+first we need to diagnose the website by checking dose it fill this criteria (an clipboard with criteria mark buttons)
+
+
+
+
+
+
+Keyword
+
+
+Onpages
+
+
+
+off page 
+
+
+
 
 
