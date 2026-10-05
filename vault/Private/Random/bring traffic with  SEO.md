@@ -16,6 +16,10 @@ and the feature is SEO, search engine optimization. this feature will make ur we
 
 and i will show you how to do it from knowing what people search, and how to optimize  so that your website should be the first thing they should see when they search on google 
 
+video is divided in four  sections    audit , keywords , onpage and offpage     
+
+moving forward with 
+
 
 # 1. audit 
 first we need to diagnose the website by checking weather it fill this criteria (an clipboard with criteria mark buttons)
@@ -67,10 +71,11 @@ which includes
 - **H1** → Is there a clear main heading that tells the user what the page is about?
 - meta description , descriptive URL, content and  image alt text  : do they include keywords  
 
+if not done hang on cause we moving towards 
 
+# Keyword 
 
-Keyword 
-
+you have been hearing a lot about key word but wtf is even keyword, 
 
 Onpages
 
