@@ -63,12 +63,13 @@ such as :
 
 # Keyword 
 
-if you have no idea about keywords  those are words or sentence  that your client might use to search the website , 
+if you have no idea about keywords  those are words or sentence also called long tail and short tail (ai : scene of word converting to long and short tail  )  that your client might use to search the website 
+but which key words to select 
 
 
 
 
-# Onpages
+# Onpage
 
 and finally we check and Fix the basics of the pages  
 
