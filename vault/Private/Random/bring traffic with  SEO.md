@@ -60,6 +60,17 @@ such as :
 `/about` → brand/about intent
 
 
+and finally we check and Fix the basics of the pages  
+
+which includes 
+- title : dose it includes the keywords and represents the intent 
+- H1 : isit present 
+- meta description : same keywords 
+- descriptive URL : same keywords 
+- useful content : same keywords 
+- image alt text : same keywords 
+
+
 
 Keyword 
 
