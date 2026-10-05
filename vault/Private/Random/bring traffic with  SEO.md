@@ -75,7 +75,7 @@ if not done hang on cause we moving towards
 
 # Keyword 
 
-you have been hearing a lot about key word but wtf is even keyword, 
+if you have no idea about keywords  those are words or sentence  that your client might use to search the website
 
 Onpages
 
