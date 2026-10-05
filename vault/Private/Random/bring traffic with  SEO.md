@@ -22,7 +22,8 @@ first we need to diagnose the website by checking weather it fill this criteria 
 
 first is Can Google see your website ?
 
-for that search on google `site:domain.com` and see result is your domain there (a video of searching ) 
+for that search on google `site:domain.com` and see result is your domain there (a video of searching ) if there is no results recheck the domain   you written  and site is live or not still same next step will fix it
+s≤
 
 
 
