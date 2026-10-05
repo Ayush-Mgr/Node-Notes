@@ -20,14 +20,14 @@ and i will show you how to do it from knowing what people search, and how to opt
 # 1. audit 
 first we need to diagnose the website by checking weather it fill this criteria (an clipboard with criteria mark buttons)
 
-1. Can Google find and index the site?
-Check:
+first is Can Google see your website ?
 
-- `site:domain.com`
-- Google Search Console
-- sitemap
-- robots.txt
-- noindex problems
+for that search on google `site:domain.com` and see result is your domain there (a video of searching ) 
+
+
+
+
+
 
 2. Does every important page target something people actually search for?
 Explain:
