@@ -87,8 +87,21 @@ if not done hang on cause we moving towards
 
 off page 
 
-it is super simple just go to ur social media platforms may be createa new accound  and start posting about ur website here is a cheat sheet i follow 
+it is super simple just Go to the social media platforms where your potential customers actually are and start talking about your business.
+Share useful posts related to your products or services, and when it's relevant, add a link to the appropriate page on your website.
+example 
 
+Instagram
+→ Post about your service
+→ Link to the relevant page
+
+LinkedIn
+→ Share a useful article/case study
+→ Link to the article
+
+Facebook group
+reddit
+and so on
 
 
 Tag 
