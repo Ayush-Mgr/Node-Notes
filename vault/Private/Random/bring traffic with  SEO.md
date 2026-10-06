@@ -63,8 +63,11 @@ such as :
 
 # Keyword 
 
-if you have no idea about keywords  those are words or sentence also called long tail and short tail (ai : scene of word converting to long and short tail  )  that your client might use to search the website 
-but which key words to select 
+if you have no idea about keywords  those are words or sentence also called short tail and long tail (ai : scene of word converting to short and long tail like  `SEO` to `best SEO agency for small business`  )  that your client might use to search the website 
+
+but which  words to select and how to know what client is searching for that we use tools
+such as Semrush Keyword Magic Tool / Keyword Search Volume Checker or Ahrefs Keyword Generator. we could use its free services   
+i like using semrush do i search GTA in its key words magic tool it gave me intent , volume and kd  , and many related key words and we could use , key words  
 
 
 
