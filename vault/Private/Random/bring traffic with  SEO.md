@@ -69,6 +69,8 @@ but which  words to select and how to know what client is searching for that we 
 such as Semrush Keyword Magic Tool / Keyword Search Volume Checker or Ahrefs Keyword Generator. we could use its free services   
 i like using semrush do i search GTA in its key words magic tool it gave me intent , volume and kd  , and many related key words and we could use , key words  
 
+serch core key it will give you reated and that keys just choose with high volume meaning how many people search daily and low kd meaning how many competition so choose balance hi volume high kd is bad hard to rank espically for new site choose moderate volume with low kd
+
 
 
 
