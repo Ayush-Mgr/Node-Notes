@@ -1,4 +1,14 @@
-thumbnail:  why your Claude , chat-gpt, website sucks , v2: WHY YOUR AI WEBSITE GETS NO TRAFFIC
+thumbnail:  why your Claude , chat-gpt, website sucks , v2: 
+
+
+
+**Thumbnail:**
+
+> **LOOKS GREAT. 0 TRAFFIC.**
+
+**Title:**
+
+> **How to Get Traffic to a New Website (SEO for AI-Built Websites)**
 
 audience : people who made websites using ai and now thinking how to get traffic
 # Script 
