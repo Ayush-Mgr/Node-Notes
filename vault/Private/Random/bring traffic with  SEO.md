@@ -83,9 +83,8 @@ which includes
 - **H1** → Is there a clear main heading that tells the user what the page is about?
 - meta description , descriptive URL, content and  image alt text  : do they include keywords  
 
-if not done hang on cause we moving towards 
 
-off page 
+# off page 
 
 it is super simple just Go to the social media platforms where your potential customers actually are and start talking about your business.
 Share useful posts related to your products or services, and when it's relevant, add a link to the appropriate page on your website.
