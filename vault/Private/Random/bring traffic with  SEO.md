@@ -8,7 +8,7 @@ thumbnail:  why your Claude , chat-gpt, website sucks , v2:
 
 **Title:**
 
-> **How to Get Traffic to a New Website (SEO for AI-Built Websites)**
+> **How to Get Traffic to a New Website , SEO for AI-Built Websites**
 
 audience : people who made websites using ai and now thinking how to get traffic
 # Script 
