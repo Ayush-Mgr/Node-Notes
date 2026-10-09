@@ -32,6 +32,8 @@ video is divided in four  sections    audit , keywords , onpage and offpage
 moving forward with 
 
 
+here is simple and basic optimization of your website 
+
 # 1. audit 
 first we need to diagnose the website by checking weather it fill this criteria (an clipboard with criteria mark buttons)
 
@@ -114,6 +116,20 @@ reddit
 and so on
 
 as your traffic grows look for opportunities to get mentioned by relevant websites, industry publications, local businesses, and creators. You can contribute useful guest articles or earn coverage through digital PR. Focus on relevance and real audiences, not simply the number of backlinks.
+
+# analysis
+
+After implementing the changes, return to Google Search Console and monitor:
+
+- Impressions: Is your website appearing in search?
+    
+- Clicks: Are people visiting?
+    
+- Queries: What are people finding you for?
+	
+- and keep indexing new pages so google could see
+
+
 
 Tag 
 #yt 
