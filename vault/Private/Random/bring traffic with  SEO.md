@@ -32,7 +32,7 @@ video is divided in four  sections    audit , keywords , onpage and offpage
 moving forward with 
 
 
-here is simple and basic optimization of your website 
+here is simple and basic optimization of your website which will lead your website to 
 
 # 1. audit 
 first we need to diagnose the website by checking weather it fill this criteria (an clipboard with criteria mark buttons)
