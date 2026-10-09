@@ -113,6 +113,7 @@ Facebook group
 reddit
 and so on
 
+as your traffic grows look for opportunities to get mentioned by relevant websites, industry publications, local businesses, and creators. You can contribute useful guest articles or earn coverage through digital PR. Focus on relevance and real audiences, not simply the number of backlinks.
 
 Tag 
 #yt 
