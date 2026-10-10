@@ -27,12 +27,14 @@ and the feature is SEO, search engine optimization. this feature will make ur we
 
 and i will show you how to do it from knowing what people search, and how to optimize  so that your website should be the first thing they should see when they search on google 
 
+v2: here is simple and basic optimization of your website which will lead your website to supass most ai build web website and rank above  
+
 video is divided in four  sections    audit , keywords , onpage and offpage     
 
 moving forward with 
 
 
-v2: here is simple and basic optimization of your website which will lead your website to supass most ai build web website and rank above  
+
 
 # 1. audit 
 first we need to diagnose the website by checking weather it fill this criteria (an clipboard with criteria mark buttons)
