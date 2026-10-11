@@ -1,7 +1,3 @@
-thumbnail:  why your Claude , chat-gpt, website sucks , v2: 
-
-
-
 **Thumbnail:**
 
 > **LOOKS GREAT. 0 TRAFFIC.**
