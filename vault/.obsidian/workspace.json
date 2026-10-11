@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "temp.md",
+                "file": "Script seo.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "temp"
+              "title": "Script seo"
             }
           }
         ]
@@ -213,7 +213,8 @@
   },
   "active": "7980d85dfad44135",
   "lastOpenFiles": [
-    "temp.md",
+    "Script seo.md",
+    "Untitled.canvas",
     "Private/Random/bring traffic with  SEO.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
     "Private/Random/1. MAze - script.md",
@@ -238,7 +239,6 @@
     "DataScience/Programming/notes/gspread.md",
     "DataScience/Programming/notes/with().md",
     "DataScience/Programming/notes/VIEWS.md",
-    "DataScience/Programming/notes/UPDATE.md",
     "CRM/Notes",
     "CRM/Index",
     "CRM",
