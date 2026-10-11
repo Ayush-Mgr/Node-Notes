@@ -9,7 +9,8 @@
 audience : people who made websites using ai and now thinking how to get traffic
 # Script 
 
-v3: you may be wondering why ur website as no traffic even though it has awesome designs 
+v3: your website has next to nothing traffic even though it has awesome designs and effects, it caused because we often over look SEO website may look good but lack the feature to rank in google heck google even not know your site exist so here are  .
+
 v1 : it has become very easy to create websites using ai,
 v2 :all this websites (scene : awesome webs slides) looks amazing with 3d renders and effects , 
 
