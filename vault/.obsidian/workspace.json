@@ -35,7 +35,8 @@
               "title": "Script seo"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -211,10 +212,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7980d85dfad44135",
+  "active": "5aadbb6b85b5030e",
   "lastOpenFiles": [
-    "Script seo.md",
     "Private/Random/bring traffic with  SEO.md",
+    "Script seo.md",
     "Untitled.canvas",
     "DataScience/Programming/notes/Seo Report Automation.md",
     "Private/Random/1. MAze - script.md",
