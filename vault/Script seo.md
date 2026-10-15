@@ -202,13 +202,13 @@ For example:
 
 **Facebook groups and Reddit:** Participate in relevant discussions and share your website only when it genuinely helps answer someone's question and follows the community rules.
 
-Don't paste your URL everywhere just to create links. The goal is to reach relevant people, not spam comments.
+Don't paste your URL everywhere just to create links. Instead, find topics and discussions your potential visitors are already interested in.
 
-As your website grows, look for opportunities to get mentioned by relevant websites, industry publications, local businesses and creators. You could contribute useful guest articles or earn coverage through digital PR.
+For example, imagine you run a gaming website. You could create a useful article like "Which GTA Games Are Worth Playing Before GTA 6?" and share it in relevant gaming communities where self-promotion is allowed.
 
-These activities can help people discover your business and may lead to valuable backlinks. Focus on relevance and real audiences rather than the raw number of links.
+Or, if someone is asking which GTA game they should play, answer their question and link to your guide if it genuinely helps.
 
-And if you're running a local business, set up a Google Business Profile where eligible. Add accurate business information, your website, relevant services, and genuine photos. Encourage honest reviews from real customers and respond professionally.
+The idea is simple: **find the right audience, provide something useful, and give interested people a reason to click through to your website.** That can bring relevant referral traffic while helping more people discover your content.
 
 ## 5. MEASURE — Check whether your work is helping
 
