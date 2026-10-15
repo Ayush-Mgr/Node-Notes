@@ -34,6 +34,14 @@ Let's start with the basics.
 
 Before trying to get traffic, we need to check whether there are any basic problems stopping people from finding our website.
 
+[Visual: A clipboard appears with checkboxes. Each item gets checked as we cover it.]
+
+- Can Google discover and index my important pages?
+    
+- Does each important page target something people actually search for?
+
+
+We'll go through these checks one by one.
 ### First: Can Google find your website?
 
 [Visual: Open Google and search `site:yourdomain.com`.]
