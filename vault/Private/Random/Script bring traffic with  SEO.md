@@ -12,7 +12,9 @@ But there's one problem.
 
 Nobody is visiting it.
 
-And if you want people to discover your website through Google, having a beautiful design isn't enough.
+And if you want people to discover your website through Google, 
+
+having a beautiful design isn't enough.
 
 AI tools can help you build a website, but they don't automatically make sure Google can find your pages or that those pages match what people are searching for.
 
