@@ -1,10 +1,4 @@
-# How to Get Traffic to an AI-Built Website — Script
 
-**Thumbnail:** LOOKS GREAT. 0 TRAFFIC.
-
-**Title:** How to Get Traffic to a New Website (SEO for AI-Built Websites)
-
-## HOOK
 
 [Visual: Show impressive AI-built websites with 3D renders, animations and beautiful designs.]
 
