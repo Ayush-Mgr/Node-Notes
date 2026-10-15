@@ -4,9 +4,9 @@
 
 **Voiceover:**
 
-Your website looks amazing. It has beautiful animations, 3D effects, and a design that looks like it cost thousands of dollars.
+Your website looks ==amazing==. It has beautiful animations, 3D effects, and a design that looks like it cost ==thousands== of dollars.
 
-But there's one problem.
+But .... there's one problem.
 
 [Visual: Website analytics showing almost zero visitors.]
 
@@ -14,13 +14,15 @@ Nobody is visiting it.
 
 And if you want people to discover your website through Google, 
 
-having a beautiful design isn't enough.
+having a beautiful design ==isn't enough==.
 
-AI tools can help you build a website, but they don't automatically make sure Google can find your pages or that those pages match what people are searching for.
+AI tools can help you build a website, 
+but they ==don't ==...automatically make sure Google can find your pages or that those pages ==match== what people are searching for.
 
-In fact, a much simpler-looking website could attract more visitors simply because it's easier to discover through search.
+In fact, a much ==simpler-looking website== could attract ==more visitors== simply because it's easier to discover through search.
 
-So, if you've built a website using ChatGPT, Claude, Lovable, or another AI tool, here's a simple SEO process you can follow to start improving its visibility.
+So, if you've built a website using ChatGPT, Claude, Lovable, or another AI tool, 
+here's a simple SEO process you can follow to start improving its visibility.
 
 We'll cover four things: **auditing your website, finding keywords, optimizing your pages, and promoting your website.**
 
