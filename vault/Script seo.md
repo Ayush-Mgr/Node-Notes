@@ -87,13 +87,13 @@ There are four common types.
 
 [Visual: Display a simple table with examples.]
 
-- **Informational:** The person wants to learn something. Example: "How to choose running shoes."
+- **Informational:** The person wants to learn something. Example: "Is GTA 6 even coming?"
     
-- **Commercial:** The person is researching options before deciding. Example: "Best running shoes for beginners."
+- **Commercial:** The person is researching options before deciding. Example: "GTA 6 vs GTA 5"
     
-- **Transactional:** The person wants to take an action. Example: "Buy running shoes online."
+- **Transactional:** The person wants to take an action. Example: "Pre-order GTA 6 "
     
-- **Navigational:** The person wants to find a particular website or brand. Example: "Nike official website."
+- **Navigational:** The person wants to find a particular website or brand. Example: "GTA 6 official Rockstar website"
     
 
 Now, imagine you're building a business website.
