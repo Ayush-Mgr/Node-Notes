@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SEO/SEO PORTFOLIO.md",
+                "file": "Private/Random/3. A* script.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SEO PORTFOLIO"
+              "title": "3. A* script"
             }
           }
         ],
@@ -70,7 +70,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tools",
+                "query": "tag:#Algorithms_and_Data_Structures",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -91,7 +91,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -212,10 +213,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "5aadbb6b85b5030e",
+  "active": "74348123305635ac",
   "lastOpenFiles": [
-    "SEO/SEO.md",
+    "Private/Random/1. MAze - script.md",
     "SEO/SEO PORTFOLIO.md",
+    "SEO/SEO.md",
     "SEO/SEO SKILL& TOOLS.md",
     "SEO/Seo Guest posting.md",
     "SEO/SEO POSt.md",
@@ -228,7 +230,6 @@
     "Private/Random/bring traffic with  SEO.md",
     "Untitled.canvas",
     "DataScience/Programming/notes/Seo Report Automation.md",
-    "Private/Random/1. MAze - script.md",
     "DataScience/Programming/notes/Decorators.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/index/Web_Dev_index.md",
