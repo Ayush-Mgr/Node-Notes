@@ -29,11 +29,14 @@ Let's start with the basics.
 
 ## 1. AUDIT — Check the foundations
 
-Before trying to get traffic, we need to check whether there are any basic problems stopping people from finding our website.
+Before trying to get traffic, we need to check whether there are any basic ==problems== stopping people from finding our website.
 
 [Visual: A clipboard appears with checkboxes. Each item gets checked as we cover it.]
 
 - Can Google discover and index my important pages?
+	- site:yourdomain.com
+	- yourdomain.com/sitemaps.xml
+	- yourdomain.com/robots.txt
     
 - Does each important page target something people actually search for?
 
