@@ -55,11 +55,7 @@ Use URL Inspection to check your important pages and find out whether Google has
 
 [Visual: Show Google Search Console.]
 
-Next, check whether your website has an XML sitemap. A commonly stored as :
-
-`yourdomain.com/sitemap.xml`
-
-so go to search bar and search `yourdomain.com/sitemap.xml`
+Next, check whether your website has an XML sitemap. 
 
 A sitemap is basically a map that gives Google a list of the important pages on your website, so it can discover them more easily.
 
