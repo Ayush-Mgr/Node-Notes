@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Private/Random/3. A* script.md",
+                "file": "Private/Random/Script bring traffic with  SEO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "3. A* script"
+              "title": "Script bring traffic with  SEO"
             }
           }
         ],
@@ -70,7 +70,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#Algorithms_and_Data_Structures",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -91,8 +91,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -213,8 +212,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "74348123305635ac",
+  "active": "5aadbb6b85b5030e",
   "lastOpenFiles": [
+    "SEO/seo KEys.md",
+    "Private/Random/3. A* script.md",
     "Private/Random/1. MAze - script.md",
     "SEO/SEO PORTFOLIO.md",
     "SEO/SEO.md",
@@ -224,7 +225,6 @@
     "SEO/Web edit console.md",
     "SEO/Low qul Backlinks - seo webs.md",
     "SEO/Seo small Prompts.md",
-    "SEO/seo KEys.md",
     "SEO/brand overview.md",
     "Private/Random/Script bring traffic with  SEO.md",
     "Private/Random/bring traffic with  SEO.md",
