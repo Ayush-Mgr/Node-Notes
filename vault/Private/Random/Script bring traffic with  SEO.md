@@ -34,7 +34,7 @@ Before trying to get traffic, we need to check whether there are any basic ==pro
 [Visual: A clipboard appears with checkboxes. Each item gets checked as we cover it.]
 
 - Can Google discover and index my important pages?
-	- site:yourdomain.com
+	- site:yourdomain.com 
 	- yourdomain.com/sitemaps.xml
 	- yourdomain.com/robots.txt
     
