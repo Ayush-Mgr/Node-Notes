@@ -61,7 +61,11 @@ Next, check whether your website has an XML sitemap. A commonly stored as :
 
 so go to search bar and search `yourdomain.com/sitemap.xml`
 
-A sitemap is essentially a list of URLs that helps Google discover important pages on your website. If you have one, submit it through Search Console.
+A sitemap is basically a map that gives Google a list of the important pages on your website, so it can discover them more easily.
+
+Think of it like giving Google a list of addresses to explore instead of making it find every page on its own.
+
+So, check whether your website has a sitemap, usually at `yourdomain.com/sitemap.xml`, and submit it through Google Search Console.
 
 You should also check your `robots.txt` file to make sure you haven't accidentally blocked important pages from being crawled.
 
