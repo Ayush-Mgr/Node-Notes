@@ -46,15 +46,18 @@ We'll go through these checks one by one.
 
 [Visual: Open Google and search `site:yourdomain.com`.]
 
-Search for `site:yourdomain.com`, replacing the domain with your own website.
+Search for this (`site:yourdomain.com`), replacing the place-holder with your own website doman.
 
-If pages appear, Google has indexed at least some of your website.
+If pages appear, Google has indexed at least some of your pages.
 
-If nothing appears, don't panic. First, double-check that you entered the correct domain and that your website is live.
+If nothing appears, 
+don't panic. 
+First, double-check that you entered the correct domain and that your website is live.
 
-If everything looks fine, open Google Search Console and add and verify your website.
+If everything looks fine, open Google Search Console , add, and verify your website.
 
-Use URL Inspection to check your important pages and find out whether Google has indexed them. If a page isn't indexed, investigate why, fix any problems, and request indexing when appropriate.
+Use URL Inspection to check your important pages and find out whether Google has indexed them.
+If a page isn't indexed, investigate why, fix any problems, and request indexing .
 
 [Visual: Show Google Search Console.]
 
