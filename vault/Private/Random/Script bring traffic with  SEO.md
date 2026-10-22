@@ -33,12 +33,12 @@ Before trying to get traffic, we need to check whether there are any basic ==pro
 
 [Visual: A clipboard appears with checkboxes. Each item gets checked as we cover it.]
 
-- Can Google discover and index my important pages?
+- Can Google discover and index my ==important== pages?
 	- site:yourdomain.com 
 	- yourdomain.com/sitemaps.xml
 	- yourdomain.com/robots.txt
     
-- Does each important page target something people actually search for?
+- Does each important page target something people ==actually== search for?
 
 
 We'll go through these checks one by one.
