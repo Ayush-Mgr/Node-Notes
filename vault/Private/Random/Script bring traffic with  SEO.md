@@ -57,7 +57,7 @@ First, double-check that you entered the correct domain and that your website is
 If everything looks fine, still nothing is appearing, open Google Search Console , add, and verify your website.
 
 Use URL Inspection to check your important pages and find out whether Google has indexed them.
-If a page isn't indexed, investigate why, fix any problems, and request indexing . and then google might see the site again   
+If a page isn't indexed, investigate why, fix any problems, and request indexing . and then google might see that page   
 
 [Visual: Show Google Search Console.]
 
