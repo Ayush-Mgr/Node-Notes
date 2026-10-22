@@ -38,7 +38,7 @@ Before trying to get traffic, we need to check whether there are any basic ==pro
 	- yourdomain.com/sitemaps.xml
 	- yourdomain.com/robots.txt
     
-- Does each important page target something people ==actually== search for?
+- Does each important page target something people actually search for?
 
 
 We'll go through these checks one by one.
@@ -54,7 +54,7 @@ If nothing appears,
 don't panic. 
 First, double-check that you entered the correct domain and that your website is live.
 
-If everything looks fine, open Google Search Console , add, and verify your website.
+If everything looks fine, still nothing appears,  open Google Search Console , add, and verify your website.
 
 Use URL Inspection to check your important pages and find out whether Google has indexed them.
 If a page isn't indexed, investigate why, fix any problems, and request indexing .
