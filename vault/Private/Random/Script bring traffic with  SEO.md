@@ -48,7 +48,7 @@ We'll go through these checks one by one.
 
 Search for this (`site:yourdomain.com`), replacing the place-holder with your own website doman.
 
-If pages appear, Google has indexed at least some of your pages.
+If pages appear, Google has indexed at-least some of your pages.
 
 If nothing appears, 
 don't panic. 
