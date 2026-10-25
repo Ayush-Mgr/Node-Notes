@@ -34,9 +34,21 @@
               "icon": "lucide-file",
               "title": "Script bring traffic with  SEO"
             }
+          },
+          {
+            "id": "ac4e514a44b8f2e2",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.14.5"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.14.5"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -212,7 +224,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "5aadbb6b85b5030e",
+  "active": "ac4e514a44b8f2e2",
   "lastOpenFiles": [
     "Private/Random/bring traffic with  SEO.md",
     "Private/Random/Script bring traffic with  SEO.md",
