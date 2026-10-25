@@ -67,7 +67,8 @@ A sitemap is basically a map that gives Google a list of the important pages on 
 
 Think of it like giving Google a list of addresses to explore instead of making it find every page on its own.
 
-So, check whether your website has a sitemap, usually at `yourdomain.com/sitemap.xml`, and submit it through Google Search Console.
+So, check whether your website has a sitemap, by searching  `yourdomain.com/sitemap.xml` if its not present create new , 
+and submit it through Google Search Console.
 
 You should also check your `robots.txt` file to make sure you haven't accidentally blocked important pages from being crawled.
 
