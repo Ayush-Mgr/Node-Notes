@@ -61,7 +61,7 @@ If a page isn't indexed, investigate why, fix any problems, and request indexing
 
 [Visual: Show Google Search Console.]
 
-Next, check whether your website has an XML sitemap. 
+Next, check whether your website has an ==XML sitemap==. 
 
 A sitemap is basically a map that gives Google a list of the important pages on your website, so it can discover them more easily.
 
