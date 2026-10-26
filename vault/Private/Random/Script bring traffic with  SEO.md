@@ -75,7 +75,8 @@ You should also check your `robots.txt` file to make sure you haven't accident
 which could be done by searching searching `yourdomain.com/robots.txt`
 
 
-Finally, check Search Console's indexing report for issues such as accidental `noindex` directives. Remember, only remove these from pages you actually want Google to index.
+Finally, check Search Console's indexing report for issues such as accidental `noindex` directives. 
+Remember, only remove these from pages you actually want Google to index.
 
 That's the first step: make sure your website is accessible to Google.
 
