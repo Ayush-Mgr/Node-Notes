@@ -71,7 +71,7 @@ and submit it through Google Search Console.
 
 You should also check your `robots.txt` file to make sure you haven't accidentally blocked important pages from being crawled.
 
-which could be done by searching searching `yourdomain.com/robots.txt`
+which could be done by searching this  `yourdomain.com/robots.txt`
 
 
 Finally, check Search Console's indexing report for issues such as accidental `noindex` directives. 
