@@ -63,9 +63,8 @@ If a page isn't indexed, investigate why, fix any problems, and request indexing
 
 Next, check whether your website has an ==XML sitemap==. 
  
-A sitemap is basically a map that gives Google a list of the important pages on your website, so it can discover them more easily.
+A sitemap is basically a map, that gives Google a ==list== of the ==important== pages on your website, so it can discover them more easily.
 
-Think of it like giving Google a list of addresses to explore instead of making it find every page on its own.
 
 So, check whether your website has a sitemap, by searching  `yourdomain.com/sitemap.xml` if its not present create new , 
 and submit it through Google Search Console.
