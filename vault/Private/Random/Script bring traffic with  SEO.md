@@ -76,28 +76,28 @@ which could be done by searching this  `yourdomain.com/robots.txt`
 
 Finally, check Search Console's indexing report for issues such as accidental `noindex` directives. 
 Remember, only remove these from pages you actually want Google to index.
-
+ 
 That's the first step: make sure your website is accessible to Google.
 
-### Second: Does every important page target something people actually search for?
+### Second: Does ==every== important page target something people ==actually== search for?
 
-Don't build a page and then randomly stuff keywords into it.
+Don't build a page and then ==randomly== stuff keywords into it.
 
-First, decide what someone would search for to find that page.
+First, decide what someone would ==actually== search for to find that page.
 
-In SEO, we call this **search intent**.
+In SEO, we call this **==search intent==**.
 
 There are four common types.
 
 [Visual: Display a simple table with examples.]
 
-- **Informational:** The person wants to learn something. Example: "Is GTA 6 even coming?"
+- **Informational:** The person wants to ==learn== something. Example: "Is GTA 6 even coming?"
     
-- **Commercial:** The person is researching options before deciding. Example: "GTA 6 vs GTA 5"
+- **Commercial:** The person is ==researching== options before deciding. Example: "GTA 6 vs GTA 5"
     
-- **Transactional:** The person wants to take an action. Example: "Pre-order GTA 6 "
+- **Transactional:** The person wants to ==take== an action. Example: "Pre-order GTA 6 "
     
-- **Navigational:** The person wants to find a particular website or brand. Example: "GTA 6 official Rockstar website"
+- **Navigational:** The person wants to ==find== a particular website or brand. Example: "GTA 6 official Rockstar website"
     
 
 Now, imagine you're building a business website.
@@ -106,7 +106,7 @@ Your `/web-design` page should explain your web design services.
 
 Your `/seo` page should explain your SEO services.
 
-And your `/about` page should tell visitors about your business.
+And your `/about` page should tell visitors about ==your== business.
 
 Each important page needs a clear purpose and should satisfy the searcher's intent.
 
