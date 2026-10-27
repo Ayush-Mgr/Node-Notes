@@ -154,7 +154,7 @@ Instead, look for relevant, more specific keywords with realistic competition an
 
 But don't blindly trust the numbers.
 
-Search the keyword on Google yourself and examine the results. Are established brands dominating the results? Are the ranking pages actually similar to yours? Can you create something that genuinely answers the search better for your intended audience?
+Search the chosen  keyword from tool  on Google yourself and examine the results. Are established brands dominating the results? Are the ranking pages actually similar to yours? Can you create something that genuinely answers the search better for your intended audience?
 
 The goal isn't simply to find a keyword with high volume and low difficulty.
 
