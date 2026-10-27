@@ -162,6 +162,8 @@ The goal isn't simply to find a keyword with high volume and low difficulty.
 
 Once you've selected a target, map it to the appropriate page instead of creating multiple pages for tiny variations of the same search.
 
+now we got the keywords mapped to the pages but how do we  implement it ?
+
 ## 3. ON-PAGE SEO — Optimize your pages
 
 Now that we know what a page should target, let's check whether the page communicates that topic clearly.
