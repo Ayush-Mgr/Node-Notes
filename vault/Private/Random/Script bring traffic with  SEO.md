@@ -142,7 +142,7 @@ Here are the main things to look at.
 
 **First, relevance.** Does this keyword actually relate to your website and what you offer?
 
-**Second, search intent.** Does the person searching want the kind of information or service your page provides?
+**Second, search intent.** remember intend from before it is  what someone would ==actually== search for to find that page. and its four types
 
 **Third, search volume.** This estimates how many searches a keyword receives per month.
 
