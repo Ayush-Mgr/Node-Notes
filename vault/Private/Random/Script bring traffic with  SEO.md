@@ -195,6 +195,8 @@ web design service page. That service page could then, link to your contact page
 
 This helps visitors navigate your website and helps search engines discover related pages.
 
+congratulations almost 90% of your seo work is done  
+
 ## 4. OFF-PAGE SEO — Get your website discovered
 
 So far, we've worked on the website itself. Now we need to get it in front of people.
