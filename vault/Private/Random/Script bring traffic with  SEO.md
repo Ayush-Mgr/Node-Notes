@@ -102,13 +102,13 @@ There are four common types.
 
 Now, imagine you're building a business website.
 
-Your `/web-design` page should explain your web design services.
+Your `/web-design` page should explain your web design services. [Visual: - Transactional — the visitor is looking to hire a web designer.]
 
-Your `/seo` page should explain your SEO services.
+Your `/seo` page should explain your SEO services.[Visual: Transactional — the visitor is looking to hire someone for SEO services.]
 
-And your `/about` page should tell visitors about ==your== business.
+And your `/about` page should tell visitors about ==your== business.[Visual: - Informational — the visitor wants to learn about the business.]
 
-Each important page needs a clear purpose and should satisfy the searcher's intent.
+Each important page needs a clear purpose and should ==satisfy== the searcher's intent.
 
 We'll use this idea again when we research keywords.
 
