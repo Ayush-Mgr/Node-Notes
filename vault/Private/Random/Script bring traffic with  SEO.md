@@ -112,27 +112,29 @@ Each important page needs a clear purpose and should ==satisfy== the searcher's 
 
 We'll use this idea again when we research keywords.
 
-## 2. KEYWORD RESEARCH — Find what people search for
+## 2. KEYWORD RESEARCH — Finding what people search for
 
-So, what exactly are keywords?
+So, what  ==are== keywords?
 
 They're the words or phrases people type into search engines when looking for information, products, or services.
 
-Some are broad, like "SEO."
+Some are ===broad===, like "GTA6."
 
-Others are more specific, like "best SEO agency for a small business."
+Others are more ==specific==, like "story line of the GTA6."
 
 [Visual: Animate the broad keyword expanding into a more specific phrase.]
 
 These more specific searches are often called long-tail keywords.
 
-But how do you know which keywords to target?
+But ==how== do you know which keywords to target?
 
 That's where keyword research tools come in.
 
 You can start with free features from tools like Semrush's Keyword Magic Tool or Ahrefs' Keyword Generator.
 
-I like starting with a core keyword related to the website. For example, if you're offering web design services, search for "web design."
+here im using Semrush's Keyword Magic Tool.
+
+I like starting with a core keyword, related to the website. For example, if you're offering web design services, search for "web design."
 
 The tool will suggest related keywords and provide useful metrics.
 
