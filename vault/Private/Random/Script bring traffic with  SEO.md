@@ -239,6 +239,9 @@ You can use these insights to identify pages that are gaining visibility, querie
 
 If you also have analytics set up, check whether visitors are taking meaningful actions, such as submitting a form, requesting a quote, or making a purchase.
 
+and if some pages have low impressions and queries ask what went wrong audit that page , research keywords used is relevant, search intent , do the on-pages and off-pages.
+most importantly 
+
 SEO takes time, and results aren't guaranteed. Keep publishing useful content where there's a genuine need, maintain your website, and use the data to decide what to improve next.
 
 ## OUTRO
