@@ -199,9 +199,9 @@ congratulations almost 90% of your seo work is done
 
 ## 4. OFF-PAGE SEO — Get your website discovered
 
-So far, we've worked on the website itself. Now we need to get it in front of people.
+So far, we've worked on the website itself. Now we need to get website, in front of people.
 
-Start with the social media platforms where your potential customers actually spend their time.
+Start with the social media platforms, where your potential customers actually spend their time.
 
 Share useful posts related to your products or services, and when relevant, link to the appropriate page on your website.
 
