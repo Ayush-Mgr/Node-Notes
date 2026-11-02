@@ -12,6 +12,27 @@ const state = {
 const HUB_DEGREE_THRESHOLD = 30;   // nodes with degree above this are treated as hubs
 const LOCAL_GRAPH_MAX_NEIGHBORS = 25; // max neighbors shown in the local graph panel
 
+// Explicit index notes with persistent labels
+const EXPLICIT_INDEX_NOTE_IDS = new Set([
+  "datascience/programming/index/index",
+  "datascience/stats/index/index",
+  "datascience/maths/index/index",
+  "business/investing_strageties/index",
+  "datascience/machine_learning/index/index",
+  "business/investing_strageties/index/index",
+  "business/basics accounting/index/index",
+  "datascience/programming/index/web_dev_index",
+  "seo/index/index",
+  "crm/index/crm index",
+]);
+
+function isExplicitIndexNode(node) {
+  if (!node || !node.id) return false;
+  const lower = node.id.toLowerCase();
+  if (EXPLICIT_INDEX_NOTE_IDS.has(lower)) return true;
+  return !lower.includes("/notes/") && (lower.endsWith("/index") || lower.endsWith("/index/index") || lower.endsWith("_index"));
+}
+
 const graphView = document.getElementById("graph-view");
 const appStatus = document.getElementById("app-status");
 const noteBackdrop = document.getElementById("note-backdrop");
@@ -847,10 +868,32 @@ function renderGraph() {
 
   simulation.on("tick", drawCanvas);
 
+  function findIndexNodeByLabel(px, py) {
+    const focusId = hoveredNode ? hoveredNode.id : state.activeNoteId;
+    for (const n of nodes) {
+      if (!isExplicitIndexNode(n)) continue;
+      const sx = n.x * currentZoomTransform.k + currentZoomTransform.x;
+      const sy = n.y * currentZoomTransform.k + currentZoomTransform.y;
+      const labelY = sy + (n.radius * currentZoomTransform.k) + 6;
+      const title = n.title || n.id;
+      const isFocused = Boolean(focusId && n.id === focusId);
+      context.font = isFocused
+        ? "600 12px Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+        : "500 11.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif";
+      const halfWidth = context.measureText(title).width / 2 + 4;
+      if (px >= sx - halfWidth && px <= sx + halfWidth && py >= labelY - 2 && py <= labelY + 16) {
+        return n;
+      }
+    }
+    return null;
+  }
+
   d3.select(canvas)
     .call(
       d3.drag()
         .subject((event) => {
+          const labelHit = findIndexNodeByLabel(event.x, event.y);
+          if (labelHit) return labelHit;
           const transform = currentZoomTransform;
           const x = transform.invertX(event.x);
           const y = transform.invertY(event.y);
@@ -878,9 +921,12 @@ function renderGraph() {
         return;
       }
       const [mx, my] = d3.pointer(event);
-      const x = currentZoomTransform.invertX(mx);
-      const y = currentZoomTransform.invertY(my);
-      const found = simulation.find(x, y, 20);
+      let found = findIndexNodeByLabel(mx, my);
+      if (!found) {
+        const x = currentZoomTransform.invertX(mx);
+        const y = currentZoomTransform.invertY(my);
+        found = simulation.find(x, y, 20);
+      }
 
       if (found !== hoveredNode) {
         hoveredNode = found;
@@ -1169,6 +1215,57 @@ function renderGraph() {
         context.stroke();
         context.setLineDash([]);
       });
+    }
+
+    context.restore();
+
+    // Draw persistent labels for explicit index nodes in screen space
+    drawPersistentIndexLabels(nodes, currentZoomTransform, focusId, neighbors, width, height);
+  }
+
+  function drawPersistentIndexLabels(nodeList, transform, focusId, neighbors, w, h) {
+    const k = transform.k;
+    const tx = transform.x;
+    const ty = transform.y;
+
+    context.save();
+    context.textAlign = "center";
+    context.textBaseline = "top";
+    context.lineJoin = "round";
+    context.miterLimit = 2;
+
+    for (const d of nodeList) {
+      if (!isExplicitIndexNode(d)) continue;
+
+      const sx = d.x * k + tx;
+      const sy = d.y * k + ty;
+
+      // Cull labels outside viewport
+      if (sx < -120 || sx > w + 120 || sy < -60 || sy > h + 60) continue;
+
+      const isFocused = Boolean(focusId && d.id === focusId);
+      const isNeighbor = Boolean(neighbors && neighbors.has(d.id));
+      const labelY = sy + (d.radius * k) + 6;
+      const title = d.title || d.id;
+
+      context.font = isFocused
+        ? "600 12px Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+        : "500 11.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif";
+
+      // Knockout halo stroke for readability over links and background texture
+      context.strokeStyle = "rgba(250, 250, 250, 0.95)";
+      context.lineWidth = 3.5;
+      context.strokeText(title, sx, labelY);
+
+      // Crisp text fill matching Node-Notes aesthetic
+      if (d.ghost) {
+        context.fillStyle = isFocused ? "#78350f" : "rgba(146, 64, 14, 0.9)";
+      } else if (focusId && !isFocused && !isNeighbor) {
+        context.fillStyle = "rgba(51, 51, 51, 0.35)";
+      } else {
+        context.fillStyle = isFocused ? "#000000" : "#222222";
+      }
+      context.fillText(title, sx, labelY);
     }
 
     context.restore();
