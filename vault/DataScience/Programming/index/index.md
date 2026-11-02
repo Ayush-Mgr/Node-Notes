@@ -18,7 +18,7 @@
 - [[pandas]]
 - [[matplotlib]]
 -  [[gspread]]
-
+---
 ## SQL 
 ### Fundamentals & Schema Design
 - [[0. source_1_SQL]]
@@ -54,7 +54,7 @@
 ## SEO Automation (Python)
 - [[Seo Report Automation]]
 
-
+---
 ## Machine Learning Concepts (In Programming)
 - [[0 AI ML SYLLABUSS]]
 - [[CNN]]
