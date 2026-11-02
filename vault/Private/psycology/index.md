@@ -34,7 +34,7 @@
 - [[Stack]]
 - [[Queue (FIFO - First In, First Out)]]
 - [[Priority Queue (Priority In, Priority Out)]]
-- [[stored procedure]]
+- [[9. stored procedure|stored procedure]]
 - [[px,percent,rem]]
 - [[App]]
 - [[Counter]]

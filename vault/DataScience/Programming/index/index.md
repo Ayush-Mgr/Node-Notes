@@ -1,7 +1,6 @@
 # Programming
 
 ## Python 
-- [[conditions]]
 - [[LOOPS & tqdm]]
 - [[lambda]]
 - [[lists]]
@@ -21,15 +20,39 @@
 -  [[gspread]]
 
 ## SQL 
+### Fundamentals & Schema Design
+- [[0. source_1_SQL]]
+- [[1. Introduction  SQL]]
+- [[1. Databases for Developers]]
 - [[2. Data base & DBMS.]]
 - [[3. Table..]]
+- [[4. ER diagram]]
 - [[primary key]]
-- [[VIEWS]]
-- [[Alter]]
-- [[DELETE]]
-- [[UPDATE]]
-- [[private enviroment]]
 
+### Core Commands & Queries
+- [[0.1 Creating a DATABASE process]]
+- [[5. SQL commands & data types]]
+- [[conditions]]
+- [[Alter]]
+- [[UPDATE]]
+- [[DELETE]]
+- [[6.Group By & Having]]
+- [[7.JOINS]]
+- [[8. SUBQUERY]]
+
+### Advanced SQL & Objects
+- [[VIEWS]]
+- [[9. stored procedure]]
+- [[10. Trigger]]
+- [[11.  WINDOWS FUNCTIONs]]
+- [[12. POSTGRE SQL]]
+
+### Python & Database Integration
+- [[installation]]
+- [[14.7 sql panda]]
+
+## SEO Automation (Python)
+- [[Seo Report Automation]]
 
 
 ## Machine Learning Concepts (In Programming)
@@ -48,7 +71,6 @@
 
 ## Miscellaneous
 - [[mac bash]]
-- [[installation]]
 - [[private enviroment]]
 - [[Reading file]]
 - [[OpenCV]]
@@ -77,5 +99,4 @@
 - [[pixel arts]]
 - [[px,percent,rem]]
 - [[something resonates]]
-- [[stored procedure]]
 - [[un_1]]
