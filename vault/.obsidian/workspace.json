@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/index/index.md",
+                "file": "DataScience/Programming/notes/1. Introduction  SQL.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "1. Introduction  SQL"
             }
           },
           {
@@ -213,8 +213,9 @@
   },
   "active": "7980d85dfad44135",
   "lastOpenFiles": [
-    "DataScience/Programming/notes/primary key.md",
     "DataScience/Programming/index/index.md",
+    "DataScience/Programming/notes/0. source_1_SQL.md",
+    "DataScience/Programming/notes/primary key.md",
     "DataScience/Programming/notes/3. Table...md",
     "DataScience/Programming/notes/2. Data base & DBMS..md",
     "Private/Random/index/index.md",
@@ -238,7 +239,6 @@
     "SEO/seo KEys.md",
     "Private/Random/3. A* script.md",
     "Private/Random/1. MAze - script.md",
-    "SEO/SEO PORTFOLIO.md",
     "Untitled.canvas",
     "CRM/Notes",
     "CRM/Index",
