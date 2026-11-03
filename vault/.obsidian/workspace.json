@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/1. Introduction  SQL.md",
+                "file": "DataScience/Programming/notes/2. Data base & DBMS..md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "1. Introduction  SQL"
+              "title": "2. Data base & DBMS."
             }
           },
           {
@@ -242,10 +242,10 @@
   },
   "active": "5e130056f283d42d",
   "lastOpenFiles": [
+    "DataScience/Programming/notes/1. Introduction  SQL.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/2. Data base & DBMS..md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
-    "DataScience/Programming/notes/1. Introduction  SQL.md",
     "DataScience/Programming/notes/0. source_1_SQL.md",
     "DataScience/Programming/notes/primary key.md",
     "DataScience/Programming/notes/3. Table...md",
