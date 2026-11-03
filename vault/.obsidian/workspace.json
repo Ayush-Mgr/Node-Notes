@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -240,11 +240,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "5e130056f283d42d",
+  "active": "7980d85dfad44135",
   "lastOpenFiles": [
+    "DataScience/Programming/notes/2. Data base & DBMS..md",
     "DataScience/Programming/notes/1. Introduction  SQL.md",
     "DataScience/Programming/index/index.md",
-    "DataScience/Programming/notes/2. Data base & DBMS..md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Programming/notes/0. source_1_SQL.md",
     "DataScience/Programming/notes/primary key.md",
