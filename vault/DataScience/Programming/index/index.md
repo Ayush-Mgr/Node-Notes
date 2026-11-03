@@ -23,9 +23,8 @@
 ### Fundamentals & Schema Design
 - [[0. source_1_SQL]]
 - [[1. Introduction  SQL]]
-- [[1. Tabels]]
 - [[2. Data base & DBMS.]]
-- [[3. Table..]]
+- [[3. Table]]
 - [[4. ER diagram]]
 - [[primary key]]
 
