@@ -25,12 +25,14 @@
             "id": "5e130056f283d42d",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.15.0"
+                "file": "DataScience/Programming/notes/1. Introduction  SQL.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.15.0"
+              "icon": "lucide-file",
+              "title": "1. Introduction  SQL"
             }
           },
           {
@@ -199,13 +201,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DataScience/Stats/notes/5. AR, MA, ARMA,ARIMA.md",
+                "file": "DataScience/Programming/notes/1. Introduction  SQL.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 5. AR, MA, ARMA,ARIMA"
+              "title": "Outline"
             }
           },
           {
@@ -241,11 +243,12 @@
   "active": "5e130056f283d42d",
   "lastOpenFiles": [
     "DataScience/Programming/index/index.md",
+    "DataScience/Programming/notes/2. Data base & DBMS..md",
+    "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Programming/notes/1. Introduction  SQL.md",
     "DataScience/Programming/notes/0. source_1_SQL.md",
     "DataScience/Programming/notes/primary key.md",
     "DataScience/Programming/notes/3. Table...md",
-    "DataScience/Programming/notes/2. Data base & DBMS..md",
     "Private/Random/index/index.md",
     "Private/Random/Script bring traffic with  SEO.md",
     "DataScience/Programming/notes/gspread.md",
@@ -265,7 +268,6 @@
     "Business/Investing_strageties/management.md",
     "Business/Investing_strageties/index.md",
     "SEO/seo KEys.md",
-    "Private/Random/3. A* script.md",
     "Untitled.canvas",
     "CRM/Notes",
     "CRM/Index",
