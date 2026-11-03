@@ -22,6 +22,18 @@
             }
           },
           {
+            "id": "5e130056f283d42d",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.15.0"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.15.0"
+            }
+          },
+          {
             "id": "7980d85dfad44135",
             "type": "leaf",
             "state": {
@@ -49,7 +61,8 @@
               "title": "JSW"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -225,7 +238,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6f744f7ff1555681",
+  "active": "5e130056f283d42d",
   "lastOpenFiles": [
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/1. Introduction  SQL.md",
