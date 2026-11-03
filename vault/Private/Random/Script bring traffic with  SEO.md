@@ -190,9 +190,9 @@ Your content should be useful to the person reading it, not written exclusively 
 One more thing: connect related pages with useful internal links.
 
 For example, an article about choosing a web design service, could link to your
-web design service page. That service page could then, link to your contact page.
+web design service page. That service page could then, link to your con tact page.
 
-This helps visitors navigate your website and helps search engines discover related pages.
+This helps the  visitors to  navigate your website and helps search engines discover related pages.
 
 congratulations almost 90% of your seo work is done  
 
