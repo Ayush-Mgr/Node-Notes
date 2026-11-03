@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/index/index.md",
+                "file": "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "0.1 Creating a DATABASE process"
             }
           },
           {
@@ -49,8 +49,7 @@
               "title": "3. Table"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -226,9 +225,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "23b3ca34858799a8",
+  "active": "6f744f7ff1555681",
   "lastOpenFiles": [
     "DataScience/Programming/index/index.md",
+    "DataScience/Programming/notes/4. ER diagram.md",
+    "DataScience/Programming/notes/primary key.md",
     "DataScience/Programming/notes/3. Table.md",
     "DataScience/Programming/notes/1. Tabels.md",
     "DataScience/Programming/notes/2. Data base & DBMS..md",
@@ -237,7 +238,6 @@
     "Business/Investing_strageties/JSW.md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Programming/notes/0. source_1_SQL.md",
-    "DataScience/Programming/notes/primary key.md",
     "Private/Random/index/index.md",
     "Private/Random/Script bring traffic with  SEO.md",
     "DataScience/Programming/notes/gspread.md",
@@ -253,7 +253,6 @@
     "Business/Investing_strageties/Bill Ackman.md",
     "Business/Investing_strageties/BUffet.md",
     "Business/Investing_strageties/BUY.md",
-    "Business/Investing_strageties/management.md",
     "Untitled.canvas",
     "CRM/Notes",
     "CRM/Index",
