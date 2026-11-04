@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
+                "file": "DataScience/Programming/notes/5. SQL commands & data types.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0.1 Creating a DATABASE process"
+              "title": "5. SQL commands & data types"
             }
           },
           {
@@ -49,8 +49,7 @@
               "title": "3. Table"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -226,12 +225,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ddbad4ece6aec69c",
+  "active": "23b3ca34858799a8",
   "lastOpenFiles": [
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
+    "DataScience/Programming/notes/Alter.md",
     "DataScience/Programming/notes/5. SQL commands & data types.md",
     "DataScience/Programming/notes/3. Table.md",
-    "DataScience/Programming/notes/Alter.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/4. ER diagram.md",
     "Private/Random/Script bring traffic with  SEO.md",
