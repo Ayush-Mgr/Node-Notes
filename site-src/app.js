@@ -868,32 +868,10 @@ function renderGraph() {
 
   simulation.on("tick", drawCanvas);
 
-  function findIndexNodeByLabel(px, py) {
-    const focusId = hoveredNode ? hoveredNode.id : state.activeNoteId;
-    for (const n of nodes) {
-      if (!isExplicitIndexNode(n)) continue;
-      const sx = n.x * currentZoomTransform.k + currentZoomTransform.x;
-      const sy = n.y * currentZoomTransform.k + currentZoomTransform.y;
-      const labelY = sy + (n.radius * currentZoomTransform.k) + 6;
-      const title = n.title || n.id;
-      const isFocused = Boolean(focusId && n.id === focusId);
-      context.font = isFocused
-        ? "600 12px Inter, -apple-system, BlinkMacSystemFont, sans-serif"
-        : "500 11.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif";
-      const halfWidth = context.measureText(title).width / 2 + 4;
-      if (px >= sx - halfWidth && px <= sx + halfWidth && py >= labelY - 2 && py <= labelY + 16) {
-        return n;
-      }
-    }
-    return null;
-  }
-
   d3.select(canvas)
     .call(
       d3.drag()
         .subject((event) => {
-          const labelHit = findIndexNodeByLabel(event.x, event.y);
-          if (labelHit) return labelHit;
           const transform = currentZoomTransform;
           const x = transform.invertX(event.x);
           const y = transform.invertY(event.y);
@@ -921,12 +899,9 @@ function renderGraph() {
         return;
       }
       const [mx, my] = d3.pointer(event);
-      let found = findIndexNodeByLabel(mx, my);
-      if (!found) {
-        const x = currentZoomTransform.invertX(mx);
-        const y = currentZoomTransform.invertY(my);
-        found = simulation.find(x, y, 20);
-      }
+      const x = currentZoomTransform.invertX(mx);
+      const y = currentZoomTransform.invertY(my);
+      const found = simulation.find(x, y, 20);
 
       if (found !== hoveredNode) {
         hoveredNode = found;
@@ -1218,57 +1193,6 @@ function renderGraph() {
     }
 
     context.restore();
-
-    // Draw persistent labels for explicit index nodes in screen space
-    drawPersistentIndexLabels(nodes, currentZoomTransform, focusId, neighbors, width, height);
-  }
-
-  function drawPersistentIndexLabels(nodeList, transform, focusId, neighbors, w, h) {
-    const k = transform.k;
-    const tx = transform.x;
-    const ty = transform.y;
-
-    context.save();
-    context.textAlign = "center";
-    context.textBaseline = "top";
-    context.lineJoin = "round";
-    context.miterLimit = 2;
-
-    for (const d of nodeList) {
-      if (!isExplicitIndexNode(d)) continue;
-
-      const sx = d.x * k + tx;
-      const sy = d.y * k + ty;
-
-      // Cull labels outside viewport
-      if (sx < -120 || sx > w + 120 || sy < -60 || sy > h + 60) continue;
-
-      const isFocused = Boolean(focusId && d.id === focusId);
-      const isNeighbor = Boolean(neighbors && neighbors.has(d.id));
-      const labelY = sy + (d.radius * k) + 6;
-      const title = d.title || d.id;
-
-      context.font = isFocused
-        ? "600 12px Inter, -apple-system, BlinkMacSystemFont, sans-serif"
-        : "500 11.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif";
-
-      // Knockout halo stroke for readability over links and background texture
-      context.strokeStyle = "rgba(250, 250, 250, 0.95)";
-      context.lineWidth = 3.5;
-      context.strokeText(title, sx, labelY);
-
-      // Crisp text fill matching Node-Notes aesthetic
-      if (d.ghost) {
-        context.fillStyle = isFocused ? "#78350f" : "rgba(146, 64, 14, 0.9)";
-      } else if (focusId && !isFocused && !isNeighbor) {
-        context.fillStyle = "rgba(51, 51, 51, 0.35)";
-      } else {
-        context.fillStyle = isFocused ? "#000000" : "#222222";
-      }
-      context.fillText(title, sx, labelY);
-    }
-
-    context.restore();
   }
 
   redrawGraph = drawCanvas;
@@ -1351,6 +1275,67 @@ function syncHashToNote() {
   }
 }
 
+function formatIndexTitle(node) {
+  const id = (node.id || "").toLowerCase();
+  if (id.includes("datascience/stats")) return "Stats Index";
+  if (id.includes("datascience/programming/index/index")) return "Programming Index";
+  if (id.includes("datascience/machine_learning")) return "Machine Learning";
+  if (id.includes("datascience/maths")) return "Maths Index";
+  if (id.includes("web_dev")) return "Web Dev Index";
+  if (id.includes("seo")) return "SEO Index";
+  if (id.includes("investing")) return "Investing Index";
+  if (id.includes("accounting")) return "Accounting Index";
+  if (id.includes("crm")) return "CRM Index";
+  return node.title || node.id;
+}
+
+function initImportantNodesList() {
+  const listEl = document.getElementById("important-nodes-list");
+  if (!listEl || !state.data?.nodes) return;
+
+  const seenTitles = new Set();
+  const indexNodes = state.data.nodes
+    .filter(isExplicitIndexNode)
+    .sort((a, b) => (b.degree || 0) - (a.degree || 0))
+    .filter((node) => {
+      const title = formatIndexTitle(node);
+      if (seenTitles.has(title)) return false;
+      seenTitles.add(title);
+      return true;
+    });
+
+  listEl.innerHTML = indexNodes.map((node) => {
+    const title = formatIndexTitle(node);
+    const degree = node.degree || 0;
+    return `
+      <li class="important-nodes__item" data-id="${escapeHtml(node.id)}">
+        <span class="important-nodes__name">${escapeHtml(title)}</span>
+        <span class="important-nodes__count">• ${degree}</span>
+      </li>
+    `;
+  }).join("");
+
+  listEl.querySelectorAll(".important-nodes__item").forEach((item) => {
+    const id = item.dataset.id;
+    const node = state.nodeById.get(id);
+    if (!node) return;
+
+    item.addEventListener("mouseenter", () => {
+      hoveredNode = node;
+      redrawGraph();
+    });
+    item.addEventListener("mouseleave", () => {
+      if (hoveredNode === node) {
+        hoveredNode = null;
+        redrawGraph();
+      }
+    });
+    item.addEventListener("click", () => {
+      openNote(node.id);
+    });
+  });
+}
+
 async function init() {
   setStatus("Loading graph...");
   const response = await fetch("./graph-data.json");
@@ -1366,6 +1351,7 @@ async function init() {
     return [node.id, node];
   }));
   renderGraph();
+  initImportantNodesList();
   setStatus(`${state.data.nodes.length} notes`);
   syncHashToNote();
 }

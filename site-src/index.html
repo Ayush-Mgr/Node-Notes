@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css?v=mobile-view" />
   <link rel="icon" href="./img/favicon.webp" type="image/webp" />
   <link rel="apple-touch-icon" href="./img/favicon.webp" />
 </head>
@@ -49,6 +49,14 @@
   <main class="app-shell">
     <section id="graph-view" aria-label="Notes graph"></section>
   </main>
+
+  <aside id="important-nodes" class="important-nodes" aria-label="Important Nodes">
+    <div class="important-nodes__header">
+      <span class="important-nodes__indicator"></span>
+      <span class="important-nodes__title">Important Nodes</span>
+    </div>
+    <ul id="important-nodes-list" class="important-nodes__list"></ul>
+  </aside>
 
   <div id="app-status" class="app-status" aria-live="polite" aria-atomic="true">Loading graph...</div>
   <div id="note-backdrop" class="note-backdrop hidden" aria-hidden="true"></div>
