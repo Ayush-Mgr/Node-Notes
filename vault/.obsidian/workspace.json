@@ -8,31 +8,17 @@
         "type": "tabs",
         "children": [
           {
-            "id": "6f744f7ff1555681",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Private/Random/Script bring traffic with  SEO.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Script bring traffic with  SEO"
-            }
-          },
-          {
             "id": "23b3ca34858799a8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/4. ER diagram.md",
+                "file": "DataScience/Programming/notes/5. SQL commands & data types.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "4. ER diagram"
+              "title": "5. SQL commands & data types"
             }
           },
           {
@@ -108,8 +94,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "ef966d28538e0895",
@@ -226,13 +211,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6f744f7ff1555681",
+  "active": "23b3ca34858799a8",
   "lastOpenFiles": [
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
+    "DataScience/Programming/notes/5. SQL commands & data types.md",
+    "DataScience/Programming/notes/3. Table.md",
+    "DataScience/Programming/notes/Alter.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/4. ER diagram.md",
+    "Private/Random/Script bring traffic with  SEO.md",
     "DataScience/Programming/notes/primary key.md",
-    "DataScience/Programming/notes/3. Table.md",
     "DataScience/Programming/notes/1. Tabels.md",
     "DataScience/Programming/notes/2. Data base & DBMS..md",
     "DataScience/Programming/index/Web_Dev_index.md",
@@ -240,7 +228,6 @@
     "Business/Investing_strageties/JSW.md",
     "DataScience/Programming/notes/0. source_1_SQL.md",
     "Private/Random/index/index.md",
-    "Private/Random/Script bring traffic with  SEO.md",
     "DataScience/Programming/notes/gspread.md",
     "DataScience/Programming/notes/0. Introduction to radial basis functions.md",
     "DataScience/Programming/notes/Seo Report Automation.md",
@@ -252,8 +239,6 @@
     "Business/Investing_strageties/CHARLE MuNGeR the inter view 1.md",
     "Business/Investing_strageties/Buy & Sell.md",
     "Business/Investing_strageties/Bill Ackman.md",
-    "Business/Investing_strageties/BUffet.md",
-    "Business/Investing_strageties/BUY.md",
     "Untitled.canvas",
     "CRM/Notes",
     "CRM/Index",
