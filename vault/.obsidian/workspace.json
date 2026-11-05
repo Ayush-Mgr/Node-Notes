@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/index/index.md",
+                "file": "DataScience/Programming/notes/Alter.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "Alter"
             }
           },
           {
@@ -63,8 +63,7 @@
               "title": "3. Table"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -240,16 +239,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6a1f55064d3e3a96",
+  "active": "23b3ca34858799a8",
   "lastOpenFiles": [
+    "DataScience/Programming/index/index.md",
+    "DataScience/Programming/notes/3. Table.md",
+    "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Programming/notes/5. SQL commands & data types.md",
     "DataScience/Programming/notes/installation.md",
-    "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Programming/notes/Alter.md",
     "DataScience/Programming/notes/DELETE.md",
-    "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/conditions.md",
-    "DataScience/Programming/notes/3. Table.md",
     "DataScience/Programming/notes/4. ER diagram.md",
     "Private/Random/Script bring traffic with  SEO.md",
     "DataScience/Programming/notes/primary key.md",
