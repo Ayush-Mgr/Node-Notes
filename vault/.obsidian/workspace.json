@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/index/index.md",
+                "file": "DataScience/Programming/notes/conditions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "conditions"
             }
           },
           {
@@ -227,11 +227,11 @@
   },
   "active": "23b3ca34858799a8",
   "lastOpenFiles": [
+    "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/5. SQL commands & data types.md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
     "DataScience/Programming/notes/Alter.md",
     "DataScience/Programming/notes/3. Table.md",
-    "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/4. ER diagram.md",
     "Private/Random/Script bring traffic with  SEO.md",
     "DataScience/Programming/notes/primary key.md",
