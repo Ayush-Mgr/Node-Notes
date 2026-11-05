@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataScience/Programming/notes/conditions.md",
+                "file": "DataScience/Programming/index/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "conditions"
+              "title": "index"
             }
           },
           {
@@ -227,6 +227,7 @@
   },
   "active": "23b3ca34858799a8",
   "lastOpenFiles": [
+    "DataScience/Programming/notes/conditions.md",
     "DataScience/Programming/index/index.md",
     "DataScience/Programming/notes/5. SQL commands & data types.md",
     "DataScience/Programming/notes/0.1 Creating a DATABASE process.md",
@@ -252,7 +253,6 @@
     "Business/Investing_strageties/Fin interpretation.md",
     "Business/Investing_strageties/CHARLE MuNGeR the inter view 1.md",
     "Business/Investing_strageties/Buy & Sell.md",
-    "Business/Investing_strageties/Bill Ackman.md",
     "Untitled.canvas",
     "CRM/Notes",
     "CRM/Index",
