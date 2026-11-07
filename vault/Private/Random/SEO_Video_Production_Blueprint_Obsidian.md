@@ -5,16 +5,16 @@ This document is your **master production blueprint** for the 14-minute faceless
 ---
 
 ## 1. Executive Summary & Production Overview
-| Metric                 | Master Specification                     |
-| ---------------------- | ---------------------------------------- |
-| **Master Voiceover**   | `motion/audio/Project seo - Enhnced.wav` |
-| **Duration**           | **14m 01.6s** (841.59 seconds)           |
-| **Total Frame Budget** | **25,248 frames** @ 30.0 fps             |
-| **Subtitle Segments** | **204 micro-beats** (`motion/audio/transcript.srt`) |
-| **Word Alignment** | **1,746 verified words** (`motion/audio/transcript_words.json`) |
-| **Visual Aesthetic** | **Monochrome Dark Developer** (`#0A0A0A` canvas, transparent cards with `#2A2A2A` hairline border, `#FFFFFF` titles & active outlines, `#E5E5E5` body, `#A3A3A3` secondary, `#737373` muted, `#1F1F1F` subtle surface) |
-| **Typography** | **Inter only** (400 Regular Body, 600 Semi-Bold Titles/Badges) with tabular numerals |
-| **Asset Strategy** | **Hybrid SR + SS + MG**: Real SaaS screen recordings and screenshots seamlessly framed inside monochrome browser mockups, driven by continuous spring cursors and kinetic callouts. |
+| Metric                 | Master Specification                                                                                                                                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Master Voiceover**   | `motion/audio/Project seo - Enhnced.wav`                                                                                                                                                                               |
+| **Duration**           | **14m 01.6s** (841.59 seconds)                                                                                                                                                                                         |
+| **Total Frame Budget** | **25,248 frames** @ 30.0 fps                                                                                                                                                                                           |
+| **Subtitle Segments**  | **204 micro-beats** (`motion/audio/transcript.srt`)                                                                                                                                                                    |
+| **Word Alignment**     | **1,746 verified words** (`motion/audio/transcript_words.json`)                                                                                                                                                        |
+| **Visual Aesthetic**   | **Monochrome Dark Developer** (`#0A0A0A` canvas, transparent cards with `#2A2A2A` hairline border, `#FFFFFF` titles & active outlines, `#E5E5E5` body, `#A3A3A3` secondary, `#737373` muted, `#1F1F1F` subtle surface) |
+| **Typography**         | **Inter only** (400 Regular Body, 600 Semi-Bold Titles/Badges) with tabular numerals                                                                                                                                   |
+| **Asset Strategy**     | **Hybrid SR + SS + MG**: Real SaaS screen recordings and screenshots seamlessly framed inside monochrome browser mockups, driven by continuous spring cursors and kinetic callouts.                                    |
 
 ---
 
