@@ -56,24 +56,26 @@ You can capture all required screen recordings in **one single recording session
 ## 3. Pre-Production Subtitle & Script Corrections
 
 Before finalizing kinetic typography and subtitle overlays, verify that text layers use these standardized technical terms:
-| Spoken Phonetic in Raw Audio | Correct Technical Term | Display Representation in Video |
-|---|---|---|
-| "sight search" / "cite domain" | `site:` search operator | `site:yourdomain.com` |
-| "robot text" / "robot dot txt" | `robots.txt` file | `yourdomain.com/robots.txt` |
-| "site map dot xml" | `sitemap.xml` | `yourdomain.com/sitemap.xml` |
-| "search council" | Google Search Console | `Google Search Console (GSC)` |
-| "some rush" / "sam rush" | Semrush | `Semrush Keyword Magic Tool` |
-| "no index directive" | `noindex` tag | ``<meta name="robots" content="noindex">`` |
-| "seater" / "c t r" | CTR | `CTR (Click-Through Rate)` |
-| "katie percent" / "kd" | KD% | `KD% (Keyword Difficulty: Easy / Hard)` |
-| "ge four" / "g a four" | GA4 | `Google Analytics 4 (GA4)` |
-| "looker" | Looker Studio | `Looker Studio Dashboard` |
+
+| Spoken Phonetic in Raw Audio   | Correct Technical Term  | Display Representation in Video            |
+| ------------------------------ | ----------------------- | ------------------------------------------ |
+| "sight search" / "cite domain" | `site:` search operator | `site:yourdomain.com`                      |
+| "robot text" / "robot dot txt" | `robots.txt` file       | `yourdomain.com/robots.txt`                |
+| "site map dot xml"             | `sitemap.xml`           | `yourdomain.com/sitemap.xml`               |
+| "search council"               | Google Search Console   | `Google Search Console (GSC)`              |
+| "some rush" / "sam rush"       | Semrush                 | `Semrush Keyword Magic Tool`               |
+| "no index directive"           | `noindex` tag           | ``<meta name="robots" content="noindex">`` |
+| "seater" / "c t r"             | CTR                     | `CTR (Click-Through Rate)`                 |
+| "katie percent" / "kd"         | KD%                     | `KD% (Keyword Difficulty: Easy / Hard)`    |
+| "ge four" / "g a four"         | GA4                     | `Google Analytics 4 (GA4)`                 |
+| "looker"                       | Looker Studio           | `Looker Studio Dashboard`                  |
 
 ---
 
 ## 4. Exact-Frame Pointer Word Overlays
 
 Whenever the voiceover says demonstrative anchor words like **"this"**, **"here"**, or sequential markers like **"First"**, **"Second"**, our engine triggers micro-overlays (callout bounding boxes, spotlight rings, or cursor clicks) at the exact spoken timestamp:
+
 | Spoken Word | Transcript Word ID | Exact Audio Sec | Visual Pointer Overlay Trigger |
 |---|---|---|---|
 | *"here"* | `w_0112` | `00:51.72` | 5-step horizontal roadmap pill appears: `[1. Indexing -> 2. Intent -> 3. Keywords -> 4. On-Page -> 5. Tracking]`. |
