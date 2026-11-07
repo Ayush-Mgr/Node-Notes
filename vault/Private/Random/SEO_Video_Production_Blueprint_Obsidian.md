@@ -118,7 +118,7 @@ Whenever the voiceover says demonstrative anchor words like **"this"**, **"here"
 
 - `00:00 – 00:08`: Smooth 60fps screen recording (`inputs/screen_recordings/01_3d_webgl_showcase.mp4`) scrolling an award-winning 3D website (e.g. Linear.app/Lusion.co) inside a floating dark browser card with subtle perspective tilt.
 
-- `00:08 – 00:14`: Hard tape-stop glitch cut on the spoken word *"problem"*. The 3D site snaps flat into an analytics card showing a flatline graph with a bold white `0` Monthly Visitors and a pulsing `#1F1F1F` warning pill.
+- `00:08 – 00:14`: Hard tape-stop glitch cut on the spoken word *"problem"*. The 3D site snaps flat into an analytics card showing a flatline graph with a bold white `0` Monthly Visitors and a pulsing `#1F1F1F` .
 
 #### Beat 1.2 (Scenes 4–8): The AI Builder Blindspot (`00:00:15 – 00:00:34`)
 
