@@ -18,21 +18,7 @@ This document is your **master production blueprint** for the 14-minute faceless
 
 ---
 
-## 2. Essential Batch Screen Recording & Screenshot Checklist for Ayush
 
-You can capture all required screen recordings in **one single recording session** (~15 minutes) before running renders.
-
-> [!TIP]
-
-> **Recording Settings for Ayush**:
-
-> - **Resolution**: 1920x1080 (or 4K 16:9).
-
-> - **Browser Zoom**: **150%** (so text and metrics are large and punchy on mobile screens).
-
-> - **Theme**: Dark Mode enabled wherever available.
-
- >- **Privacy**: Use dummy domains (`yourwebsite.com`) or blur confidential client URLs.
 
 | #         | File Path                                                | What to Record                                                                                                                                                                     | Format & Details                                                  | Status            |
 | --------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------- |
@@ -45,11 +31,10 @@ You can capture all required screen recordings in **one single recording session
 | **SR-07** | `inputs/screen_recordings/07_gsc_performance.mp4`        | **GSC Performance Report**: Overview dashboard showing Total Clicks, Total Impressions, Average CTR, Average Position, and scroll down into the Queries table.                     | 60 fps, 1080p. Used in **11:56 – 12:54**.                         | [ ] Needs Capture |
 
 ### Supporting Static Screenshots (SS)
-| # | File Path | Screenshot Description | Status |
-|---|---|---|---|
-| **SS-01** | `inputs/screenshots/portfolio_home.jpg` | **Ayush Thapa Portfolio**: Home screen showing automation projects, tabs, and bio. | ✅ **Captured** |
-| **SS-02** | `inputs/screenshots/08_serp_snippet.png` | **Google SERP Snippet**: Clean Google Search result card for target service keyword. | [ ] Needs Capture (or MG mockup) |
-| **SS-03** | `inputs/screenshots/09_ga4_or_looker.png` | **GA4 / Looker Studio**: Traffic overview & conversion goals dashboard. | [ ] Needs Capture (or MG mockup) |
+
+| **SS-02** | `inputs/screenshots/08_serp_snippet.png`  | **Google SERP Snippet**: Clean Google Search result card for target service keyword. |     |
+| --------- | ----------------------------------------- | ------------------------------------------------------------------------------------ | --- |
+| **SS-03** | `inputs/screenshots/09_ga4_or_looker.png` | **GA4 / Looker Studio**: Traffic overview & conversion goals dashboard.              |     |
 
 ---
 
@@ -72,31 +57,7 @@ Before finalizing kinetic typography and subtitle overlays, verify that text lay
 
 ---
 
-## 4. Exact-Frame Pointer Word Overlays
 
-Whenever the voiceover says demonstrative anchor words like **"this"**, **"here"**, or sequential markers like **"First"**, **"Second"**, our engine triggers micro-overlays (callout bounding boxes, spotlight rings, or cursor clicks) at the exact spoken timestamp:
-
-| Spoken Word | Transcript Word ID | Exact Audio Sec | Visual Pointer Overlay Trigger |
-|---|---|---|---|
-| *"here"* | `w_0112` | `00:51.72` | 5-step horizontal roadmap pill appears: `[1. Indexing -> 2. Intent -> 3. Keywords -> 4. On-Page -> 5. Tracking]`. |
-| *"First,"* | `w_0202` | `01:37.12` | Spotlight zoom snaps onto Google Search bar typing `site:`. |
-| *"this."* | `w_0210` | `01:41.02` | Red-border bounding box highlights `site:` operator syntax. |
-| *"First,"* | `w_0236` | `01:54.58` | Cursor points to indexed URLs count at top of Google search results. |
-| *"this."* | `w_0358` | `02:48.18` | White hairline highlight boxes the URL path `/sitemap.xml`. |
-| *"this,"* | `w_0374` | `02:56.28` | XML tree root node pulses open with child branch links. |
-| *"this."* | `w_0403` | `03:11.24` | GSC Sitemaps "Success" status pill triggers subtle scale bounce. |
-| *"this,"* | `w_0439` | `03:26.70` | Terminal card highlights line `User-agent: * Disallow: /`. |
-| *"this"* | `w_0461` | `03:40.36` | Code callout highlights ``<meta name="robots" content="noindex">``. |
-| *"Second,"* | `w_0476` | `03:48.00` | Transition wipe from Technical Audit into 2x2 Search Intent Matrix. |
-| *"Here,"* | `w_0745` | `06:11.08` | Cursor clicks into Semrush Keyword Magic search input field. |
-| *"Here"* | `w_0785` | `06:29.18` | Semrush table header row highlights with white border outline. |
-| *"look"* | `w_0791` | `06:30.76` | Spotlight ring focuses on **Intent** column badge. |
-| *"First,"* | `w_0793` | `06:32.02` | 1st metric card snaps in: **Relevance (100%)**. |
-| *"this"* | `w_0796` | `06:34.30` | 2nd metric card snaps in: **Search Intent Match**. |
-| *"Second,"* | `w_0808` | `06:40.40` | 3rd metric card snaps in: **Monthly Volume**. |
-| *"Third,"* | `w_0820` | `06:48.50` | 4th metric card snaps in: **Keyword Difficulty (KD%)**. |
-
----
 
 ## 5. Complete Phase-by-Phase Scene Blueprint (Phases 1 to 7)
 
